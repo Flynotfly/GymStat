@@ -15,7 +15,7 @@
     </form>
 {% endblock %}
 
-{% block include_js %}
+{% block domready %}
 	async function submitForm(event) {
         event.preventDefault();
         const form = event.target;
