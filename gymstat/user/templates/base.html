@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}GymStat{% endblock %}</title>
+</head>
+<body>
+    <div id="header">
+
+    </div>
+    {% block content %}
+
+    {% endblock %}
+
+    {% block include_js %}
+    {% endblock %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            {% block domready %}
+            {% endblock %}
+        })
+    </script>
+</body>
+</html>
