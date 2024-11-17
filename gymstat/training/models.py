@@ -8,12 +8,12 @@ class Training(models.Model):
         related_name='trainings',
         on_delete=models.CASCADE,
     )
-    time = models.DateTimeField(auto_now_add=True)
+    conducted = models.DateTimeField()
     description = models.TextField(blank=True)
 
     class Meta:
-        indexes = [models.Index(fields=['-time'])]
-        ordering = ['-time']
+        indexes = [models.Index(fields=['-conducted'])]
+        ordering = ['-conducted']
 
 
 class Exercise(models.Model):
