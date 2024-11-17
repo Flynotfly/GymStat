@@ -11,6 +11,9 @@ class Training(models.Model):
     time = models.DateTimeField(auto_now_add=True)
     description = models.TextField(blank=True)
 
+    class Meta:
+        indexes = [models.Index(fields=['-time'])]
+        ordering = ['-time']
 
 
 class Exercise(models.Model):
