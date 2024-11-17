@@ -21,7 +21,7 @@ class Exercise(models.Model):
     )
     order = models.PositiveIntegerField()
     weight = models.DecimalField(max_digits=6, decimal_places=2)
-    repatitions = models.PositiveIntegerField()
+    repetitions = models.PositiveIntegerField()
 
     class Meta:
         ordering = ['order']
