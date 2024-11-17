@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.views.generic.edit import CreateView
 from django.shortcuts import get_object_or_404
@@ -6,10 +7,15 @@ from .models import Training
 from .forms import TrainingForm
 
 
-class TrainingCreateUpdateView(CreateView):
+class TrainingCreateUpdateView(LoginRequiredMixin, CreateView):
     model = Training
     form_class = TrainingForm
     template_name = 'training/training.html'
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
     def get_object(self, **kwargs):
         pk = self.kwargs.get('pk')
