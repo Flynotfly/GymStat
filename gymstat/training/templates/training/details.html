@@ -5,7 +5,7 @@
 		Training {{ training.pk }}
 	{% else %}
 		Create new training
-	{% endif %} 
+	{% endif %}
 {% endblock %}
 
 {% block content %}
@@ -14,4 +14,45 @@
 	{% else %}
 		Create new training
 	{% endif %}</h1>
+
+    <form id="training-form" method="post">{% csrf_token %}
+        {{ training_form.as_p }}
+        <input type="submit" value="Save">
+    </form>
+
+    <div id="training-form-response"></div>
+{% endblock %}
+
+{% block domready %}
+    const form = document.getElementById('training-form');
+    const responseDiv = document.getElementById('training-form-response');
+
+    form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        const formData = new FormData(form);
+        const csrfToken = form.querySelector('[name=csrfmiddlewaretoken]').value;
+        fetch(form.action, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken
+            },
+            body: formData
+        }).then(response => response.json()).then(data => {
+            if (data.success) {
+                responseDiv.innerHTML = '<p>Form saved successfully<p>';
+            } else {
+                let errorHtml = '<ul>';
+                for (const [field, errors] of Object.entries(data.errors)) {
+                    errors.forEach (error => {
+                        errorHtml += `<li>${field}: ${error}</li>`
+                    });
+                }
+                errorHtml += '</ul>';
+                responseDiv.innerHTML = errorHtml;
+            }
+        }).catch(error => {
+            responseDiv.innerHTML = '<p>An error occurred.</p>';
+            console.error('Error:', error);
+        });
+    });
 {% endblock %}
