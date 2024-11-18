@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}
+	{% if training %}
+		Training {{ training.pk }}
+	{% else %}
+		Create new training
+	{% endif %} 
+{% endblock %}
+
+{% block content %}
+	<h1>{% if training %}
+		Training {{ training.pk }}
+	{% else %}
+		Create new training
+	{% endif %}</h1>
+{% endblock %}
