@@ -17,6 +17,17 @@
 
     <form id="training-form" method="post">{% csrf_token %}
         {{ training_form.as_p }}
+
+        <h2>Exercises</h2>
+        <div id="exercises">
+            {{ exercise_formset.management_form }}
+            {% for form in exercise_formset %}
+            	<div class="exercise-form">
+                    {{ form.as_p }}
+                </div>
+            {% endfor %}
+        </div>
+
         <input type="submit" value="Save">
     </form>
 
@@ -41,14 +52,8 @@
             if (data.success) {
                 responseDiv.innerHTML = '<p>Form saved successfully<p>';
             } else {
-                let errorHtml = '<ul>';
-                for (const [field, errors] of Object.entries(data.errors)) {
-                    errors.forEach (error => {
-                        errorHtml += `<li>${field}: ${error}</li>`
-                    });
-                }
-                errorHtml += '</ul>';
-                responseDiv.innerHTML = errorHtml;
+                responseDiv.innerHTML = '<p>Error saving the form.</p>';
+                console.error('Errors:', data.errors);
             }
         }).catch(error => {
             responseDiv.innerHTML = '<p>An error occurred.</p>';
