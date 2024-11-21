@@ -10,11 +10,19 @@
 
 	{% for training in trainings %}
 		<div>
-            {{ forloop.counter }}. 
-            date: {{ training.conducted }}
+            <p>
+                {{ forloop.counter }}. 
+                date: {{ training.conducted }}
+            </p>
             {% if training.description %}
-            	description: {{ training.description }}
-            {% endif %} 
+            	<p>
+                    description: {{ training.description }}
+                </p>
+            {% endif %}
+            <p>
+                <a href="{{ training.get_absolute_url }}">View</a>
+            </p>
+            
         </div>
 	{% empty %}
 		you don't have any training records yet.

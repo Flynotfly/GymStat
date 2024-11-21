@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.urls import reverse
 
 
 class Training(models.Model):
@@ -14,6 +15,9 @@ class Training(models.Model):
     class Meta:
         indexes = [models.Index(fields=['-conducted'])]
         ordering = ['-conducted']
+
+    def get_absolute_url(self):
+        return reverse('training:edit', args=[self.id])
 
 
 class Exercise(models.Model):
