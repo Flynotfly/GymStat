@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}
+	Your trainings
+{% endblock %}
+
+{% block content %}
+
+    <h1>Trainings</h1>
+
+	{% for training in trainings %}
+		<div>
+            {{ forloop.counter }}. 
+            date: {{ training.conducted }}
+            {% if training.description %}
+            	description: {{ training.description }}
+            {% endif %} 
+        </div>
+	{% empty %}
+		you don't have any training records yet.
+	{% endfor %}
+
+{% endblock %}
