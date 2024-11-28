@@ -7,12 +7,38 @@ class TrainingForm(forms.ModelForm):
     class Meta:
         model = Training
         fields = ['conducted', 'description']
+        widgets = {
+            'conducted': forms.DateTimeInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'YYYY-MM-DD HH:MM',
+            }),
+            'description': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': 'Description of the trainings session...',
+            }),
+        }
 
 
 class ExerciseForm(forms.ModelForm):
     class Meta:
         model = Exercise
         fields = ['training', 'order', 'weight', 'repetitions']
+        widgets = {
+            'training': forms.HiddenInput(),
+            'order': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Order of exercise',
+            }),
+            'weight': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Weight in kg',
+            }),
+            'repetitions': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Number of repetitions',
+            }),
+        }
 
 
 ExerciseFormSet = forms.inlineformset_factory(

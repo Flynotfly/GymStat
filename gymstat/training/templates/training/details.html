@@ -15,20 +15,23 @@
 		Create new training
 	{% endif %}</h1>
 
-    <form id="training-form" method="post">{% csrf_token %}
-        {{ training_form.as_p }}
+    <form id="training-form" method="post" class="container">{% csrf_token %}
+        <div class="mb-4">
+            {{ training_form.as_p }}
+        </div>
 
         <h2>Exercises</h2>
-        <div id="exercises">
+        <div id="exercises" class="mb-4">
             {{ exercise_formset.management_form }}
             {% for form in exercise_formset %}
-            	<div class="exercise-form">
+            	<div class="exercise-form border p-3 mb-3">
                     {{ form.as_p }}
                 </div>
             {% endfor %}
         </div>
 
-        <input type="submit" value="Save">
+        <input type="submit" class="btn btn-primary" value="Save">
+        
     </form>
 
     <div id="training-form-response"></div>
