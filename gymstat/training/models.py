@@ -32,3 +32,19 @@ class Exercise(models.Model):
 
     class Meta:
         ordering = ['order']
+
+
+class ExerciseType(models.Model):
+    owner = models.ForeignKey(
+        User,
+        related_name='exercises',
+        on_delete=models.CASCADE,
+    )
+    name = models.CharField(max_length=50)
+    private = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return f'Exercise {self.pk} - {self.name}'

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Training, Exercise
+from .models import Training, Exercise, ExerciseType
 
 
 class TrainingInline(admin.StackedInline):
@@ -14,3 +14,8 @@ class TrainingAdmin(admin.ModelAdmin):
     filter = ['owner']
     inlines = [TrainingInline]
 
+
+@admin.register(ExerciseType)
+class ExerciseAdmin(admin.ModelAdmin):
+    list_display = ['owner', 'name', 'private']
+    filter = ['owner', 'private']

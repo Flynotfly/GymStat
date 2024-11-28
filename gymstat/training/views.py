@@ -5,8 +5,8 @@ from django.views.generic.edit import CreateView
 from django.views.generic.detail import DetailView
 from django.shortcuts import get_object_or_404, render
 
-from .models import Training
-from .forms import TrainingForm, ExerciseFormSet
+from .models import Training, ExerciseType
+from .forms import TrainingForm, ExerciseFormSet, ExerciseTypeForm
 
 
 class TrainingCreateUpdateView(LoginRequiredMixin, CreateView):
@@ -80,5 +80,39 @@ def training_details(request, pk=None):
             'training': training,
             'training_form': training_form,
             'exercise_formset': exercise_formset,
+        }
+    )
+
+
+@login_required
+def create_exercise(request, pk=None):
+    if pk:
+        exercise = get_object_or_404(ExerciseType, pk=pk, owner=request.user)
+    else:
+        exercise = None
+
+    if request.method == 'POST':
+        exercise_form = ExerciseTypeForm(request.POST, instance=exercise)
+        if exercise_form.is_valid():
+            exercise = exercise_form.save(commit=False)
+            exercise.owner = request.user
+            exercise.save()
+            return JsonResponse({
+                'success': True,
+                'message': 'Form saved successfully'
+            })
+        else:
+            return JsonResponse({
+                'success': False,
+                'errors': exercise_form.errors,
+            })
+
+    exercise_form = ExerciseTypeForm(instance=exercise)
+    return render(
+        request,
+        'exercise/exercise.html',
+        {
+            'exercise': exercise,
+            'exercise_form': exercise_form,
         }
     )

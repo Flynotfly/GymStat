@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Training, Exercise
+from .models import Training, Exercise, ExerciseType
 
 
 class TrainingForm(forms.ModelForm):
@@ -46,3 +46,18 @@ ExerciseFormSet = forms.inlineformset_factory(
     Exercise,
     form=ExerciseForm
 )
+
+
+class ExerciseTypeForm(forms.ModelForm):
+    class Meta:
+        model = ExerciseType
+        fields = ['name', 'private']
+        widgets = {
+            'name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter name of exercise',
+            }),
+            'private': forms.CheckboxInput(attrs={
+                'class': 'form-check-input',
+            }),
+        }

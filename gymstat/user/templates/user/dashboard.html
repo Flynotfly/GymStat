@@ -6,9 +6,7 @@
 
 {% block content %}
 	<h1>Dashboard</h1>
-    <p>
-        It's your account. <br>
-        Name: {{ request.user.username }}. <br>
-        E-mail: {{ request.user.email }}.
-    </p>
+    <p>Username: {{ request.user.username }}</p>
+    <p>My trainings: <a href="{% url 'user:trainings' %}">Go</a> </p>
+    <p>My exercises: <a href="{%  %}"></a></p>
 {% endblock %}

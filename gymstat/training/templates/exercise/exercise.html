@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if exercise %}
+    	{{ exercise }}
+    {% else %}
+    	Create exercise
+    {% endif %}
+
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1 class="mb-4">
+        {% if exercise %}
+            {{ exercise }}
+        {% else %}
+            Create new exercise
+        {% endif %}
+        </h1>
+
+        <form id="exercise-form" method="post" class="needs-validation" novalidate>{% csrf_token %}
+            <!-- Name Field -->
+            <div class="mb-3">
+                {{ exercise_form.name.label_tag }}
+                {{ exercise_form.name }}
+                {% if exercise_form.name.errors %}
+                    <div class="text-danger">
+                        {{ exercise_form.name.errors }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Private Field -->
+            <div class="form-check mb-3">
+                {{ exercise_form.private.label_tag }}
+                {{ exercise_form.private }}
+            </div>
+            <input type="submit" class="btn btn-primary" value="Save">
+        </form>
+        <div id="exercise-form-response" class="mt-4"></div>
+    </div>
+{% endblock %}
+
+{% block domready %}
+    const form = document.getElementById('exercise-form');
+    const responseDiv = document.getElementById('exercise-form-response');
+
+    form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        const formData = new FormData(form);
+        const csrfToken = form.querySelector('[name=csrfmiddlewaretoken]').value;
+        fetch(form.action, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken
+            },
+            body: formData
+        }).then(response => response.json()).then(data => {
+            if (data.success) {
+                responseDiv.innerHTML = '<div class="alert alert-success">Form saved successfully</div>';
+            } else {
+                responseDiv.innerHTML = '<div class="alert alert-danger">Error saving the form.</div>';
+                console.error('Errors:', data.errors);
+            }
+        }).catch(error => {
+            responseDiv.innerHTML = '<div class="alert alert-danger">An error occurred.</div>';
+            console.error('Error:', error);
+        });
+    });
+{% endblock %}
