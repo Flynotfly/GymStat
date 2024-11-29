@@ -7,6 +7,6 @@
 {% block content %}
 	<h1>Dashboard</h1>
     <p>Username: {{ request.user.username }}</p>
-    <p>My trainings: <a href="{% url 'user:trainings' %}">Go</a> </p>
-    <p>My exercises: <a href="{%  %}"></a></p>
+    <p>My trainings: <a href="{% url 'user:trainings' %}">Go</a></p>
+    <p>My exercises: <a href="{% url 'user:exercises' %}">Go</a></p>
 {% endblock %}

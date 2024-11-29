@@ -1,4 +1,6 @@
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
+from django.db import models
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
 
@@ -51,7 +53,9 @@ def training_details(request, pk=None):
 @login_required
 def create_exercise(request, pk=None):
     if pk:
-        exercise = get_object_or_404(ExerciseType, pk=pk, owner=request.user)
+        exercise = get_object_or_404(ExerciseType, pk=pk)
+        if exercise.owner != request.user and exercise.private:
+            raise PermissionDenied("You don't have permission to edit exercise")
     else:
         exercise = None
 
@@ -79,4 +83,16 @@ def create_exercise(request, pk=None):
             'exercise': exercise,
             'exercise_form': exercise_form,
         }
+    )
+
+
+@login_required
+def exercises_list(request):
+    exercises = (ExerciseType.objects.filter(
+        models.Q(owner=request.user) | models.Q(subscribers=request.user)
+    ).distinct())
+
+    return render(
+        request,
+
     )

@@ -5,27 +5,52 @@
 {% endblock %}
 
 {% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4 d-flex justify-content-between align-items-center">
+        Trainings
+        <a href="{% url 'training:create' %}" class="btn btn-success">
+            + Create New Training
+        </a>
+    </h1>
 
-    <h1>Trainings</h1>
-
-	{% for training in trainings %}
-		<div>
-            <p>
-                {{ forloop.counter }}. 
-                date: {{ training.conducted }}
-            </p>
-            {% if training.description %}
-            	<p>
-                    description: {{ training.description }}
-                </p>
-            {% endif %}
-            <p>
-                <a href="{{ training.get_absolute_url }}">View</a>
-            </p>
-            
-        </div>
-	{% empty %}
-		you don't have any training records yet.
-	{% endfor %}
-
+    {% if trainings %}
+        <table class="table table-striped table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for training in trainings %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ training.conducted|date:"Y-m-d H:i" }}</td>
+                    <td>
+                        {{ training.description|default:"No description provided." }}
+                    </td>
+                    <td>
+                        <a href="{{ training.get_absolute_url }}" class="btn btn-primary btn-sm">
+                            View
+                        </a>
+                        <a href="" class="btn btn-warning btn-sm">
+                            Edit
+                        </a>
+                        <a href="" class="btn btn-danger btn-sm">
+                            Delete
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+         <p class="alert alert-info">
+            You don't have any training records yet. 
+            <a href="{% url 'training:create' %}" class="alert-link">Create one now</a>.
+        </p>
+    {% endif %}
+</div>
 {% endblock %}

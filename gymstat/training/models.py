@@ -37,8 +37,13 @@ class Exercise(models.Model):
 class ExerciseType(models.Model):
     owner = models.ForeignKey(
         User,
-        related_name='exercises',
+        related_name='owned_exercises',
         on_delete=models.CASCADE,
+    )
+    subscribers = models.ManyToManyField(
+        User,
+        related_name='subscribed_exercises',
+        blank=True
     )
     name = models.CharField(max_length=50)
     private = models.BooleanField(default=True)
@@ -48,3 +53,6 @@ class ExerciseType(models.Model):
 
     def __repr__(self):
         return f'Exercise {self.pk} - {self.name}'
+
+    def get_absolute_url(self):
+        return ...
