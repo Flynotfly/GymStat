@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.db import models
 from django.shortcuts import render
 
@@ -7,11 +8,15 @@ from training.models import Training, ExerciseType
 
 def training_list(request):
     trainings = Training.objects.filter(owner=request.user)
+    paginator = Paginator(trainings, 15)
+
+    page_number = request.GET.get('page')
+    paje_obj = paginator.get_page(page_number)
     return render(
         request,
         'user/trainings.html',
         {
-            'trainings': trainings,
+            'page_obj': paje_obj,
         }
     )
 
