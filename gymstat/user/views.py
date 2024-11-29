@@ -31,10 +31,16 @@ def dashboard(request):
 
 
 @login_required
-def user_exercises_list(request):
-    exercises = (ExerciseType.objects.filter(
-        models.Q(owner=request.user) | models.Q(subscribers=request.user)
-    ).distinct())
+def exercises_list(request):
+    mode = request.GET.get('mode', 'bookmarked')
+
+    if mode == 'bookmarked':
+        exercises = ExerciseType.objects.filter(bookmarked=request.user)
+    elif mode == 'created':
+        exercises = ExerciseType.objects.filter(owner=request.user)
+    else:
+        exercises = ExerciseType.objects.filter(base=True)
+
     paginator = Paginator(exercises, 10)
 
     page_number = request.GET.get('page')
@@ -46,5 +52,6 @@ def user_exercises_list(request):
         {
             'page_obj': paje_obj,
             'user': request.user,
+            'mode': mode,
         }
     )
