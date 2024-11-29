@@ -8,7 +8,7 @@ from training.models import Training, ExerciseType
 
 def training_list(request):
     trainings = Training.objects.filter(owner=request.user)
-    paginator = Paginator(trainings, 15)
+    paginator = Paginator(trainings, 10)
 
     page_number = request.GET.get('page')
     paje_obj = paginator.get_page(page_number)
