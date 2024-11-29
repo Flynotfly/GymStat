@@ -40,13 +40,14 @@ class ExerciseType(models.Model):
         related_name='owned_exercises',
         on_delete=models.CASCADE,
     )
-    subscribers = models.ManyToManyField(
+    bookmarked = models.ManyToManyField(
         User,
-        related_name='subscribed_exercises',
+        related_name='bookmarked_exercises',
         blank=True
     )
     name = models.CharField(max_length=50)
     private = models.BooleanField(default=True)
+    base = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
