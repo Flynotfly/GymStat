@@ -7,8 +7,8 @@
 {% block content %}
 <div class="container mt-5">
     <h1 class="mb-4">My Exercises</h1>
-    
-    {% if exercises %}
+
+    {% if page_obj %}
         <table class="table table-striped table-hover">
             <thead class="thead-dark">
                 <tr>
@@ -19,9 +19,9 @@
                 </tr>
             </thead>
             <tbody>
-                {% for exercise in exercises %}
+                {% for exercise in page_obj %}
                 <tr>
-                    <td>{{ forloop.counter }}</td>
+                    <td>{{ forloop.counter0|add:page_obj.start_index }}</td>
                     <td>
                         <a href="{{ exercise.get_absolute_url }}" class="text-decoration-none">
                             {{ exercise.name }}
@@ -40,7 +40,7 @@
                         </a>
                         <a href="
 {#{% url 'unsubscribe_exercise' exercise.id %}#}
-" 
+"
                            class="btn btn-danger btn-sm">
                             Unsubscribe
                         </a>

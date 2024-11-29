@@ -35,12 +35,16 @@ def user_exercises_list(request):
     exercises = (ExerciseType.objects.filter(
         models.Q(owner=request.user) | models.Q(subscribers=request.user)
     ).distinct())
+    paginator = Paginator(exercises, 10)
+
+    page_number = request.GET.get('page')
+    paje_obj = paginator.get_page(page_number)
 
     return render(
         request,
         'user/exercises.html',
         {
-            'exercises': exercises,
+            'page_obj': paje_obj,
             'user': request.user,
         }
     )
