@@ -56,3 +56,6 @@ class ExerciseType(models.Model):
 
     def get_absolute_url(self):
         return ...
+
+    class Meta:
+        ordering = ['name']
