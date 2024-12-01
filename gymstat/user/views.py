@@ -39,6 +39,8 @@ def exercises_list(request):
         exercises = ExerciseType.objects.filter(bookmarked=request.user)
     elif mode == 'created':
         exercises = ExerciseType.objects.filter(owner=request.user)
+    elif mode == 'public':
+        exercises = ExerciseType.objects.filter(private=False)
     else:
         exercises = ExerciseType.objects.filter(base=True)
 
