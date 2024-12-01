@@ -56,7 +56,7 @@ class ExerciseType(models.Model):
         return f'Exercise {self.pk} - {self.name}'
 
     def get_absolute_url(self):
-        return ...
+        return reverse('training:exercise_detail', args=[self.id])
 
     class Meta:
         ordering = ['name']

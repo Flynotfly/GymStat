@@ -78,7 +78,7 @@ def create_exercise(request, pk=None):
     exercise_form = ExerciseTypeForm(instance=exercise)
     return render(
         request,
-        'exercise/exercise.html',
+        'exercise/edit.html',
         {
             'exercise': exercise,
             'exercise_form': exercise_form,
@@ -86,13 +86,19 @@ def create_exercise(request, pk=None):
     )
 
 
-@login_required
-def exercises_list(request):
-    exercises = (ExerciseType.objects.filter(
-        models.Q(owner=request.user) | models.Q(subscribers=request.user)
-    ).distinct())
+def exercise_details(request, pk):
+    user = None
+    if request.user.is_authenticated:
+        user = request.user
 
+    exercise = get_object_or_404(
+        ExerciseType,
+        models.Q(pk=pk) & (models.Q(private=False) | models.Q(owner=user))
+    )
     return render(
         request,
-
+        'exercise/view.html',
+        {
+            'exercise': exercise,
+        }
     )

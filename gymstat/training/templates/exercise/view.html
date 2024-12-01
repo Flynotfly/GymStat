@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}
+	View {{ exercise }}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4 d-flex justify-content-between align-items-center">
+        {{ exercise.name }}
+        {% if exercise.owner == user %}
+            <a href="{% url 'training:exercise_edit' exercise.id %}" class="btn btn-primary">Edit Exercise</a>
+        {% endif %}
+    </h1>
+
+    <div class="card">
+        <div class="card-body">
+            <!-- Exercise Name -->
+            <h5 class="card-title">Name:</h5>
+            <p class="card-text">{{ exercise.name }}</p>
+
+            <!-- Owner -->
+            <h5 class="card-title">Owner:</h5>
+            <p class="card-text">
+                {% if exercise.owner == user %}
+                    <span class="badge bg-success">You</span>
+                {% else %}
+                    {{ exercise.owner }}
+                {% endif %}
+            </p>
+
+            <!-- Private Status -->
+            <h5 class="card-title">Private:</h5>
+            <p class="card-text">
+                {% if exercise.private %}
+                    <span class="badge bg-warning text-dark">Yes</span>
+                {% else %}
+                    <span class="badge bg-secondary">No</span>
+                {% endif %}
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
