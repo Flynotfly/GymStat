@@ -17,7 +17,7 @@ class Training(models.Model):
         ordering = ['-conducted']
 
     def get_absolute_url(self):
-        return reverse('training:edit', args=[self.id])
+        return reverse('training:details', args=[self.id])
 
 
 class Exercise(models.Model):
