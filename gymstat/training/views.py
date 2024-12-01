@@ -41,7 +41,7 @@ def training_details(request, pk=None):
 
     return render(
         request,
-        'training/details.html',
+        'training/edit.html',
         {
             'training': training,
             'training_form': training_form,
