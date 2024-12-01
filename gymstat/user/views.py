@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db import models
+from django.http import JsonResponse
 from django.shortcuts import render
 
 from training.models import Training, ExerciseType
@@ -55,3 +56,27 @@ def exercises_list(request):
             'mode': mode,
         }
     )
+
+
+@login_required
+def bookmark_exercise(request):
+    exercise_id = request.POST.get('id')
+    action = request.POST.get('action')
+
+    if exercise_id and action:
+        try:
+            exercise = ExerciseType.objects.get(id=exercise_id)
+            if action == 'book':
+                ExerciseType.bookmarked.add(request.user)
+            else:
+                ExerciseType.bookmarked.remove(request.user)
+            return JsonResponse({'success': True})
+        except ExerciseType.DoesNotExist:
+            JsonResponse({
+                'success': False,
+                'errors': 'Invalid exercise id',
+            })
+    return JsonResponse({
+        'success': False,
+        'errors': 'Server error',
+    })
