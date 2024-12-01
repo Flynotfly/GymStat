@@ -9,32 +9,83 @@
 {% endblock %}
 
 {% block content %}
-	<h1>{% if training %}
-		Training {{ training.pk }}
-	{% else %}
-		Create new training
-	{% endif %}</h1>
+<div class="container mt-5">
+	<h1 class="mb-4 d-flex justify-content-between align-items-center">
+        {% if training %}
+            Edit Training #{{ training.pk }}
+        {% else %}
+            Create New Training
+        {% endif %}
+    </h1>
 
-    <form id="training-form" method="post" class="container">{% csrf_token %}
-        <div class="mb-4">
-            {{ training_form.as_p }}
+    <form id="training-form" method="post" class="needs-validation" novalidate>{% csrf_token %}
+        <!-- Training Details -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Training Details</h4>
+            </div>
+            <div class="card-body">
+                {{ training_form.conducted.label_tag }}
+                {{ training_form.conducted }}
+                {% if training_form.conducted.errors %}
+                    <div class="text-danger">{{ training_form.conducted.errors }}</div>
+                {% endif %}
+
+                {{ training_form.description.label_tag }}
+                {{ training_form.description }}
+                {% if training_form.description.errors %}
+                    <div class="text-danger">{{ training_form.description.errors }}</div>
+                {% endif %}
+            </div>
         </div>
 
-        <h2>Exercises</h2>
-        <div id="exercises" class="mb-4">
-            {{ exercise_formset.management_form }}
-            {% for form in exercise_formset %}
-            	<div class="exercise-form border p-3 mb-3">
-                    {{ form.as_p }}
+        <!-- Exercises Section -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Exercises</h4>
+                <button type="button" class="btn btn-sm btn-success" id="add-exercise">
+                    + Add Exercise
+                </button>
+            </div>
+            <div class="card-body" id="exercises">
+                {{ exercise_formset.management_form }}
+                {% for form in exercise_formset %}
+                <div class="border rounded p-3 mb-3 exercise-form">
+                    <div class="row">
+                        <div class="col-md-4">
+                            {{ form.exercise_type.label_tag }}
+                            {{ form.exercise_type }}
+                            {% if form.exercise_type.errors %}
+                                <div class="text-danger">{{ form.exercise_type.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-2">
+                            {{ form.order.label_tag }}
+                            {{ form.order }}
+                        </div>
+                        <div class="col-md-3">
+                            {{ form.weight.label_tag }}
+                            {{ form.weight }}
+                        </div>
+                        <div class="col-md-3">
+                            {{ form.repetitions.label_tag }}
+                            {{ form.repetitions }}
+                        </div>
+                    </div>
                 </div>
-            {% endfor %}
+                {% endfor %}
+            </div>
         </div>
 
-        <input type="submit" class="btn btn-primary" value="Save">
+        <!-- Submit Button -->
+        <div class="d-grid">
+            <button type="submit" class="btn btn-primary btn-lg">Save Training</button>
+        </div>
         
     </form>
 
-    <div id="training-form-response"></div>
+    <div id="training-form-response" class="mt-4"></div>
+</div>
 {% endblock %}
 
 {% block domready %}
@@ -53,13 +104,13 @@
             body: formData
         }).then(response => response.json()).then(data => {
             if (data.success) {
-                responseDiv.innerHTML = '<p>Form saved successfully<p>';
+                responseDiv.innerHTML = '<div class="alert alert-success">Training saved successfully!</div>';
             } else {
-                responseDiv.innerHTML = '<p>Error saving the form.</p>';
+                responseDiv.innerHTML = '<div class="alert alert-danger">Error saving training.</div>';
                 console.error('Errors:', data.errors);
             }
         }).catch(error => {
-            responseDiv.innerHTML = '<p>An error occurred.</p>';
+            responseDiv.innerHTML = '<div class="alert alert-danger">An error occurred.</div>';
             console.error('Error:', error);
         });
     });
