@@ -67,9 +67,9 @@ def bookmark_exercise(request):
         try:
             exercise = ExerciseType.objects.get(id=exercise_id)
             if action == 'book':
-                ExerciseType.bookmarked.add(request.user)
+                exercise.bookmarked.add(request.user)
             else:
-                ExerciseType.bookmarked.remove(request.user)
+                exercise.bookmarked.remove(request.user)
             return JsonResponse({'success': True})
         except ExerciseType.DoesNotExist:
             JsonResponse({
