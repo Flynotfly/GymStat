@@ -35,6 +35,7 @@
                     <th>Name</th>
                     <th>Owner</th>
                     <th>Actions</th>
+                    <th>Bookmarked</th>
                 </tr>
             </thead>
             <tbody>
@@ -57,9 +58,14 @@
                         <a href="{{ exercise.get_absolute_url }}" class="btn btn-primary btn-sm">
                             View
                         </a>
-                        <a href="#" class="btn btn-danger btn-sm">
-                            Unsubscribe
-                        </a>
+                    </td>
+                    <td>
+                        <button
+                            class="btn btn-sm {% if exercise in user.bookmarked_exercises.all %}btn-danger{% else %}btn-outline-secondary{% endif %} toggle-bookmark"
+                            data-id="{{ exercise.id }}"
+                            data-action="{% if exercise in user.bookmarked_exercises.all %}unbook{% else %}book{% endif %}">
+                            {% if exercise in user.bookmarked_exercises.all %}-{% else %}+{% endif %}
+                        </button>
                     </td>
                 </tr>
                 {% endfor %}
@@ -73,4 +79,42 @@
         </p>
     {% endif %}
 </div>
+{% endblock %}
+
+{% block domready %}
+    const url = '{% url 'user:bookmark_exercise' %}';
+    var options = {
+        method: 'POST',
+        headers: {'X-CSRFToken': csrftoken},
+        mode: 'same-origin'
+    }
+
+    document.querySelectorAll('.toggle-bookmark').forEach(button => {
+        button.addEventListener('click', function () {
+            var formData = new FormData();
+            formData.append('id', this.dataset.id);
+            formData.append('action', this.dataset.action);
+            options['body'] = formData;
+
+            fetch(url, options).then(response => response.json()).then(data => {
+                if (data.success) {
+                    if (this.dataset.action === 'book') {
+                        this.classList.remove('btn-outline-secondary');
+                        this.classList.add('btn-danger');
+                        this.textContent = '-';
+                        this.dataset.action = 'unbook';
+                    } else {
+                        this.classList.remove('btn-danger');
+                        this.classList.add('btn-outline-secondary');
+                        this.textContent = '+';
+                        this.dataset.action = 'book';
+                    }
+                } else {
+                    console.error('Error:', data.errors);
+                }
+            }).catch(error => {
+                console.error('Error:', error);
+            })
+        })
+    })
 {% endblock %}
