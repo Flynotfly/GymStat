@@ -9,7 +9,7 @@ from .forms import TrainingForm, ExerciseFormSet, ExerciseTypeForm
 
 
 @login_required
-def training_details(request, pk=None):
+def training_edit(request, pk=None):
     if pk:
         training = get_object_or_404(Training, pk=pk, owner=request.user)
     else:
