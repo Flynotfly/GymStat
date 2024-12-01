@@ -81,7 +81,7 @@
         <div class="d-grid">
             <button type="submit" class="btn btn-primary btn-lg">Save Training</button>
         </div>
-        
+
     </form>
 
     <div id="training-form-response" class="mt-4"></div>
@@ -91,7 +91,10 @@
 {% block domready %}
     const form = document.getElementById('training-form');
     const responseDiv = document.getElementById('training-form-response');
+    const addExerciseButton = document.getElementById('add-exercise');
+    const exercisesContainer = document.getElementById('exercises');
 
+    // Handle form submission via AJAX
     form.addEventListener('submit', function (event) {
         event.preventDefault();
         const formData = new FormData(form);
@@ -113,5 +116,23 @@
             responseDiv.innerHTML = '<div class="alert alert-danger">An error occurred.</div>';
             console.error('Error:', error);
         });
+    });
+
+    // Handle adding a new exercise form
+    addExerciseButton.addEventListener('click', function () {
+        const formCount = parseInt(document.getElementById('id_exercises-TOTAL_FORMS').value, 10);
+        const newForm = exercisesContainer.querySelector('.exercise-form').cloneNode(true);
+
+        // Clear input fields
+        newForm.querySelectorAll('input, select').forEach(input => {
+            input.value = '';
+            const nameAttr = input.getAttribute('name').replace(/-\d+-/, `-${formCount}-`);
+            input.setAttribute('name', nameAttr);
+            input.setAttribute('id', `id_${nameAttr}`);
+        });
+
+        // Append the new form and update management form count
+        exercisesContainer.appendChild(newForm);
+        document.getElementById('id_exercises-TOTAL_FORMS').value = formCount + 1;
     });
 {% endblock %}
