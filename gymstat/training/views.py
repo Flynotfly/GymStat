@@ -51,6 +51,22 @@ def training_edit(request, pk=None):
 
 
 @login_required
+def training_details(request, pk):
+    training = get_object_or_404(
+        Training,
+        pk=pk,
+        owner=request.user
+    )
+    return render(
+        request,
+        'training/view.html',
+        {
+            'training': training,
+        }
+    )
+
+
+@login_required
 def create_exercise(request, pk=None):
     if pk:
         exercise = get_object_or_404(ExerciseType, pk=pk)
