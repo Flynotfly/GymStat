@@ -26,6 +26,13 @@ class Exercise(models.Model):
         related_name='exercises',
         on_delete=models.CASCADE
     )
+    exercise_type = models.ForeignKey(
+        'ExerciseType',
+        related_name='exercises',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
     order = models.PositiveIntegerField()
     weight = models.DecimalField(max_digits=6, decimal_places=2)
     repetitions = models.PositiveIntegerField()
