@@ -77,17 +77,10 @@ def create_exercise(request, pk=None):
         exercise_form = ExerciseTypeForm(request.POST, instance=exercise)
         if exercise_form.is_valid():
             exercise = exercise_form.save(commit=False)
-            exercise.owner = request.user
+            if not exercise.pk:
+                exercise.owner = request.user
             exercise.save()
-            return JsonResponse({
-                'success': True,
-                'message': 'Form saved successfully'
-            })
-        else:
-            return JsonResponse({
-                'success': False,
-                'errors': exercise_form.errors,
-            })
+            return redirect(exercise)
 
     exercise_form = ExerciseTypeForm(instance=exercise)
     return render(
