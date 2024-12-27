@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.db import models
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 
 from .models import Training, ExerciseType
 from .forms import TrainingForm, ExerciseFormSet, ExerciseTypeForm
@@ -24,17 +24,7 @@ def training_edit(request, pk=None):
             training.save()
             exercise_formset.instance = training
             exercise_formset.save()
-            return JsonResponse({
-                'success': True,
-                'message': 'Form saved successfully'
-            })
-        return JsonResponse({
-            'success': False,
-            'errors': {
-                'training_form': training_form.errors,
-                'exercise_formset': exercise_formset.errors,
-            }
-        })
+            return redirect(training)
 
     training_form = TrainingForm(instance=training)
     exercise_formset = ExerciseFormSet(instance=training)

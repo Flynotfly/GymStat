@@ -89,35 +89,10 @@
 {% endblock %}
 
 {% block domready %}
-    const form = document.getElementById('training-form');
-    const responseDiv = document.getElementById('training-form-response');
     const addExerciseButton = document.getElementById('add-exercise');
     const exercisesContainer = document.getElementById('exercises');
 
-    // Handle form submission via AJAX
-    form.addEventListener('submit', function (event) {
-        event.preventDefault();
-        const formData = new FormData(form);
-        const csrfToken = form.querySelector('[name=csrfmiddlewaretoken]').value;
-        fetch(form.action, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': csrfToken
-            },
-            body: formData
-        }).then(response => response.json()).then(data => {
-            if (data.success) {
-                responseDiv.innerHTML = '<div class="alert alert-success">Training saved successfully!</div>';
-            } else {
-                responseDiv.innerHTML = '<div class="alert alert-danger">Error saving training.</div>';
-                console.error('Errors:', data.errors);
-            }
-        }).catch(error => {
-            responseDiv.innerHTML = '<div class="alert alert-danger">An error occurred.</div>';
-            console.error('Error:', error);
-        });
-    });
-
+    
     // Handle adding a new exercise form
     addExerciseButton.addEventListener('click', function () {
         const formCount = parseInt(document.getElementById('id_exercises-TOTAL_FORMS').value, 10);
