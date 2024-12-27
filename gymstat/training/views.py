@@ -17,7 +17,11 @@ def training_edit(request, pk=None):
 
     if request.method == 'POST':
         training_form = TrainingForm(request.POST, instance=training)
-        exercise_formset = ExerciseFormSet(request.POST, instance=training)
+        exercise_formset = ExerciseFormSet(
+            request.POST,
+            instance=training,
+            form_kwargs={'user': request.user}
+        )
         if training_form.is_valid() and exercise_formset.is_valid():
             training = training_form.save(commit=False)
             if not training.pk:  # Only set the owner for new training instances
@@ -28,7 +32,10 @@ def training_edit(request, pk=None):
             return redirect(training)
 
     training_form = TrainingForm(instance=training)
-    exercise_formset = ExerciseFormSet(instance=training)
+    exercise_formset = ExerciseFormSet(
+        instance=training,
+        form_kwargs={'user': request.user}
+    )
 
     return render(
         request,

@@ -45,6 +45,14 @@ class ExerciseForm(forms.ModelForm):
             }),
         }
 
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        if user:
+            self.fields['exercise_type'].queryset = ExerciseType.objects.filter(bookmarked=user)
+        else:
+            self.fields['exercise_type'].queryset = ExerciseType.objects.none()
+
 
 ExerciseFormSet = forms.inlineformset_factory(
     Training,
