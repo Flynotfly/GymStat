@@ -9,6 +9,7 @@ class TrainingForm(forms.ModelForm):
         fields = ['conducted', 'description']
         widgets = {
             'conducted': forms.DateTimeInput(attrs={
+                'type': 'datetime-local',
                 'class': 'form-control',
                 'placeholder': 'YYYY-MM-DD HH:MM',
             }),
