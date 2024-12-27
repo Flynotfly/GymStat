@@ -20,7 +20,8 @@ def training_edit(request, pk=None):
         exercise_formset = ExerciseFormSet(request.POST, instance=training)
         if training_form.is_valid() and exercise_formset.is_valid():
             training = training_form.save(commit=False)
-            training.owner = request.user
+            if not training.pk:  # Only set the owner for new training instances
+                training.owner = request.user
             training.save()
             exercise_formset.instance = training
             exercise_formset.save()
