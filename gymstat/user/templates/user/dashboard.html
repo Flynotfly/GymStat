@@ -1,12 +1,90 @@
 {% extends 'base.html' %}
 
-{% block title %}
-	Dashboard
-{% endblock %}
+{% block title %}Dashboard{% endblock %}
 
 {% block content %}
-	<h1>Dashboard</h1>
-    <p>Username: {{ request.user.username }}</p>
-    <p>My trainings: <a href="{% url 'user:trainings' %}">Go</a></p>
-    <p>My exercises: <a href="{% url 'user:exercises' %}">Go</a></p>
+<div class="container-fluid p-0">
+    <!-- Dashboard Header -->
+    <header class="dashboard-header sticky-top bg-dark shadow-sm">
+        <div class="container d-flex justify-content-between align-items-center py-2">
+            <h2 class="text-white mb-0">Welcome, {{ request.user.username }}</h2>
+            <div>
+                <a href="{% url 'user:statistic_by_exercise_type' %}" class="btn btn-outline-warning btn-sm">Statistics</a>
+                <a href="{% url 'user:logout' %}" class="btn btn-outline-light btn-sm">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Dashboard Main Content -->
+    <div class="dashboard-content mt-4">
+        <div class="row g-4">
+            <!-- Trainings Card -->
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">My Trainings</h5>
+                        <p class="card-text">View and manage your training sessions.</p>
+                        <a href="{% url 'user:trainings' %}" class="btn btn-primary">Go to Trainings</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Exercises Card -->
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">My Exercises</h5>
+                        <p class="card-text">Track and manage your exercises.</p>
+                        <a href="{% url 'user:exercises' %}" class="btn btn-success">Go to Exercises</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Statistics Card -->
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Statistics</h5>
+                        <p class="card-text">View your performance and progress.</p>
+                        <a href="{% url 'user:statistic_by_exercise_type' %}" class="btn btn-warning">Go to Statistics</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats Section -->
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body">
+                        <h5 class="card-title">Quick Stats</h5>
+                        <p class="card-text">Stay updated with your latest progress and achievements.</p>
+                        <ul>
+                            <li>Total Trainings: <strong>15</strong></li>
+                            <li>Total Exercises: <strong>45</strong></li>
+                            <li>Best Performance: <strong>Bench Press - 100kg</strong></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block domready %}
+    let lastScrollTop = 0;
+    const header = document.querySelector('.dashboard-header');
+
+    window.addEventListener('scroll', () => {
+        let currentScroll = window.scrollY || document.documentElement.scrollTop;
+
+        if (currentScroll > lastScrollTop) {
+            // Downscroll
+            header.style.transform = 'translateY(-100%)';
+        } else {
+            // Upscroll
+            header.style.transform = 'translateY(0)';
+        }
+
+        lastScrollTop = currentScroll;
+    });
 {% endblock %}
