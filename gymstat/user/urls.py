@@ -11,5 +11,6 @@ urlpatterns = [
     path('trainings/', views.training_list, name='trainings'),
     path('exercises/', views.exercises_list, name='exercises'),
     path('post/bookmark/exercise/', views.bookmark_exercise, name='bookmark_exercise'),
+    path('statistic/by_exercise_type/', views.exercise_type_statistic, name='statistic_by_exercise_type'),
     path('', views.dashboard, name='dashboard'),
 ]

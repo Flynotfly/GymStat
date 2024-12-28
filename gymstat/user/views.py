@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db import models
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 from training.models import Training, ExerciseType
 
@@ -82,3 +82,32 @@ def bookmark_exercise(request):
         'success': False,
         'errors': 'Server error',
     })
+
+
+@login_required
+def exercise_type_statistic(request):
+    exercise_types = ExerciseType.objects.filter(bookmarked=request.user)
+    exercise_type_id = request.GET.get('exercise_type')
+    exercise_type = None
+    training_with_exercises = []
+
+    if exercise_type_id:
+        exercise_type = get_object_or_404(
+            ExerciseType,
+            id=exercise_type_id,
+            bookmarked=request.user
+        )
+        training_with_exercises = Training.objects.filter(
+            owner=request.user,
+            exercises__exercise_type=exercise_type
+        ).prefetch_related('exercises').distinct()
+
+    return render(
+        request,
+        'user/statistic/by_exercise_type.html',
+        {
+            'exercise_types': exercise_types,
+            'selected_exercise_type': exercise_type,
+            'trainings_with_exercises': training_with_exercises,
+        }
+    )
