@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'training',
     'user',
     'debug_toolbar',
-    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -136,9 +135,3 @@ LOGOUT_URL = 'user:logout'
 INTERNAL_IPS = [
     '127.0.0.1',
 ]
-
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
-    ]
-}
