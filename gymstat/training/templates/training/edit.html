@@ -108,9 +108,9 @@
 {% endblock %}
 
 {% block domready %}
-{#    <script>#}
     const trainingFormResponseDiv = document.getElementById('training-form-response')
-
+    const managementForm = document.querySelector('#id_exercises-TOTAL_FORMS');
+    
     const addExerciseButton = document.getElementById('add-exercise');
     const exercisesContainer = document.getElementById('exercises');
 
@@ -153,23 +153,43 @@
                     alert(data.error);
                     return;
                 }
-                document.querySelector('#id_conducted').value = formatDateForInput(data.conducted);
+{#                document.querySelector('#id_conducted').value = formatDateForInput(data.conducted);#}
                 document.querySelector('#id_description').value = data.description;
+
+                const exerciseForms = exercisesContainer.querySelectorAll('.exercise-form');
+                exerciseForms.forEach(form => {
+                    form.style.display = 'none';
+                    const deleteCheckbox = form.querySelector('input[name$="-DELETE"]');
+                    deleteCheckbox.checked = true;
+                });
+
+                const currentTotalForms = parseInt(managementForm.value, 10);
+
                 data.exercises.forEach((exercise, index) => {
+                    new_index = index + currentTotalForms
                     const newForm = exercisesContainer.querySelector('.exercise-form').cloneNode(true);
+                    newForm.style.display = '';
                     newForm.querySelector('[name$="-exercise_type"]').value = exercise.exercise_type;
                     newForm.querySelector('[name$="-order"]').value = exercise.order;
                     newForm.querySelector('[name$="-weight"]').value = exercise.weight;
                     newForm.querySelector('[name$="-repetitions"]').value = exercise.repetitions;
+                    const deleteCheckbox = newForm.querySelector('input[name$="-DELETE"]');
+                    deleteCheckbox.checked = false;
                     newForm.querySelectorAll('input, select').forEach(input => {
-                        const name = input.name.replace(/-\d+-/, `-${index}-`);
+                        const name = input.name.replace(/-\d+-/, `-${new_index}-`);
                         input.name = name;
                         input.id = `id_${name}`;
                     });
+                    const idField = newForm.querySelector('input[name$="-id"]');
+                    idField.value = '';
 
                     // Append the new exercise to the form
                     exercisesContainer.appendChild(newForm);
-                })
+                });
+                document.querySelector('#id_exercises-TOTAL_FORMS').value = data.exercises.length + currentTotalForms;
+            })
+            .catch(error => {
+                console.error('Error:', error);
             });
     });
 
