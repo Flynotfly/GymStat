@@ -21,8 +21,13 @@
     <form id="training-form" method="post" class="needs-validation" novalidate>{% csrf_token %}
         <!-- Training Details -->
         <div class="card mb-4 shadow-sm">
-            <div class="card-header bg-primary text-white">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                 <h4 class="mb-0">Training Details</h4>
+                {% if user_has_previous_training %}
+                <button type="button" class="btn btn-outline-secondary" id="load-last-training">
+                    Take Data from Last Training
+                </button>
+                {% endif %}
             </div>
             <div class="card-body">
                 {{ training_form.conducted.label_tag }}
@@ -103,6 +108,8 @@
 {% endblock %}
 
 {% block domready %}
+    const trainingFormResponseDiv = document.getElementById('training-form-response')
+
     const addExerciseButton = document.getElementById('add-exercise');
     const exercisesContainer = document.getElementById('exercises');
 
@@ -123,5 +130,32 @@
         exercisesContainer.appendChild(newForm);
         document.getElementById('id_exercises-TOTAL_FORMS').value = formCount + 1;
     });
+
+    const loadLastTrainingButton = document.getElementById('load-last-training');
+    const getLastTrainingURL = "{% url 'training:api:last_training' %}"
+
+    loadLastTrainingButton.addEventListener('click', function () {
+        const options = {
+            method: 'GET',
+            headers: {"X-CSRFToken": csrftoken},
+            mode: 'same-origin'
+        }
+        fetch(getLastTrainingURL, options)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch last training data.');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+                document.querySelector('#id_conducted').value = formatDateForInput(data.conducted);
+                document.querySelector('#id_description').value = data.description;
+            });
+    });
+
 
 {% endblock %}
