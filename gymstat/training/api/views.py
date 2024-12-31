@@ -1,0 +1,19 @@
+from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+
+from ..models import Training
+from .serializers import TrainingSerializer
+
+
+class LastTrainingAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        last_training = Training.objects.filter(owner=request.user).first()
+        if not last_training:
+            return Response({'error': 'No previous training found'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = TrainingSerializer(last_training)
+        return Response(serializer.data)
