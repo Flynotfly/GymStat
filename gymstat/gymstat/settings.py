@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'training',
     'user',
     'debug_toolbar',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
