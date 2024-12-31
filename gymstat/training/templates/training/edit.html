@@ -71,6 +71,12 @@
                             {{ form.repetitions.label_tag }}
                             {{ form.repetitions }}
                         </div>
+                        <div style="display:none">
+                            {{ form.DELETE }}
+                        </div>
+                        <div class="col-12 text-end">
+                            <button type="button" class="btn btn-sm btn-danger delete-exercise">Delete</button>
+                        </div>
                         {{ form.id }}
                     </div>
                 </div>
@@ -93,7 +99,6 @@
     const addExerciseButton = document.getElementById('add-exercise');
     const exercisesContainer = document.getElementById('exercises');
 
-    
     // Handle adding a new exercise form
     addExerciseButton.addEventListener('click', function () {
         const formCount = parseInt(document.getElementById('id_exercises-TOTAL_FORMS').value, 10);
@@ -110,5 +115,15 @@
         // Append the new form and update management form count
         exercisesContainer.appendChild(newForm);
         document.getElementById('id_exercises-TOTAL_FORMS').value = formCount + 1;
+    });
+
+    // Handle deleting exercise forms
+    document.querySelectorAll('.delete-exercise').forEach(button => {
+        button.addEventListener('click', function () {
+            const exerciseForm = this.closest('.exercise-form');
+            const deleteCheckbox = exerciseForm.querySelector('input[name$="-DELETE"]');
+            deleteCheckbox.checked = true;
+            exerciseForm.style.display = 'none';  // Скрываем форму
+        });
     });
 {% endblock %}

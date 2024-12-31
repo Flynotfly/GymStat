@@ -57,7 +57,8 @@ class ExerciseForm(forms.ModelForm):
 ExerciseFormSet = forms.inlineformset_factory(
     Training,
     Exercise,
-    form=ExerciseForm
+    form=ExerciseForm,
+    can_delete=True,
 )
 
 
