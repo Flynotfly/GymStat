@@ -3,6 +3,7 @@ from django.core.exceptions import PermissionDenied
 from django.db import models
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
+from django.views.decorators.http import require_POST
 
 from .models import Training, ExerciseType
 from .forms import TrainingForm, ExerciseFormSet, ExerciseTypeForm
@@ -62,6 +63,14 @@ def training_details(request, pk):
             'training': training,
         }
     )
+
+
+@require_POST
+@login_required
+def training_delete(request, pk):
+    training = get_object_or_404(Training, pk=pk, owner=request.user)
+    training.delete()
+    return redirect('user:trainings')
 
 
 @login_required

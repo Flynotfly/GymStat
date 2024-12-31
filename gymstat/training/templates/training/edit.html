@@ -88,8 +88,15 @@
         <div class="d-grid">
             <button type="submit" class="btn btn-primary btn-lg">Save Training</button>
         </div>
-
     </form>
+
+    <!-- Separate Delete Form -->
+        {% if training %}
+        <form method="post" action="{% url 'training:delete' training.pk %}" class="mt-3">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-lg w-100">Delete Training</button>
+        </form>
+        {% endif %}
 
     <div id="training-form-response" class="mt-4"></div>
 </div>
@@ -117,13 +124,4 @@
         document.getElementById('id_exercises-TOTAL_FORMS').value = formCount + 1;
     });
 
-    // Handle deleting exercise forms
-    document.querySelectorAll('.delete-exercise').forEach(button => {
-        button.addEventListener('click', function () {
-            const exerciseForm = this.closest('.exercise-form');
-            const deleteCheckbox = exerciseForm.querySelector('input[name$="-DELETE"]');
-            deleteCheckbox.checked = true;
-            exerciseForm.style.display = 'none';  // Скрываем форму
-        });
-    });
 {% endblock %}
