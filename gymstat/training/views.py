@@ -45,6 +45,7 @@ def training_edit(request, pk=None):
             'training': training,
             'training_form': training_form,
             'exercise_formset': exercise_formset,
+            'user_has_previous_training': Training.objects.filter(owner=request.user).exists(),
         }
     )
 
