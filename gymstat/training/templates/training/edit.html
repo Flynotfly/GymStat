@@ -108,6 +108,7 @@
 {% endblock %}
 
 {% block domready %}
+{#    <script>#}
     const trainingFormResponseDiv = document.getElementById('training-form-response')
 
     const addExerciseButton = document.getElementById('add-exercise');
@@ -154,6 +155,21 @@
                 }
                 document.querySelector('#id_conducted').value = formatDateForInput(data.conducted);
                 document.querySelector('#id_description').value = data.description;
+                data.exercises.forEach((exercise, index) => {
+                    const newForm = exercisesContainer.querySelector('.exercise-form').cloneNode(true);
+                    newForm.querySelector('[name$="-exercise_type"]').value = exercise.exercise_type;
+                    newForm.querySelector('[name$="-order"]').value = exercise.order;
+                    newForm.querySelector('[name$="-weight"]').value = exercise.weight;
+                    newForm.querySelector('[name$="-repetitions"]').value = exercise.repetitions;
+                    newForm.querySelectorAll('input, select').forEach(input => {
+                        const name = input.name.replace(/-\d+-/, `-${index}-`);
+                        input.name = name;
+                        input.id = `id_${name}`;
+                    });
+
+                    // Append the new exercise to the form
+                    exercisesContainer.appendChild(newForm);
+                })
             });
     });
 
