@@ -132,6 +132,16 @@
         exercisesContainer.appendChild(newForm);
         document.getElementById('id_exercises-TOTAL_FORMS').value = formCount + 1;
     });
+    
+    // Handle deleting exercise forms
+    document.querySelectorAll('.delete-exercise').forEach(button => {
+        button.addEventListener('click', function () {
+            const exerciseForm = this.closest('.exercise-form');
+            const deleteCheckbox = exerciseForm.querySelector('input[name$="-DELETE"]');
+            deleteCheckbox.checked = true;
+            exerciseForm.style.display = 'none';  // Скрываем форму
+        });
+    });
 
     const loadLastTrainingButton = document.getElementById('load-last-training');
     const getLastTrainingURL = "{% url 'training:api:last_training' %}"
