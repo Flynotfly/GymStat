@@ -158,36 +158,65 @@
                 document.querySelector('#id_description').value = data.description;
 
                 const exerciseForms = exercisesContainer.querySelectorAll('.exercise-form');
-                exerciseForms.forEach(form => {
-                    form.style.display = 'none';
+                const quantityCurrentForms = exerciseForms.length;
+                const quantityNewForms = data.exercises.length;
+                const quantityFormsToAdd = Math.max(0, quantityNewForms - quantityCurrentForms);
+                const quantityFormsToDelete = Math.max(0, quantityCurrentForms - quantityNewForms);
+                const quantityFormsToEdit = Math.min(quantityNewForms, quantityCurrentForms);
+
+                for (let i = 0; i < quantityFormsToEdit; i++) {
+                    const form = exerciseForms[i];
+                    const exercise = data.exercises[i];
+                    form.style.display = '';
+
+                    // Update form fields with new exercise data
+                    form.querySelector('[name$="-exercise_type"]').value = exercise.exercise_type;
+                    form.querySelector('[name$="-order"]').value = exercise.order;
+                    form.querySelector('[name$="-weight"]').value = exercise.weight;
+                    form.querySelector('[name$="-repetitions"]').value = exercise.repetitions;
+
+                    // Ensure the delete checkbox is not checked
                     const deleteCheckbox = form.querySelector('input[name$="-DELETE"]');
-                    deleteCheckbox.checked = true;
-                });
+                    if (deleteCheckbox) {
+                        deleteCheckbox.checked = false;
+                    }
+                }
 
-                const currentTotalForms = parseInt(managementForm.value, 10);
+                if (quantityFormsToDelete){
+                    for (let i = 0; i < quantityFormsToDelete; i++){
+                        const index = i + quantityFormsToEdit;
+                        const form = exerciseForms[index];
+                        form.style.display = 'none';
+                        const deleteCheckbox = form.querySelector('input[name$="-DELETE"]');
+                        deleteCheckbox.checked = true;
+                    }
+                 }
 
-                data.exercises.forEach((exercise, index) => {
-                    let new_index = index + currentTotalForms
-                    const newForm = exercisesContainer.querySelector('.exercise-form').cloneNode(true);
-                    newForm.style.display = '';
-                    newForm.querySelector('[name$="-exercise_type"]').value = exercise.exercise_type;
-                    newForm.querySelector('[name$="-order"]').value = exercise.order;
-                    newForm.querySelector('[name$="-weight"]').value = exercise.weight;
-                    newForm.querySelector('[name$="-repetitions"]').value = exercise.repetitions;
-                    const deleteCheckbox = newForm.querySelector('input[name$="-DELETE"]');
-                    deleteCheckbox.checked = false;
-                    newForm.querySelectorAll('input, select').forEach(input => {
-                        const name = input.name.replace(/-\d+-/, `-${new_index}-`);
-                        input.name = name;
-                        input.id = `id_${name}`;
-                    });
-                    const idField = newForm.querySelector('input[name$="-id"]');
-                    idField.value = '';
+                if (quantityFormsToAdd){
+                    for (let i = 0; i < quantityFormsToAdd; i++){
+                        const index = i + quantityFormsToEdit;
+                        const exercise = data.exercises[index];
+                        const newForm = exercisesContainer.querySelector('.exercise-form').cloneNode(true);
+                        newForm.style.display = '';
+                        newForm.querySelector('[name$="-exercise_type"]').value = exercise.exercise_type;
+                        newForm.querySelector('[name$="-order"]').value = exercise.order;
+                        newForm.querySelector('[name$="-weight"]').value = exercise.weight;
+                        newForm.querySelector('[name$="-repetitions"]').value = exercise.repetitions;
+                        const deleteCheckbox = newForm.querySelector('input[name$="-DELETE"]');
+                        deleteCheckbox.checked = false;
+                        newForm.querySelectorAll('input, select').forEach(input => {
+                            const name = input.name.replace(/-\d+-/, `-${index}-`);
+                            input.name = name;
+                            input.id = `id_${name}`;
+                        });
+                        const idField = newForm.querySelector('input[name$="-id"]');
+                        idField.value = '';
 
-                    // Append the new exercise to the form
-                    exercisesContainer.appendChild(newForm);
-                });
-                document.querySelector('#id_exercises-TOTAL_FORMS').value = data.exercises.length + currentTotalForms;
+                        exercisesContainer.appendChild(newForm);
+                    }
+                 }
+
+                document.querySelector('#id_exercises-TOTAL_FORMS').value = Math.max(quantityNewForms, quantityCurrentForms);
             })
             .catch(error => {
                 console.error('Error:', error);
