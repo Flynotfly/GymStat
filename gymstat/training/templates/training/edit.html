@@ -108,6 +108,7 @@
 {% endblock %}
 
 {% block domready %}
+{#    <script>#}
     const trainingFormResponseDiv = document.getElementById('training-form-response')
     const managementForm = document.querySelector('#id_exercises-TOTAL_FORMS');
     
@@ -166,7 +167,7 @@
                 const currentTotalForms = parseInt(managementForm.value, 10);
 
                 data.exercises.forEach((exercise, index) => {
-                    new_index = index + currentTotalForms
+                    let new_index = index + currentTotalForms
                     const newForm = exercisesContainer.querySelector('.exercise-form').cloneNode(true);
                     newForm.style.display = '';
                     newForm.querySelector('[name$="-exercise_type"]').value = exercise.exercise_type;
@@ -191,6 +192,13 @@
             .catch(error => {
                 console.error('Error:', error);
             });
+    });
+
+    document.addEventListener('keydown', function(event) {
+        if (event.ctrlKey && event.key === 's') {
+            event.preventDefault(); // Prevent the default browser save behavior
+            document.getElementById('training-form').submit(); // Submit the form
+        }
     });
 
 
