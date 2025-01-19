@@ -22,6 +22,8 @@ class TrainingForm(forms.ModelForm):
 
 
 class ExerciseForm(forms.ModelForm):
+    template_name_div = 'training/exercise_form.html'
+
     class Meta:
         model = Exercise
         fields = ['training', 'exercise_type', 'order', 'weight', 'repetitions']
