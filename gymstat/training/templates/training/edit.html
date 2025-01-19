@@ -79,7 +79,6 @@
 {% endblock %}
 
 {% block domready %}
-{#    <script>#}
     const trainingFormResponseDiv = document.getElementById('training-form-response')
     const managementForm = document.querySelector('#id_exercises-TOTAL_FORMS');
     
@@ -187,21 +186,30 @@
                     for (let i = 0; i < quantityFormsToAdd; i++){
                         const index = i + quantityFormsToEdit;
                         const exercise = data.exercises[index];
-                        const newForm = exercisesContainer.querySelector('.exercise-form').cloneNode(true);
-                        newForm.style.display = '';
+                        const newForm = emptyExerciseForm.content.cloneNode(true);
+
+                        newForm.querySelectorAll("[id]").forEach((element) => {
+                            element.id = element.id.replace("__prefix__", index);
+                        });
+
+                        newForm.querySelectorAll("[name]").forEach((element) => {
+                            element.name = element.name.replace("__prefix__", index);
+                        });
+
+{#                        newForm.style.display = '';#}
                         newForm.querySelector('[name$="-exercise_type"]').value = exercise.exercise_type;
                         newForm.querySelector('[name$="-order"]').value = exercise.order;
                         newForm.querySelector('[name$="-weight"]').value = exercise.weight;
                         newForm.querySelector('[name$="-repetitions"]').value = exercise.repetitions;
                         const deleteCheckbox = newForm.querySelector('input[name$="-DELETE"]');
-                        deleteCheckbox.checked = false;
-                        newForm.querySelectorAll('input, select').forEach(input => {
-                            const name = input.name.replace(/-\d+-/, `-${index}-`);
-                            input.name = name;
-                            input.id = `id_${name}`;
-                        });
-                        const idField = newForm.querySelector('input[name$="-id"]');
-                        idField.value = '';
+                        {#deleteCheckbox.checked = false;#}
+                        {#newForm.querySelectorAll('input, select').forEach(input => {#}
+                        {#    const name = input.name.replace(/-\d+-/, `-${index}-`);#}
+                        {#    input.name = name;#}
+                        {#    input.id = `id_${name}`;#}
+                        {# }); #}
+                        {#const idField = newForm.querySelector('input[name$="-id"]');#}
+                        {#idField.value = '';#}
 
                         exercisesContainer.appendChild(newForm);
                     }
