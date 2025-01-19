@@ -54,6 +54,9 @@
             </div>
             <div class="card-body" id="exercises">
                 {{ exercise_formset.as_div }}
+                <template id="empty_exercise_form">
+                    {{ exercise_formset.empty_form.as_div }}
+                </template>
             </div>
         </div>
 
@@ -83,18 +86,28 @@
     const addExerciseButton = document.getElementById('add-exercise');
     const exercisesContainer = document.getElementById('exercises');
 
+    const emptyExerciseForm = document.getElementById('empty_exercise_form');
+
     // Handle adding a new exercise form
     addExerciseButton.addEventListener('click', function () {
         const formCount = parseInt(document.getElementById('id_exercises-TOTAL_FORMS').value, 10);
-        const newForm = exercisesContainer.querySelector('.exercise-form').cloneNode(true);
+        const newForm = emptyExerciseForm.content.cloneNode(true);
+
+        newForm.querySelectorAll("[id]").forEach((element) => {
+            element.id = element.id.replace("__prefix__", formCount);
+        });
+
+        newForm.querySelectorAll("[name]").forEach((element) => {
+            element.name = element.name.replace("__prefix__", formCount);
+        });
 
         // Clear input fields
-        newForm.querySelectorAll('input, select').forEach(input => {
-            input.value = '';
-            const nameAttr = input.getAttribute('name').replace(/-\d+-/, `-${formCount}-`);
-            input.setAttribute('name', nameAttr);
-            input.setAttribute('id', `id_${nameAttr}`);
-        });
+        {#newForm.querySelectorAll('input, select').forEach(input => {#}
+        {#    input.value = '';#}
+        {#    const nameAttr = input.getAttribute('name').replace(/-\d+-/, `-${formCount}-`);#}
+        {#    input.setAttribute('name', nameAttr);#}
+        {#    input.setAttribute('id', `id_${nameAttr}`);#}
+        {# }); #}
 
         // Append the new form and update management form count
         exercisesContainer.appendChild(newForm);
