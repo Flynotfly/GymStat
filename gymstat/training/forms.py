@@ -22,7 +22,7 @@ class TrainingForm(forms.ModelForm):
 
 
 class ExerciseForm(forms.ModelForm):
-    template_name_div = 'training/exercise_form.html'
+    template_name_div = 'training/forms/exercise.html'
 
     class Meta:
         model = Exercise
@@ -61,6 +61,7 @@ ExerciseFormSet = forms.inlineformset_factory(
     Exercise,
     form=ExerciseForm,
     can_delete=True,
+    extra=0,
 )
 
 
