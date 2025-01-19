@@ -7,6 +7,7 @@ from django.shortcuts import render, get_object_or_404
 from training.models import Training, ExerciseType
 
 
+@login_required
 def training_list(request):
     trainings = Training.objects.filter(owner=request.user)
     paginator = Paginator(trainings, 10)
