@@ -55,7 +55,7 @@
             <div class="card-body" id="exercises">
                 {{ exercise_formset.management_form }}
                 {% for form in exercise_formset %}
-                <div class="border rounded p-3 mb-3 exercise-form">
+                <div class="border rounded p-3 mb-3 exercise-form"  x-data="{ deleted: false }" x-show="!deleted">
                     <div class="row">
                         <div class="col-md-4">
                             {{ form.exercise_type.label_tag }}
@@ -76,11 +76,17 @@
                             {{ form.repetitions.label_tag }}
                             {{ form.repetitions }}
                         </div>
-                        <div style="display:none">
+                        <div class="exercise_delete_field" style="display:none">
                             {{ form.DELETE }}
                         </div>
                         <div class="col-12 text-end">
-                            <button type="button" class="btn btn-sm btn-danger delete-exercise">Delete</button>
+                            <button type="button" class="btn btn-sm btn-danger delete-exercise" @click="
+                            deleted = true;
+                            const row = $el.closest('.row');
+                            const deleteFieldDiv = row.querySelector('.exercise_delete_field');
+                            const deleteField = deleteFieldDiv.querySelector('input');
+                            deleteField.checked = true;
+                            ">Delete</button>
                         </div>
                         {{ form.id }}
                     </div>
@@ -133,15 +139,15 @@
         document.getElementById('id_exercises-TOTAL_FORMS').value = formCount + 1;
     });
     
-    // Handle deleting exercise forms
-    document.querySelectorAll('.delete-exercise').forEach(button => {
-        button.addEventListener('click', function () {
-            const exerciseForm = this.closest('.exercise-form');
-            const deleteCheckbox = exerciseForm.querySelector('input[name$="-DELETE"]');
-            deleteCheckbox.checked = true;
-            exerciseForm.style.display = 'none';  // Скрываем форму
-        });
-    });
+{#    // Handle deleting exercise forms#}
+{#    document.querySelectorAll('.delete-exercise').forEach(button => {#}
+{#        button.addEventListener('click', function () {#}
+{#            const exerciseForm = this.closest('.exercise-form');#}
+{#            const deleteCheckbox = exerciseForm.querySelector('input[name$="-DELETE"]');#}
+{#            deleteCheckbox.checked = true;#}
+{#            exerciseForm.style.display = 'none';  // Скрываем форму#}
+{#        });#}
+{#    });#}
 
     const loadLastTrainingButton = document.getElementById('load-last-training');
     const getLastTrainingURL = "{% url 'training:api:last_training' %}"
