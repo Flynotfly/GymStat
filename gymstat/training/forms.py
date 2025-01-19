@@ -64,6 +64,8 @@ ExerciseFormSet = forms.inlineformset_factory(
     extra=0,
 )
 
+ExerciseFormSet.template_name_div = 'training/forms/exercise_formset.html'
+
 
 class ExerciseTypeForm(forms.ModelForm):
     class Meta:

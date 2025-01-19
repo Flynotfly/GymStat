@@ -53,10 +53,7 @@
                 </button>
             </div>
             <div class="card-body" id="exercises">
-                {{ exercise_formset.management_form }}
-                {% for form in exercise_formset %}
-                    {{ form.as_div }}
-                {% endfor %}
+                {{ exercise_formset.as_div }}
             </div>
         </div>
 
