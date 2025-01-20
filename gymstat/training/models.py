@@ -34,11 +34,13 @@ class Exercise(models.Model):
         blank=True
     )
     order = models.PositiveIntegerField()
+    suborder = models.PositiveIntegerField()
     weight = models.DecimalField(max_digits=6, decimal_places=2)
     repetitions = models.PositiveIntegerField()
 
     class Meta:
-        ordering = ['order']
+        indexes = [models.Index(fields=['order', 'suborder'])]
+        ordering = ['order', 'suborder']
 
 
 class ExerciseType(models.Model):

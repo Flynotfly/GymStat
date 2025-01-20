@@ -26,7 +26,7 @@ class ExerciseForm(forms.ModelForm):
 
     class Meta:
         model = Exercise
-        fields = ['training', 'exercise_type', 'order', 'weight', 'repetitions']
+        fields = ['training', 'exercise_type', 'order', 'suborder', 'weight', 'repetitions']
         widgets = {
             'training': forms.HiddenInput(),
             'exercise_type': forms.Select(attrs={
@@ -34,6 +34,10 @@ class ExerciseForm(forms.ModelForm):
                 'placeholder': 'Choose exercise type',
             }),
             'order': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Order of exercise',
+            }),
+            'suborder': forms.NumberInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Order of exercise',
             }),
