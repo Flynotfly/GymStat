@@ -48,7 +48,6 @@ def training_edit(request, pk=None):
         {
             'training': training,
             'training_form': training_form,
-            'exercise_formset': exercise_formset,
             'ziped': ziped,
             'management_form': management_form,
             'empty_form': empty_form,
