@@ -216,14 +216,17 @@
         });
 
         const orderInputs = document.querySelectorAll('input.order-input');
-        let maxValue = Number.NEGATIVE_INFINITY;
-        orderInputs.forEach((input => {
-            const value = Number(input.value) || 0;
-            if (value > maxValue) {
-                maxValue = value;
-                }
-        }));
-        const newValue = maxValue + 1;
+        let newValue = 1;
+        if (orderInputs.length > 0) {
+            let maxValue = Number.NEGATIVE_INFINITY;
+            orderInputs.forEach((input => {
+                const value = Number(input.value) || 0;
+                if (value > maxValue) {
+                    maxValue = value;
+                    }
+            }));
+            newValue = maxValue + 1;
+        };
         const orderInput = newForm.querySelector(".order-input");
         orderInput.value = newValue;
         const suborderInput = newForm.querySelector(".suborder-input");
