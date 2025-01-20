@@ -48,7 +48,7 @@
         <div class="card mb-4 shadow-sm">
             <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
                 <h4 class="mb-0">Exercises</h4>
-                <button type="button" class="btn btn-sm btn-success" id="add-exercise">
+                <button type="button" class="btn btn-sm btn-success" id="add-group">
                     + Add Exercise
                 </button>
             </div>
@@ -56,12 +56,36 @@
                 {{ management_form }}
                 {% for group in exercise_grouped_formset %}
                     <div class="border rounded p-3 mb-3 exercise-form"  x-data="{ deleted_set: false }" x-show="!deleted_set">
+                        <button type="button" class="btn btn-sm btn-success add-exercise-button"
+                                @click="
+                                const orderInputs = document.querySelectorAll('input.order-input');
+                                let maxValue = Number.NEGATIVE_INFINITY;
+                                orderInputs.forEach((input => {
+                                    const value = Number(input.value) || 0;
+                                    if (value > maxValue) {
+                                        maxValue = value;
+                                        }
+                                }));
+                                const newValue = maxValue + 1;
+                                console.log(newValue);
+                                ">
+                            + Add Exercise
+                        </button>
                         {% for form in group %}
                             {{ form.as_div }}
                         {% endfor %}
                     </div>
                 {% endfor %}
-                <template id="empty_exercise_form">
+                <template id="empty_exercise_group_form">
+                    <div class="border rounded p-3 mb-3 exercise-form"  x-data="{ deleted_set: false }" x-show="!deleted_set">
+                        <button type="button" class="btn btn-sm btn-success add-exercise-button"
+                                @click="">
+                            + Add Exercise
+                        </button>
+                    {{ empty_form.as_div }}
+                    </div>
+                </template>
+                <template id="empty_exercise_row_form">
                     {{ empty_form.as_div }}
                 </template>
             </div>
@@ -86,18 +110,19 @@
 {% endblock %}
 
 {% block domready %}
+{#    <script>#}
     const trainingFormResponseDiv = document.getElementById('training-form-response')
     const managementForm = document.querySelector('#id_exercises-TOTAL_FORMS');
     
-    const addExerciseButton = document.getElementById('add-exercise');
+    const addGroupButton = document.getElementById('add-group');
     const exercisesContainer = document.getElementById('exercises');
 
-    const emptyExerciseForm = document.getElementById('empty_exercise_form');
+    const emptyExerciseGroupForm = document.getElementById('empty_exercise_group_form');
 
     // Handle adding a new exercise form
-    addExerciseButton.addEventListener('click', function () {
+    addGroupButton.addEventListener('click', function () {
         const formCount = parseInt(document.getElementById('id_exercises-TOTAL_FORMS').value, 10);
-        const newForm = emptyExerciseForm.content.cloneNode(true);
+        const newForm = emptyExerciseGroupForm.content.cloneNode(true);
 
         newForm.querySelectorAll("[id]").forEach((element) => {
             element.id = element.id.replace("__prefix__", formCount);
@@ -106,6 +131,21 @@
         newForm.querySelectorAll("[name]").forEach((element) => {
             element.name = element.name.replace("__prefix__", formCount);
         });
+
+        const orderInputs = document.querySelectorAll('input.order-input');
+        let maxValue = Number.NEGATIVE_INFINITY;
+        orderInputs.forEach((input => {
+            const value = Number(input.value) || 0;
+            if (value > maxValue) {
+                maxValue = value;
+                }
+        }));
+        const newValue = maxValue + 1;
+        const orderInput = newForm.querySelector(".order-input");
+        orderInput.value = newValue;
+        const suborderInput = newForm.querySelector(".suborder-input");
+        suborderInput.value = 1;
+
 
         // Clear input fields
         {#newForm.querySelectorAll('input, select').forEach(input => {#}
