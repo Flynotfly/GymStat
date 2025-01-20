@@ -53,9 +53,16 @@
                 </button>
             </div>
             <div class="card-body" id="exercises">
-                {{ exercise_formset.as_div }}
+                {{ management_form }}
+                {% for group in exercise_grouped_formset %}
+                    <div class="border rounded p-3 mb-3 exercise-form"  x-data="{ deleted_set: false }" x-show="!deleted_set">
+                        {% for form in group %}
+                            {{ form.as_div }}
+                        {% endfor %}
+                    </div>
+                {% endfor %}
                 <template id="empty_exercise_form">
-                    {{ exercise_formset.empty_form.as_div }}
+                    {{ empty_form.as_div }}
                 </template>
             </div>
         </div>

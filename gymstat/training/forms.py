@@ -60,10 +60,25 @@ class ExerciseForm(forms.ModelForm):
             self.fields['exercise_type'].queryset = ExerciseType.objects.none()
 
 
+class GroupByOrderFormset(forms.BaseInlineFormSet):
+    def grouped_by_order(self):
+        if self.instance:
+            data = []
+            for form in self.forms:
+                order = form.instance.order
+                if len(data) < order:
+                    data.append([form])
+                else:
+                    data[order-1].append(form)
+            return data
+        return None
+
+
 ExerciseFormSet = forms.inlineformset_factory(
     Training,
     Exercise,
     form=ExerciseForm,
+    formset=GroupByOrderFormset,
     can_delete=True,
     extra=0,
 )
