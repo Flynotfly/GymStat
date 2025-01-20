@@ -37,7 +37,8 @@ def training_edit(request, pk=None):
         instance=training,
         form_kwargs={'user': request.user}
     )
-    exercise_grouped_formset = exercise_formset.grouped_by_order()
+    exercise_grouped_formset, exercise_types = exercise_formset.grouped_by_order()
+    ziped = zip(exercise_grouped_formset, exercise_types)
     management_form = exercise_formset.management_form
     empty_form = exercise_formset.empty_form
 
@@ -48,7 +49,7 @@ def training_edit(request, pk=None):
             'training': training,
             'training_form': training_form,
             'exercise_formset': exercise_formset,
-            'exercise_grouped_formset': exercise_grouped_formset,
+            'ziped': ziped,
             'management_form': management_form,
             'empty_form': empty_form,
             'user_has_previous_training': Training.objects.filter(owner=request.user).exists(),

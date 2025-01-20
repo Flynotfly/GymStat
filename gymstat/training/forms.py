@@ -31,6 +31,7 @@ class ExerciseForm(forms.ModelForm):
             'training': forms.HiddenInput(),
             'exercise_type': forms.Select(attrs={
                 'class': 'form-control exercise-type-input',
+                'x-model': 'exercise_type',
                 'placeholder': 'Choose exercise type',
             }),
             'order': forms.NumberInput(attrs={
@@ -64,13 +65,15 @@ class GroupByOrderFormset(forms.BaseInlineFormSet):
     def grouped_by_order(self):
         if self.instance:
             data = []
+            exercise_types = []
             for form in self.forms:
                 order = form.instance.order
                 if len(data) < order:
                     data.append([form])
+                    exercise_types.append(form.instance.exercise_type.id)
                 else:
                     data[order-1].append(form)
-            return data
+            return data, exercise_types
         return None
 
 

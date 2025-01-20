@@ -54,8 +54,8 @@
             </div>
             <div class="card-body" id="exercises">
                 {{ management_form }}
-                {% for group in exercise_grouped_formset %}
-                    <div class="border rounded p-3 mb-3 exercise-group"  x-data="{ deleted_set: false }" x-show="!deleted_set">
+                {% for group, exercise_type in ziped %}
+                    <div class="border rounded p-3 mb-3 exercise-group"  x-data="{ deleted_group: false, exercise_type: '{{ exercise_type }}'}" x-show="!deleted_group">
                         <button type="button" class="btn btn-sm btn-success add-exercise-button"
                                 @click="
                                 const totalFormsForm = document.getElementById('id_exercises-TOTAL_FORMS');
@@ -104,7 +104,7 @@
                     </div>
                 {% endfor %}
                 <template id="empty_exercise_group_form">
-                    <div class="border rounded p-3 mb-3 exercise-group"  x-data="{ deleted_set: false }" x-show="!deleted_set">
+                    <div class="border rounded p-3 mb-3 exercise-group"  x-data="{ deleted_group: false, exercise_type: ''}" x-show="!deleted_group">
                         <button type="button" class="btn btn-sm btn-success add-exercise-button"
                                 @click="
                                 const totalFormsForm = document.getElementById('id_exercises-TOTAL_FORMS');
