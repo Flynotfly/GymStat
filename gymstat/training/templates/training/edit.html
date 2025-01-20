@@ -98,6 +98,15 @@
                                 ">
                             + Add Exercise
                         </button>
+                        <button type="button" class="btn btn-sm btn-danger delete-group" @click="
+                            deleted_group = true;
+                            const exerciseGroup = $el.closest('.exercise-group');
+                            const deleteFieldDivs = exerciseGroup.querySelectorAll('.exercise_delete_field');
+                            deleteFieldDivs.forEach(deleteFieldDiv => {
+                                const deleteField = deleteFieldDiv.querySelector('input');
+                                deleteField.checked = true;
+                            });
+                            ">Delete group</button>
                         {% for form in group %}
                             {{ form.as_div }}
                         {% endfor %}
@@ -147,6 +156,15 @@
                                 ">
                             + Add Exercise
                         </button>
+                        <button type="button" class="btn btn-sm btn-danger delete-group" @click="
+                            deleted_group = true;
+                            const exerciseGroup = $el.closest('.exercise-group');
+                            const deleteFieldDivs = exerciseGroup.querySelectorAll('.exercise_delete_field');
+                            deleteFieldDivs.forEach(deleteFieldDiv => {
+                                const deleteField = deleteFieldDiv.querySelector('input');
+                                deleteField.checked = true;
+                            });
+                            ">Delete group</button>
                     {{ empty_form.as_div }}
                     </div>
                 </template>
