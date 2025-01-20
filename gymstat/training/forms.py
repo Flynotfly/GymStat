@@ -34,13 +34,11 @@ class ExerciseForm(forms.ModelForm):
                 'x-model': 'exercise_type',
                 'placeholder': 'Choose exercise type',
             }),
-            'order': forms.NumberInput(attrs={
-                'class': 'form-control order-input',
-                'placeholder': 'Order of exercise',
+            'order': forms.HiddenInput(attrs={
+                'class': 'order-input',
             }),
-            'suborder': forms.NumberInput(attrs={
-                'class': 'form-control suborder-input',
-                'placeholder': 'Order of exercise',
+            'suborder': forms.HiddenInput(attrs={
+                'class': 'suborder-input',
             }),
             'weight': forms.NumberInput(attrs={
                 'class': 'form-control',

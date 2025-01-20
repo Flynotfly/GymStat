@@ -6,14 +6,6 @@
             <div class="text-danger">{{ form.exercise_type.errors }}</div>
         {% endif %}
     </div>
-    <div class="col-md-1">
-        {{ form.order.label_tag }}
-        {{ form.order }}
-    </div>
-    <div class="col-md-1">
-        {{ form.suborder.label_tag }}
-        {{ form.suborder }}
-    </div>
     <div class="col-md-3">
         {{ form.weight.label_tag }}
         {{ form.weight }}
@@ -35,4 +27,6 @@
         ">Delete</button>
     </div>
     {{ form.id }}
+    {{ form.order }}
+    {{ form.suborder }}
 </div>
