@@ -1,5 +1,5 @@
-<div class="border rounded p-3 mb-3 exercise-form"  x-data="{ deleted: false }" x-show="!deleted">
-    <div class="row">
+<div class="border rounded p-3 mb-3 exercise-form"  x-data="{ deleted_set: false }" x-show="!deleted_set">
+    <div class="row" x-data="{ deleted_exercise: false }" x-show="!deleted_exercise">
         <div class="col-md-4">
             {{ form.exercise_type.label_tag }}
             {{ form.exercise_type }}
@@ -24,7 +24,7 @@
         </div>
         <div class="col-12 text-end">
             <button type="button" class="btn btn-sm btn-danger delete-exercise" @click="
-            deleted = true;
+            deleted_exercise = true;
             const row = $el.closest('.row');
             const deleteFieldDiv = row.querySelector('.exercise_delete_field');
             const deleteField = deleteFieldDiv.querySelector('input');
