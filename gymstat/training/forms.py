@@ -30,7 +30,7 @@ class ExerciseForm(forms.ModelForm):
         widgets = {
             'training': forms.HiddenInput(),
             'exercise_type': forms.Select(attrs={
-                'class': 'form-control',
+                'class': 'form-control exercise-type-input',
                 'placeholder': 'Choose exercise type',
             }),
             'order': forms.NumberInput(attrs={

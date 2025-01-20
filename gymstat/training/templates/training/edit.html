@@ -55,19 +55,46 @@
             <div class="card-body" id="exercises">
                 {{ management_form }}
                 {% for group in exercise_grouped_formset %}
-                    <div class="border rounded p-3 mb-3 exercise-form"  x-data="{ deleted_set: false }" x-show="!deleted_set">
+                    <div class="border rounded p-3 mb-3 exercise-group"  x-data="{ deleted_set: false }" x-show="!deleted_set">
                         <button type="button" class="btn btn-sm btn-success add-exercise-button"
                                 @click="
-                                const orderInputs = document.querySelectorAll('input.order-input');
+                                const totalFormsForm = document.getElementById('id_exercises-TOTAL_FORMS');
+                                const formCount = parseInt(totalFormsForm.value, 10);
+                                const newForm = document.getElementById('empty_exercise_row_form').content.cloneNode(true);
+                                newForm.querySelectorAll('[id]').forEach((element) => {
+                                    element.id = element.id.replace('__prefix__', formCount);
+                                });
+
+                                newForm.querySelectorAll('[name]').forEach((element) => {
+                                    element.name = element.name.replace('__prefix__', formCount);
+                                });
+
+                                const exerciseGroup = $el.closest('.exercise-group');
+
+                                const existingOrderInput = exerciseGroup.querySelectorAll('input.order-input')[0];
+                                const orderValue = Number(existingOrderInput.value) || 0;
+                                const orderInput = newForm.querySelector('input.order-input');
+                                orderInput.value = orderValue;
+
+                                const existingExerciseTypeInput = exerciseGroup.querySelectorAll('select.exercise-type-input')[0];
+                                const exerciseType = existingExerciseTypeInput.value;
+                                const exerciseTypeInput = newForm.querySelector('select.exercise-type-input');
+                                exerciseTypeInput.value = exerciseType;
+
+                                const suborderInputs = exerciseGroup.querySelectorAll('input.suborder-input');
                                 let maxValue = Number.NEGATIVE_INFINITY;
-                                orderInputs.forEach((input => {
+                                suborderInputs.forEach((input => {
                                     const value = Number(input.value) || 0;
                                     if (value > maxValue) {
                                         maxValue = value;
                                         }
                                 }));
-                                const newValue = maxValue + 1;
-                                console.log(newValue);
+                                const newSuborderValue = maxValue + 1;
+                                const suborderInput = newForm.querySelector('input.suborder-input');
+                                suborderInput.value = newSuborderValue;
+
+                                exerciseGroup.appendChild(newForm);
+                                totalFormsForm.value = formCount + 1;
                                 ">
                             + Add Exercise
                         </button>
@@ -77,9 +104,47 @@
                     </div>
                 {% endfor %}
                 <template id="empty_exercise_group_form">
-                    <div class="border rounded p-3 mb-3 exercise-form"  x-data="{ deleted_set: false }" x-show="!deleted_set">
+                    <div class="border rounded p-3 mb-3 exercise-group"  x-data="{ deleted_set: false }" x-show="!deleted_set">
                         <button type="button" class="btn btn-sm btn-success add-exercise-button"
-                                @click="">
+                                @click="
+                                const totalFormsForm = document.getElementById('id_exercises-TOTAL_FORMS');
+                                const formCount = parseInt(totalFormsForm.value, 10);
+                                const newForm = document.getElementById('empty_exercise_row_form').content.cloneNode(true);
+                                newForm.querySelectorAll('[id]').forEach((element) => {
+                                    element.id = element.id.replace('__prefix__', formCount);
+                                });
+
+                                newForm.querySelectorAll('[name]').forEach((element) => {
+                                    element.name = element.name.replace('__prefix__', formCount);
+                                });
+
+                                const exerciseGroup = $el.closest('.exercise-group');
+
+                                const existingOrderInput = exerciseGroup.querySelectorAll('input.order-input')[0];
+                                const orderValue = Number(existingOrderInput.value) || 0;
+                                const orderInput = newForm.querySelector('input.order-input');
+                                orderInput.value = orderValue;
+
+                                const existingExerciseTypeInput = exerciseGroup.querySelectorAll('select.exercise-type-input')[0];
+                                const exerciseType = existingExerciseTypeInput.value;
+                                const exerciseTypeInput = newForm.querySelector('select.exercise-type-input');
+                                exerciseTypeInput.value = exerciseType;
+
+                                const suborderInputs = exerciseGroup.querySelectorAll('input.suborder-input');
+                                let maxValue = Number.NEGATIVE_INFINITY;
+                                suborderInputs.forEach((input => {
+                                    const value = Number(input.value) || 0;
+                                    if (value > maxValue) {
+                                        maxValue = value;
+                                        }
+                                }));
+                                const newSuborderValue = maxValue + 1;
+                                const suborderInput = newForm.querySelector('input.suborder-input');
+                                suborderInput.value = newSuborderValue;
+
+                                exerciseGroup.appendChild(newForm);
+                                totalFormsForm.value = formCount + 1;
+                                ">
                             + Add Exercise
                         </button>
                     {{ empty_form.as_div }}
@@ -159,11 +224,13 @@
         exercisesContainer.appendChild(newForm);
         document.getElementById('id_exercises-TOTAL_FORMS').value = formCount + 1;
     });
+
+
     
 {#    // Handle deleting exercise forms#}
 {#    document.querySelectorAll('.delete-exercise').forEach(button => {#}
 {#        button.addEventListener('click', function () {#}
-{#            const exerciseForm = this.closest('.exercise-form');#}
+{#            const exerciseForm = this.closest('.exercise-group');#}
 {#            const deleteCheckbox = exerciseForm.querySelector('input[name$="-DELETE"]');#}
 {#            deleteCheckbox.checked = true;#}
 {#            exerciseForm.style.display = 'none';  // Скрываем форму#}
@@ -194,7 +261,7 @@
 {#                document.querySelector('#id_conducted').value = formatDateForInput(data.conducted);#}
                 document.querySelector('#id_description').value = data.description;
 
-                const exerciseForms = exercisesContainer.querySelectorAll('.exercise-form');
+                const exerciseForms = exercisesContainer.querySelectorAll('.exercise-group');
                 const quantityCurrentForms = exerciseForms.length;
                 const quantityNewForms = data.exercises.length;
                 const quantityFormsToAdd = Math.max(0, quantityNewForms - quantityCurrentForms);
