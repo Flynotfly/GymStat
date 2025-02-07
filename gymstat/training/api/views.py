@@ -17,3 +17,18 @@ class LastTrainingAPIView(APIView):
 
         serializer = TrainingSerializer(last_training)
         return Response(serializer.data)
+
+
+class GetAllTrainingsAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        trainings = Training.objects.filter(owner=request.user)
+        if not trainings.exists():
+            return Response(
+                {'error': 'No trainings found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        serializer = TrainingSerializer(trainings, many=True)
+        return Response(serializer.data)
