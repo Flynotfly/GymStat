@@ -11,5 +11,6 @@ app_name = 'user'
 
 urlpatterns = [
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('set-token/', api_views.CustomTokenObtainPairView.as_view(), name='set_token'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
