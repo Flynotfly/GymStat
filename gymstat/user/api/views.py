@@ -1,8 +1,9 @@
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework.response import Response
+
+from .serializers import CustomTokenObtainPairSerializer
 
 
-class CustomTokenObtainPairView(TokenObtainPairView):
+class SetTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
         if response.status_code == 200:
@@ -16,3 +17,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
                 samesite='Lax',  # or 'Strict' as appropriate
             )
         return response
+
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
