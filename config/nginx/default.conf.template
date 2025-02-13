@@ -4,6 +4,9 @@ upstream uwsgi_app {
 
 server {
 	listen 80;
+	listen 443 ssl;
+	ssl_certificate /code/gymstat/ssl/gymstat.crt;
+	ssl_certificate_key /code/gymstat/ssl/gymstat.key;
 	server_name www.mysite.example mysite.example;
 	error_log stderr warn;
 	access_log /dev/stdout main;
