@@ -4,6 +4,10 @@ upstream uwsgi_app {
 
 server {
 	listen 80;
+	server_name www.mysite.example mysite.example;
+	return 301 https://$host$request_uri;
+}
+server {
 	listen 443 ssl;
 	ssl_certificate /code/gymstat/ssl/gymstat.crt;
 	ssl_certificate_key /code/gymstat/ssl/gymstat.key;
