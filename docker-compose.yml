@@ -16,11 +16,12 @@ services:
             - ./data/cache:/data
             
     web:
-        build: .
-        command: ["./wait-for-it.sh", "db:5432", "--", "uwsgi", "--ini", "/code/config/uwsgi/uwsgi.ini"]
+        build: ./gymstat
+        command: ["./gymstat/wait-for-it.sh", "db:5432", "--", "uwsgi", "--ini", "/code/config/uwsgi/uwsgi.ini"]
         restart: always
         volumes:
-            - .:/code
+            - ./gymstat:/code/gymstat
+            - ./config:/code/config
         environment:
             - DJANGO_SETTINGS_MODULE=gymstat.settings.prod
             - POSTGRES_DB=postgres
@@ -35,7 +36,8 @@ services:
         restart: always
         volumes:
             - ./config/nginx:/etc/nginx/templates
-            - .:/code
+            - ./gymstat:/code/gymstat
+            - ./frontend:/code/frontend
         ports:
             - "80:80"
             - "443:443"

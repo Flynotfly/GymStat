@@ -9,3 +9,4 @@ Dockerfile
 .env
 /data
 uwsgi_app.sock
+/frontend

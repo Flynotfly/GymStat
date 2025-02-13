@@ -1,17 +1,20 @@
+# --- API Server Block: Django on api.mysite.example ---
+
 upstream uwsgi_app {
 	server unix:/code/gymstat/uwsgi_app.sock;
 }
 
 server {
 	listen 80;
-	server_name www.mysite.example mysite.example;
+	server_name api.mysite.example;
 	return 301 https://$host$request_uri;
 }
 server {
 	listen 443 ssl;
 	ssl_certificate /code/gymstat/ssl/gymstat.crt;
 	ssl_certificate_key /code/gymstat/ssl/gymstat.key;
-	server_name www.mysite.example mysite.example;
+	server_name api.mysite.example;
+	
 	error_log stderr warn;
 	access_log /dev/stdout main;
 	
@@ -27,4 +30,28 @@ server {
 	location /media/ {
 		alias /code/gymstat/media/;
 	}
+}
+
+# --- Frontend Server Block: React on mysite.example ---
+
+server {
+    listen 80;
+    server_name mysite.example www.mysite.example;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    ssl_certificate     /code/gymstat/ssl/gymstat.crt;
+    ssl_certificate_key /code/gymstat/ssl/gymstat.key;
+    server_name         mysite.example www.mysite.example;
+
+    error_log  stderr warn;
+    access_log /dev/stdout main;
+
+    # Serve the built React app
+    location / {
+        root   /code/frontend/dist;
+        try_files $uri /index.html;
+    }
 }
