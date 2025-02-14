@@ -37,7 +37,7 @@ services:
         volumes:
             - ./config/nginx:/etc/nginx/templates
             - ./gymstat:/code/gymstat
-            - ./frontend/dist:/code/frontend/dist
+            - ./frontend:/code/frontend
         ports:
             - "80:80"
             - "443:443"
