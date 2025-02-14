@@ -6,7 +6,7 @@ ADMINS = [
     ('Mikhail', 'Alteria2004@gmail.com'),
 ]
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['api.mysite.example', 'mysite.example']
 
 DATABASES = {
     'default': {
@@ -26,13 +26,20 @@ CACHE_MIDDLEWARE_ALIAS = 'default'
 CACHE_MIDDLEWARE_SECONDS = 60 * 15  # 15 minutes
 CACHE_MIDDLEWARE_KEY_PREFIX = 'gymstat'
 
-INTERNAL_IPS = [
-    '127.0.0.1',
-]
+# INTERNAL_IPS = [
+#     '127.0.0.1',
+# ]
 
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 SECURE_SSL_REDIRECT = True
+
+SESSION_COOKIE_DOMAIN = ".mysite.example"
+CSRF_COOKIE_DOMAIN = ".mysite.example"
+CSRF_TRUSTED_ORIGINS = [
+    "https://mysite.example",
+    "https://api.mysite.example",
+]
 
 # TODO: solve
 #  (security.W004) You have not set a value for the SECURE_HSTS_SECONDS setting.
@@ -40,3 +47,10 @@ SECURE_SSL_REDIRECT = True
 #  you may want to consider setting a value and enabling HTTP Strict Transport Security.
 #  Be sure to read the documentation first;
 #  enabling HSTS carelessly can cause serious, irreversible problems.
+
+CORS_ALLOWED_ORIGINS = [
+    "https://mysite.example",
+    "https://api.mysite.example",
+]
+
+CORS_ALLOW_CREDENTIALS = True
