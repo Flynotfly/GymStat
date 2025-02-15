@@ -9,4 +9,11 @@ Dockerfile
 .env
 /data
 uwsgi_app.sock
-/frontend
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
