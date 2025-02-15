@@ -2,10 +2,7 @@
 /gymstat/db.sqlite3
 node_modules
 npm-debug.log
-Dockerfile
-.dockerignore
 .git
-.gitignore
 .env
 /data
 uwsgi_app.sock
