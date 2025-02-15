@@ -1,4 +1,4 @@
-# --- API Server Block: Django on api.mysite.example ---
+# --- API Server Block: Django on backend.orange-city.ru ---
 
 upstream uwsgi_app {
 	server unix:/code/gymstat/uwsgi_app.sock;
@@ -11,8 +11,8 @@ server {
 }
 server {
 	listen 443 ssl;
-	ssl_certificate /code/gymstat/ssl/gymstat.crt;
-	ssl_certificate_key /code/gymstat/ssl/gymstat.key;
+	ssl_certificate /etc/letsencrypt/live/system.orange-city.ru/fullchain.pem;
+	ssl_certificate_key /etc/letsencrypt/live/system.orange-city.ru/privkey.pem;
 	server_name backend.orange-city.ru;
 	
 	error_log stderr warn;
@@ -32,7 +32,7 @@ server {
 	}
 }
 
-# --- Frontend Server Block: React on mysite.example ---
+# --- Frontend Server Block: React on system.orange-city.ru ---
 
 server {
     listen 80;
@@ -42,8 +42,8 @@ server {
 
 server {
     listen 443 ssl;
-    ssl_certificate     /code/gymstat/ssl/gymstat.crt;
-    ssl_certificate_key /code/gymstat/ssl/gymstat.key;
+    ssl_certificate     /etc/letsencrypt/live/system.orange-city.ru/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/system.orange-city.ru/privkey.pem;
     server_name         system.orange-city.ru;
 
     error_log  stderr warn;
