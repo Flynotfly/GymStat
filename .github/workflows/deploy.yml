@@ -22,7 +22,7 @@ jobs:
       - name: Deploy to production server
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
-            cd /path/to/GymStat
+            cd ~/GymStat
             git pull origin deploy
             docker-compose up -d --build
           EOF
