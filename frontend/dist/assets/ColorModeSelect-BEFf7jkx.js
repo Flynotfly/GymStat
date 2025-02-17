@@ -1,1 +1,0 @@
-import{aP as o,j as e,a6 as n,a3 as s}from"./index-CVG1tVtw.js";function c(a){const{mode:t,setMode:l}=o();return t?e.jsxs(n,{value:t,onChange:r=>l(r.target.value),SelectDisplayProps:{"data-screenshot":"toggle-mode"},...a,children:[e.jsx(s,{value:"system",children:"System"}),e.jsx(s,{value:"light",children:"Light"}),e.jsx(s,{value:"dark",children:"Dark"})]}):null}export{c as C};
