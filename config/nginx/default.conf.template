@@ -51,7 +51,7 @@ server {
 
     # Serve the built React app
     location / {
-        root   /code/frontend/dist;
+        root   /code/frontend/build;
         try_files $uri /index.html;
     }
 }
