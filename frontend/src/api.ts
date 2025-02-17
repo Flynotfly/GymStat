@@ -1,4 +1,4 @@
-const baseURL = 'https://backend.orange-city.ru/';
+const baseURL = import.meta.env.VITE_BASE_URL;
 const userAPIURL = `${baseURL}user/api/`;
 const trainingAPIURL = `${baseURL}training/api/`;
 
