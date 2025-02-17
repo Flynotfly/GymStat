@@ -6,7 +6,7 @@ ADMINS = [
     ('Mikhail', 'Alteria2004@gmail.com'),
 ]
 
-ALLOWED_HOSTS = ['api.mysite.example', 'mysite.example']
+ALLOWED_HOSTS = ['backend.orange-city.ru', 'system.orange-city.ru']
 
 DATABASES = {
     'default': {
@@ -34,11 +34,11 @@ CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 SECURE_SSL_REDIRECT = True
 
-SESSION_COOKIE_DOMAIN = ".mysite.example"
-CSRF_COOKIE_DOMAIN = ".mysite.example"
+SESSION_COOKIE_DOMAIN = ".orange-city.ru"
+CSRF_COOKIE_DOMAIN = ".orange-city.ru"
 CSRF_TRUSTED_ORIGINS = [
-    "https://mysite.example",
-    "https://api.mysite.example",
+    "https://backend.orange-city.ru",
+    "https://system.orange-city.ru",
 ]
 
 # TODO: solve
@@ -49,8 +49,8 @@ CSRF_TRUSTED_ORIGINS = [
 #  enabling HSTS carelessly can cause serious, irreversible problems.
 
 CORS_ALLOWED_ORIGINS = [
-    "https://mysite.example",
-    "https://api.mysite.example",
+    "https://backend.orange-city.ru",
+    "https://system.orange-city.ru",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
