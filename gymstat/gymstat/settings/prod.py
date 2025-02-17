@@ -41,12 +41,9 @@ CSRF_TRUSTED_ORIGINS = [
     "https://system.orange-city.ru",
 ]
 
-# TODO: solve
-#  (security.W004) You have not set a value for the SECURE_HSTS_SECONDS setting.
-#  If your entire site is served only over SSL,
-#  you may want to consider setting a value and enabling HTTP Strict Transport Security.
-#  Be sure to read the documentation first;
-#  enabling HSTS carelessly can cause serious, irreversible problems.
+SECURE_HSTS_SECONDS = 3600
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
 
 CORS_ALLOWED_ORIGINS = [
     "https://backend.orange-city.ru",
