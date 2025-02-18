@@ -28,6 +28,7 @@ const Body = lazy(() => import("./pages/Body.tsx"));
 const Tasks = lazy(() => import("./pages/Tasks.tsx"));
 const SignIn = lazy(() => import("./sign-in/SignIn.tsx"));
 const SignUp = lazy(() => import("./sign-up/SignUp.tsx"));
+const Promo = lazy(() => import("./pages/Promo.tsx"));
 
 function useRouteMatch(patterns: readonly string[]) {
   const {pathname} = useLocation();
@@ -105,9 +106,13 @@ function RouteLayout(props: { disableCustomTheme?: boolean }) {
 const router = createBrowserRouter([
   {
     path: "/",
+    element: <Promo/>,
+  },
+  {
+    path: "/app",
     element: <RouteLayout/>,
     children: [
-      { path: "/", element: <Home/> },
+      { index: true, element: <Home/> },
       { path: "/trainings", element: <Training/> },
       { path: "/body", element: <Body/> },
       { path: "/tasks", element: <Tasks/> },
