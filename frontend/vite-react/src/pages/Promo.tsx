@@ -1,9 +1,8 @@
 import Typography from "@mui/material/Typography";
+import MarketingPage from "../marketing-page/MarketingPage.tsx";
 
 export default function Promo() {
   return (
-    <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
-      This is promo
-    </Typography>
+    <MarketingPage/>
   );
 }
