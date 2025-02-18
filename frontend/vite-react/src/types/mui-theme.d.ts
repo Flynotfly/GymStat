@@ -17,6 +17,7 @@ declare module '@mui/material/styles' {
         borderRadius: number;
       };
       palette: Palette;
+      shadows: string[];
     };
   }
   interface ThemeOptions {
@@ -25,6 +26,7 @@ declare module '@mui/material/styles' {
         borderRadius?: number;
       };
       palette?: PaletteOptions;
+      shadows?: string[];
     };
   }
 }
