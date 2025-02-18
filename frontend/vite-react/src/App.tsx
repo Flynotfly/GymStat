@@ -1,4 +1,4 @@
-import {createBrowserRouter, matchPath, Outlet, RouterProvider, useLocation} from "react-router-dom";
+import {createBrowserRouter, Outlet, RouterProvider} from "react-router-dom";
 import AppTheme from "./shared-theme/AppTheme.tsx";
 import CssBaseline from "@mui/material/CssBaseline";
 import {
