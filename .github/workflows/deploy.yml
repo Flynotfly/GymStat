@@ -29,7 +29,11 @@ jobs:
         uses: webfactory/ssh-agent@v0.5.3
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-            
+      
+      - name: Upload build files to server
+        run: |
+          rsync -avz --delete frontend/build ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:~/GymStat/frontend
+
       - name: Deploy to production server
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
