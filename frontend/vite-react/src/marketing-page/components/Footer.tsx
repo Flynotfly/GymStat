@@ -4,7 +4,6 @@ import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import IconButton from '@mui/material/IconButton';
 import InputLabel from '@mui/material/InputLabel';
-import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
@@ -12,7 +11,8 @@ import FacebookIcon from '@mui/icons-material/GitHub';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import TwitterIcon from '@mui/icons-material/X';
 import SitemarkIcon from './SitemarkIcon';
-import {Link} from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
+import Link from '@mui/material/Link';
 
 function Copyright() {
   return (
@@ -99,22 +99,22 @@ export default function Footer() {
             gap: 1,
           }}
         >
-          <Typography variant="body2" sx={{ fontWeight: 'medium' }} component={Link} to="#product">
+          <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
             Product
           </Typography>
-          <Link color="text.secondary" variant="body2" component={Link} to="#features">
+          <Link color="text.secondary" variant="body2" component={RouterLink} to="#features">
             Features
           </Link>
-          <Link color="text.secondary" variant="body2" component={Link} to="#testimonials">
+          <Link color="text.secondary" variant="body2" component={RouterLink} to="#testimonials">
             Testimonials
           </Link>
-          <Link color="text.secondary" variant="body2" component={Link} to="#highlights">
+          <Link color="text.secondary" variant="body2" component={RouterLink} to="#highlights">
             Highlights
           </Link>
-          <Link color="text.secondary" variant="body2" component={Link} to="#pricing">
+          <Link color="text.secondary" variant="body2" component={RouterLink} to="#pricing">
             Pricing
           </Link>
-          <Link color="text.secondary" variant="body2" component={Link} to="#faq">
+          <Link color="text.secondary" variant="body2" component={RouterLink} to="#faq">
             FAQs
           </Link>
         </Box>
