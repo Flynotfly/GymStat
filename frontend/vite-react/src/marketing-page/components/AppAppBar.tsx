@@ -113,12 +113,11 @@ export default function AppAppBar() {
                   </IconButton>
                 </Box>
 
-                <MenuItem>Features</MenuItem>
-                <MenuItem>Testimonials</MenuItem>
-                <MenuItem>Highlights</MenuItem>
-                <MenuItem>Pricing</MenuItem>
-                <MenuItem>FAQ</MenuItem>
-                <MenuItem>Blog</MenuItem>
+                <MenuItem onClick={toggleDrawer(false)} component={Link} to="#features">Features</MenuItem>
+                <MenuItem onClick={toggleDrawer(false)} component={Link} to="#testimonials">Testimonials</MenuItem>
+                <MenuItem onClick={toggleDrawer(false)} component={Link} to="#highlights">Highlights</MenuItem>
+                <MenuItem onClick={toggleDrawer(false)} component={Link} to="#pricing">Pricing</MenuItem>
+                <MenuItem onClick={toggleDrawer(false)} component={Link} to="#faq">FAQ</MenuItem>
                 <Divider sx={{ my: 3 }} />
                 <MenuItem>
                   <Button color="primary" variant="contained" fullWidth component={Link} to="/sign-up">
