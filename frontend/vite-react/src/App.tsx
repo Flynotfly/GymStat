@@ -114,9 +114,9 @@ const router = createBrowserRouter([
     element: <RouteLayout/>,
     children: [
       { index: true, element: <Home/> },
-      { path: "/trainings", element: <Training/> },
-      { path: "/body", element: <Body/> },
-      { path: "/tasks", element: <Tasks/> },
+      { path: "trainings", element: <Training/> },
+      { path: "body", element: <Body/> },
+      { path: "tasks", element: <Tasks/> },
     ],
   },
   {
