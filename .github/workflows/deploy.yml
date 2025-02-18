@@ -32,7 +32,7 @@ jobs:
       
       - name: Upload build files to server
         run: |
-          rsync -avz --delete frontend/build ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:~/GymStat/frontend
+          rsync -avz -e "ssh -o StrictHostKeyChecking=no" --delete frontend/build ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:~/GymStat/frontend
 
       - name: Deploy to production server
         run: |
