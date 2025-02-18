@@ -30,40 +30,41 @@ const SignIn = lazy(() => import("./sign-in/SignIn.tsx"));
 const SignUp = lazy(() => import("./sign-up/SignUp.tsx"));
 const Promo = lazy(() => import("./pages/Promo.tsx"));
 
-function useRouteMatch(patterns: readonly string[]) {
-  const {pathname} = useLocation();
-
-  for (let i = 0; i < patterns.length; i += 1) {
-    const pattern = patterns[i];
-    const possibleMatch = matchPath(pattern, pathname);
-    if (possibleMatch !== null) {
-      return possibleMatch;
-    }
-  }
-  return null;
-}
-
-type tabIndexPattern = {
-  index: number,
-  pattern: string,
-}
-
-function matchTabIndex(patterns: readonly tabIndexPattern[], currentTab: string|undefined) {
-  const matchingPattern = patterns.find(({ pattern }) => pattern === currentTab);
-  return matchingPattern ? matchingPattern.index : -1;
-}
+// function useRouteMatch(patterns: readonly string[]) {
+//   const {pathname} = useLocation();
+//
+//   for (let i = 0; i < patterns.length; i += 1) {
+//     const pattern = patterns[i];
+//     const possibleMatch = matchPath(pattern, pathname);
+//     if (possibleMatch !== null) {
+//       return possibleMatch;
+//     }
+//   }
+//   return null;
+// }
+//
+// type tabIndexPattern = {
+//   index: number,
+//   pattern: string,
+// }
+//
+// function matchTabIndex(patterns: readonly tabIndexPattern[], currentTab: string|undefined) {
+//   const matchingPattern = patterns.find(({ pattern }) => pattern === currentTab);
+//   return matchingPattern ? matchingPattern.index : -1;
+// }
 
 function RouteLayout(props: { disableCustomTheme?: boolean }) {
-  const pagePatterns = ["/", "/trainings", "/body", "/tasks"];
-  const tabPatterns: tabIndexPattern[] = [
-    { index: 0, pattern: "/" },
-    { index: 1, pattern: "/trainings" },
-    { index: 2, pattern: "/body" },
-    { index: 3, pattern: "/tasks" },
-  ];
-  const routeMatch = useRouteMatch(pagePatterns);
-  const currentTab = routeMatch?.pattern?.path;
-  const tabIndex = matchTabIndex(tabPatterns, currentTab)
+  // const pagePatterns = ["/", "/trainings", "/body", "/tasks"];
+  // const tabPatterns: tabIndexPattern[] = [
+  //   { index: 0, pattern: "/" },
+  //   { index: 1, pattern: "/trainings" },
+  //   { index: 2, pattern: "/body" },
+  //   { index: 3, pattern: "/tasks" },
+  // ];
+  // const routeMatch = useRouteMatch(pagePatterns);
+  // const currentTab = routeMatch?.pattern?.path;
+  // const tabIndex = matchTabIndex(tabPatterns, currentTab)
+  const tabIndex = 0;
 
   return (
     <AppTheme {...props} themeComponents={xThemeComponents}>
