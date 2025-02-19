@@ -2,6 +2,10 @@ from django.contrib.auth.base_user import BaseUserManager
 
 
 class CustomUserManager(BaseUserManager):
+    @classmethod
+    def normalize_email(cls, email):
+        return email.lower()
+
     def create_user(self, email, password, first_name, last_name, **extra_fields):
         """
         Create and save a user with the given email and password.
