@@ -1,11 +1,11 @@
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.db import models
 from django.urls import reverse
 
 
 class Training(models.Model):
     owner = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         related_name='trainings',
         on_delete=models.CASCADE,
     )
@@ -47,12 +47,12 @@ class Exercise(models.Model):
 
 class ExerciseType(models.Model):
     owner = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         related_name='owned_exercises',
         on_delete=models.CASCADE,
     )
     bookmarked = models.ManyToManyField(
-        User,
+        settings.AUTH_USER_MODEL,
         related_name='bookmarked_exercises',
         blank=True
     )
