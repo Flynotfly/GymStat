@@ -18,7 +18,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'email'
     EMAIL_FIELD = 'email'
-    REQUIRED_FIELDS = [first_name, last_name]
+    REQUIRED_FIELDS = ['first_name', 'last_name']
 
     def get_full_name(self):
         return f'{self.first_name} {self.last_name}'.strip()
