@@ -6,6 +6,10 @@ class CustomUserManager(BaseUserManager):
     def normalize_email(cls, email):
         return email.strip().lower()
 
+    def get_by_natural_key(self, username):
+        username = self.normalize_email(username)
+        return super().get_by_natural_key(username)
+
     def create_user(self, email, password, first_name, last_name, **extra_fields):
         """
         Create and save a user with the given email and password.
