@@ -4,7 +4,7 @@ from django.contrib.auth.base_user import BaseUserManager
 class CustomUserManager(BaseUserManager):
     @classmethod
     def normalize_email(cls, email):
-        return email.lower()
+        return email.strip().lower()
 
     def create_user(self, email, password, first_name, last_name, **extra_fields):
         """
