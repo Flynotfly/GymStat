@@ -17,10 +17,10 @@ services:
             
     web:
         build: ./gymstat
-        command: ["./gymstat/wait-for-it.sh", "db:5432", "--", "uwsgi", "--ini", "/code/config/uwsgi/uwsgi.ini"]
+        command: ["./wait-for-it.sh", "db:5432", "--", "uwsgi", "--ini", "/code/config/uwsgi/uwsgi.ini"]
         restart: always
         volumes:
-            - ./gymstat:/code/gymstat
+            - ./gymstat:/code
             - ./config:/code/config
         environment:
             - DJANGO_SETTINGS_MODULE=gymstat.settings.prod
@@ -36,7 +36,6 @@ services:
         restart: always
         volumes:
             - ./config/nginx:/etc/nginx/templates
-            - ./gymstat:/code/gymstat
             - ./frontend/build:/code/frontend/build
             - /etc/letsencrypt:/etc/letsencrypt:ro
         ports:
