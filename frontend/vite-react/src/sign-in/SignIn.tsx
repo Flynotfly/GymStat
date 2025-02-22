@@ -115,7 +115,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
     const username = emailField.toString()
     const password = passwordField.toString()
     APILogin(csrfToken, username, password)
-      .then(() => navigate("/"))
+      .then(() => navigate("/app"))
       .catch(err =>  console.log('login error: ', err))
   };
 
