@@ -17,7 +17,7 @@ services:
             
     web:
         build: ./gymstat
-        command: ["./gymstat/wait-for-it.sh", "db:5432", "--", "uwsgi", "--ini", "/code/config/uwsgi/uwsgi.ini"]
+        command: ["./wait-for-it.sh", "db:5432", "--", "uwsgi", "--ini", "/code/config/uwsgi/uwsgi.ini"]
         restart: always
         volumes:
             - ./gymstat:/code
