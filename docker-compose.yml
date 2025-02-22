@@ -36,7 +36,6 @@ services:
         restart: always
         volumes:
             - ./config/nginx:/etc/nginx/templates
-            - ./gymstat:/code/gymstat
             - ./frontend/build:/code/frontend/build
             - /etc/letsencrypt:/etc/letsencrypt:ro
         ports:
