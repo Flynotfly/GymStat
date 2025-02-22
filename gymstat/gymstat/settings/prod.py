@@ -3,7 +3,7 @@ from .base import *
 DEBUG = False
 
 ADMINS = [
-    ('Mikhail', 'Alteria2004@gmail.com'),
+    ('Mikhail Kudryashov', 'Alteria2004@gmail.com'),
 ]
 
 ALLOWED_HOSTS = ['backend.orange-city.ru', 'system.orange-city.ru']
