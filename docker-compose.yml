@@ -38,6 +38,7 @@ services:
             - ./config/nginx:/etc/nginx/templates
             - ./frontend/build:/code/frontend/build
             - /etc/letsencrypt:/etc/letsencrypt:ro
+            - ./gymstat:/code
         ports:
             - "80:80"
             - "443:443"
