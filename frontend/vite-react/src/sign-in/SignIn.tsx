@@ -115,7 +115,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
     const username = emailField.toString()
     const password = passwordField.toString()
     APILogin(csrfToken, username, password)
-      .then(() => navigate("/"))
+      .then(() => navigate("/app"))
       .catch(err =>  console.log('login error: ', err))
   };
 
@@ -126,11 +126,9 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
     let isValid = true;
 
     if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
-      // setEmailError(true);
-      // setEmailErrorMessage('Please enter a valid email address.');
-      // isValid = false; TODO: change
-      setEmailError(false);
-      setEmailErrorMessage('');
+      setEmailError(true);
+      setEmailErrorMessage('Please enter a valid email address.');
+      isValid = false;
     } else {
       setEmailError(false);
       setEmailErrorMessage('');
@@ -242,7 +240,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
             <Typography sx={{ textAlign: 'center' }}>
               Don&apos;t have an account?{' '}
               <Link
-                href="/material-ui/getting-started/templates/sign-in/"
+                href="/sign-up"
                 variant="body2"
                 sx={{ alignSelf: 'center' }}
               >

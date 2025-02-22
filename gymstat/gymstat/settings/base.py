@@ -85,7 +85,7 @@ ASGI_APPLICATION = 'gymstat.asgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 
-
+AUTH_USER_MODEL = "user.CustomUser"
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
