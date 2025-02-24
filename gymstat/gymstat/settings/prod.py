@@ -56,6 +56,7 @@ CORS_ALLOW_CREDENTIALS = True
 HEADLESS_ONLY = True
 HEADLESS_FRONTEND_URLS = {
     "account_confirm_email": "https://system.orange-city.ru/account/verify-email/{key}",
+    "account_reset_password": "https://system.orange-city.ru/account/password/reset",
     "account_reset_password_from_key": "https://system.orange-city.ru/account/password/reset/key/{key}",
     "account_signup": "https://system.orange-city.ru/account/signup",
 }
