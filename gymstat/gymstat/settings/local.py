@@ -20,3 +20,11 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CORS_ALLOW_CREDENTIALS = True
+
+# allauth settings
+HEADLESS_ONLY = True
+HEADLESS_FRONTEND_URLS = {
+    "account_confirm_email": "http://localhost:5173/account/verify-email/{key}",
+    "account_reset_password_from_key": "http://localhost:5173/account/password/reset/key/{key}",
+    "account_signup": "http://localhost:5173/account/signup",
+}

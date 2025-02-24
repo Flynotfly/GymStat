@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     'user',
     'debug_toolbar',
     'rest_framework',
+    'allauth.account',
+    'allauth.headless',
 ]
 
 MIDDLEWARE = [
