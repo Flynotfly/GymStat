@@ -21,6 +21,7 @@ services:
         restart: always
         volumes:
             - ./config:/code/config
+            - uwsgi_socket:/code/gymstat
         environment:
             - DJANGO_SETTINGS_MODULE=gymstat.settings.prod
             - POSTGRES_DB=postgres
@@ -37,7 +38,10 @@ services:
             - ./config/nginx:/etc/nginx/templates
             - ./frontend/build:/code/frontend/build
             - /etc/letsencrypt:/etc/letsencrypt:ro
-            - ./gymstat:/code/gymstat
+            - uwsgi_socket:/code/gymstat:ro
         ports:
             - "80:80"
             - "443:443"
+
+volumes:
+    uwsgi_socket:
