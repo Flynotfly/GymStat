@@ -21,7 +21,7 @@ services:
         restart: always
         volumes:
             - ./config:/code/config
-            - ./gymstat:/code
+            - ./gymstat:/code/gymstat
         environment:
             - DJANGO_SETTINGS_MODULE=gymstat.settings.prod
             - POSTGRES_DB=postgres
