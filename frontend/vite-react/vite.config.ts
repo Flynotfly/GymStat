@@ -11,6 +11,6 @@ const __dirname = path.dirname(__filename);
 export default defineConfig({
   plugins: [react()],
   build: {
-    outDir: path.resolve(__dirname, '../build'),
+    outDir: path.resolve(__dirname, './build'),
   },
 })
