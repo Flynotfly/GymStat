@@ -20,7 +20,6 @@ services:
         command: ["./wait-for-it.sh", "db:5432", "--", "uwsgi", "--ini", "/code/config/uwsgi/uwsgi.ini"]
         restart: always
         volumes:
-            - ./gymstat:/code/gymstat
             - ./config:/code/config
         environment:
             - DJANGO_SETTINGS_MODULE=gymstat.settings.prod
