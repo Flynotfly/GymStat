@@ -14,6 +14,5 @@ RUN pip install -r requirements.txt
 # Copy the Django project
 COPY . .
 
-COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/code/entrypoint.sh"]
