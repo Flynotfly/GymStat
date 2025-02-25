@@ -16,9 +16,7 @@ services:
             - ./data/cache:/data
             
     web:
-        build:
-            context: ./gymstat
-            dockerfile: Dockerfile
+        image: ${DOCKERHUB_USERNAME}/gymstat-web:${TAG}
         command: ["./wait-for-it.sh", "db:5432", "--", "uwsgi", "--ini", "/code/config/uwsgi/uwsgi.ini"]
         restart: always
         volumes:
@@ -36,9 +34,7 @@ services:
             - cache
         
     nginx:
-        build:
-            context: .
-            dockerfile: docker/nginx.Dockerfile
+        image: ${DOCKERHUB_USERNAME}/gymstat-nginx:${TAG}
         restart: always
         volumes:
             - uwsgi_socket:/run/uwsgi:ro
