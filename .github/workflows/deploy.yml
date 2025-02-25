@@ -47,10 +47,11 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       
       - name: Build and push web image
+        working-directory: gymstat
         run: |
           docker build \
             -t ${{ secrets.DOCKERHUB_USERNAME }}/gymstat-web:${{ steps.version.outputs.new_version }} \
-            -f gymstat/Dockerfile .
+            .
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/gymstat-web:${{ steps.version.outputs.new_version }}
       
       - name: Build and push nginx image
