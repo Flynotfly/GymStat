@@ -1,7 +1,7 @@
 # --- API Server Block: Django on backend.orange-city.ru ---
 
 upstream uwsgi_app {
-	server unix:/code/gymstat/uwsgi_app.sock;
+	server unix:/run/uwsgi/uwsgi_app.sock;
 }
 
 server {
