@@ -16,11 +16,14 @@ services:
             - ./data/cache:/data
             
     web:
-        build: ./gymstat
+        build:
+            context: ./gymstat
+            dockerfile: Dockerfile
         command: ["./wait-for-it.sh", "db:5432", "--", "uwsgi", "--ini", "/code/config/uwsgi/uwsgi.ini"]
         restart: always
         volumes:
-            - ./config:/code/config
+            - ./config/uwsgi:/code/config/uwsgi
+            - uwsgi_socket:/run/uwsgi
         environment:
             - DJANGO_SETTINGS_MODULE=gymstat.settings.prod
             - POSTGRES_DB=postgres
@@ -31,13 +34,16 @@ services:
             - cache
         
     nginx:
-        image: nginx:1.25.5
+        build:
+            context: .
+            dockerfile: docker/nginx.Dockerfile
         restart: always
         volumes:
-            - ./config/nginx:/etc/nginx/templates
-            - ./frontend/build:/code/frontend/build
+            - uwsgi_socket:/run/uwsgi:ro
             - /etc/letsencrypt:/etc/letsencrypt:ro
-            - ./gymstat:/code/gymstat
         ports:
             - "80:80"
             - "443:443"
+
+volumes:
+    uwsgi_socket:
