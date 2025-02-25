@@ -26,16 +26,16 @@ jobs:
               base_version="0.0"
           fi
           echo "Base version: $base_version"
-          latest=$(git tag --list "${base_version}.*" --sort=-v:refname | head -n 1)
+          latest=$(git tag --list "v${base_version}.*" --sort=-v:refname | head -n 1)
           if [ -z "$latest" ]; then
-              new_version="${base_version}.0"
+              new_version="v${base_version}.0"
           else
               patch=$(echo "$latest" | awk -F. '{print $3}')
               new_patch=$((patch+1))
-              new_version="${base_version}.${new_patch}"
+              new_version="v${base_version}.${new_patch}"
           fi
           echo "New version is: $new_version"
-          echo "::set-output name=new_version::$new_version"2
+          echo "::set-output name=new_version::$new_version"
         
       - name: Set up Docker buildx
         uses: docker/setup-buildx-action@v2
@@ -67,16 +67,27 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git tag ${{ steps.version.outputs.new_version }}
           git push origin ${{ steps.version.outputs.new_version }}
+      
+      - name: Creave .env file
+        run: |
+          echo "DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" > .env
+          echo "TAG=${{ steps.version.outputs.new_version }}" >> .env
+          cat .env
           
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.5.3
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          
+      - name: Create remote directories for deployment
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "mkdir -p ~/deploy/config/uwsgi"
       
       - name: Upload files to server
         run: |
           rsync -avz -e "ssh -o StrictHostKeyChecking=no" docker-compose.yml ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:~/deploy/
-          rsync -avz -e "ssh -o StrictHostKeyChecking=no" gymstat/config/uwsgi/uwsgi.ini ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:~/deploy/config/uwsgi/
+          rsync -avz -e "ssh -o StrictHostKeyChecking=no" .env ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:~/deploy/
+          rsync -avz -e "ssh -o StrictHostKeyChecking=no" config/uwsgi/uwsgi.ini ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:~/deploy/config/uwsgi/
 
       - name: Deploy new version
         run: |
