@@ -1,6 +1,9 @@
 # SQLite
 *.sqlite3
 
+# self assigned certs
+ssl/
+
 # Git
 .git
 .gitignore
