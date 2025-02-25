@@ -26,16 +26,16 @@ jobs:
               base_version="0.0"
           fi
           echo "Base version: $base_version"
-          latest=$(git tag --list "${base_version}.*" --sort=-v:refname | head -n 1)
+          latest=$(git tag --list "v${base_version}.*" --sort=-v:refname | head -n 1)
           if [ -z "$latest" ]; then
-              new_version="${base_version}.0"
+              new_version="v${base_version}.0"
           else
               patch=$(echo "$latest" | awk -F. '{print $3}')
               new_patch=$((patch+1))
-              new_version="${base_version}.${new_patch}"
+              new_version="v${base_version}.${new_patch}"
           fi
           echo "New version is: $new_version"
-          echo "::set-output name=new_version::$new_version"2
+          echo "::set-output name=new_version::$new_version"
         
       - name: Set up Docker buildx
         uses: docker/setup-buildx-action@v2
