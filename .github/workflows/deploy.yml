@@ -11,33 +11,76 @@ jobs:
     runs-on: ubuntu-latest
         
     steps:
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v3
-        
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
         with:
-          node-version: '20.18'
+          persist-credentials: false
       
-      - name: Install dependencies and build Vite React
-        working-directory: frontend/vite-react
+      - name: Determine new version
+        id: version
         run: |
-          npm ci
-          npm run build
+          if [ -f VERSION ]; then
+              base_version=$(cat VERSION)
+          else
+              echo "VERSION file not found, defaulting to 0.0"
+              base_version="0.0"
+          fi
+          echo "Base version: $base_version"
+          latest=$(git tag --list "${base_version}.*" --sort=-v:refname | head -n 1)
+          if [ -z "$latest" ]; then
+              new_version="${base_version}.0"
+          else
+              patch=$(echo "$latest" | awk -F. '{print $3}')
+              new_patch=$((patch+1))
+              new_version="${base_version}.${new_patch}"
+          fi
+          echo "New version is: $new_version"
+          echo "::set-output name=new_version::$new_version"2
+        
+      - name: Set up Docker buildx
+        uses: docker/setup-buildx-action@v2
+        
+      - name: Log in to Docker hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      
+      - name: Build and push web image
+        run: |
+          docker build \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/gymstat-web:${{ steps.version.outputs.new_version }} \
+            -f gymstat/Dockerfile .
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/gymstat-web:${{ steps.version.outputs.new_version }}
+      
+      - name: Build and push nginx image
+        run: |
+          docker build \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/gymstat-nginx:${{ steps.version.outputs.new_version }} \
+            -f docker/nginx.Dockerfile .
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/gymstat-nginx:${{ steps.version.outputs.new_version }}
+      
+      - name: Create and push git tag
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git tag ${{ steps.version.outputs.new_version }}
+          git push origin ${{ steps.version.outputs.new_version }}
           
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.5.3
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
       
-      - name: Upload build files to server
+      - name: Upload files to server
         run: |
-          rsync -avz -e "ssh -o StrictHostKeyChecking=no" --delete frontend/build ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:~/GymStat/frontend
+          rsync -avz -e "ssh -o StrictHostKeyChecking=no" docker-compose.yml ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:~/deploy/
+          rsync -avz -e "ssh -o StrictHostKeyChecking=no" gymstat/config/uwsgi/uwsgi.ini ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:~/deploy/config/uwsgi/
 
-      - name: Deploy to production server
+      - name: Deploy new version
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
-            cd ~/GymStat
-            git pull origin deploy
-            docker-compose up -d --build
+            cd ~/deploy
+            docker-compose pull
+            docker-compose up -d
           EOF
