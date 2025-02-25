@@ -67,6 +67,12 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git tag ${{ steps.version.outputs.new_version }}
           git push origin ${{ steps.version.outputs.new_version }}
+      
+      - name: Creave .env file
+        run: |
+          echo "DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" > .env
+          echo "TAG=${{ steps.version.outputs.new_version }}" >> .env
+          cat .env
           
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.5.3
@@ -80,6 +86,7 @@ jobs:
       - name: Upload files to server
         run: |
           rsync -avz -e "ssh -o StrictHostKeyChecking=no" docker-compose.yml ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:~/deploy/
+          rsync -avz -e "ssh -o StrictHostKeyChecking=no" .env ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:~/deploy/
           rsync -avz -e "ssh -o StrictHostKeyChecking=no" config/uwsgi/uwsgi.ini ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:~/deploy/config/uwsgi/
 
       - name: Deploy new version
