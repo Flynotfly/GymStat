@@ -18,7 +18,7 @@ import AppTheme from '../shared-theme/AppTheme';
 import ColorModeSelect from '../shared-theme/ColorModeSelect';
 import { GoogleIcon, SitemarkIcon } from './components/CustomIcons';
 import {useNavigate} from "react-router-dom";
-import {APILogin, fetchCsrf} from "../api.ts";
+import {fetchCsrf} from "../api.ts";
 import {useEffect} from "react";
 import {getCookie} from "../utils.ts";
 import {useConfig} from "../auth";
@@ -71,15 +71,18 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
-  const [formError, setFormError] = React.useState('');
+  // const [formError, setFormError] = React.useState('');
   const [open, setOpen] = React.useState(false);
   const [fetching, setFetching] = React.useState(false);
+
+  // @ts-ignore: Unused variable
   const config = useConfig();
 
 
   // const { user, setUser } = useContext(UserContext);
   // const { session, setSession } = useContext(SessionContext);
 
+  // @ts-ignore: Unused variable
   const navigate = useNavigate();
 
   useEffect(() => {
