@@ -1,8 +1,8 @@
 from django.contrib.auth import views as auth_views
-from django.urls import path, include
+from django.urls import include, path
 
-from .api import urls as api_urls
 from . import views
+from .api import urls as api_urls
 
 app_name = "user"
 

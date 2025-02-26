@@ -2,11 +2,11 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.db import models
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, render, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
-from .models import Training, ExerciseType
-from .forms import TrainingForm, ExerciseFormSet, ExerciseTypeForm
+from .forms import ExerciseFormSet, ExerciseTypeForm, TrainingForm
+from .models import ExerciseType, Training
 
 
 @login_required

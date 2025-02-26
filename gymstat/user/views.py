@@ -2,9 +2,9 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db import models
 from django.http import JsonResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404, render
 
-from training.models import Training, ExerciseType
+from training.models import ExerciseType, Training
 
 
 @login_required

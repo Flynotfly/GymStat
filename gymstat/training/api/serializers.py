@@ -1,8 +1,7 @@
 from django.db.models import Max
-
 from rest_framework import serializers
 
-from ..models import Training, Exercise
+from ..models import Exercise, Training
 
 
 class ExerciseSerializer(serializers.ModelSerializer):

@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Training, Exercise, ExerciseType
+from .models import Exercise, ExerciseType, Training
 
 
 class TrainingForm(forms.ModelForm):
