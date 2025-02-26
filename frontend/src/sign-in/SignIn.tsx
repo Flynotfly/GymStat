@@ -21,6 +21,8 @@ import {useNavigate} from "react-router-dom";
 import {APILogin, fetchCsrf} from "../api.ts";
 import {useEffect} from "react";
 import {getCookie} from "../utils.ts";
+import {useConfig} from "../auth";
+import {login} from "../lib/allauth";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -69,7 +71,11 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
+  const [formError, setFormError] = React.useState('');
   const [open, setOpen] = React.useState(false);
+  const [fetching, setFetching] = React.useState(false);
+  const config = useConfig();
+
 
   // const { user, setUser } = useContext(UserContext);
   // const { session, setSession } = useContext(SessionContext);
@@ -114,9 +120,12 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
 
     const username = emailField.toString()
     const password = passwordField.toString()
-    APILogin(csrfToken, username, password)
-      .then(() => navigate("/app"))
-      .catch(err =>  console.log('login error: ', err))
+    setFetching(true);
+    login({username, password}).then(() => setFetching(false))
+      .catch((e) => {
+        console.error(e);
+        window.alert(e)
+      })
   };
 
   const validateInputs = () => {
@@ -214,6 +223,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
               type="submit"
               fullWidth
               variant="contained"
+              disabled={fetching}
             >
               Sign in
             </Button>
