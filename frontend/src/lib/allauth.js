@@ -9,7 +9,7 @@ export const Client = Object.freeze({
 
 export const settings = {
   client: Client.BROWSER,
-  baseUrl: `${serverDomain}${Client.BROWSER}/v1`,
+  baseUrl: `${serverDomain}_allauth/${Client.BROWSER}/v1`,
   withCredentials: false
 }
 
