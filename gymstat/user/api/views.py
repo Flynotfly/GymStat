@@ -62,7 +62,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 
 
-@method_decorator(ensure_csrf_cookie, name='dispatch')
+@method_decorator(ensure_csrf_cookie, name="dispatch")
 class CsrfTokenAPIView(APIView):
     permission_classes = [AllowAny]
 
@@ -81,4 +81,6 @@ class LoginAPIView(APIView):
             login(request, user)
             return Response({"detail": "Login successful"}, status=status.HTTP_200_OK)
         else:
-            return Response({"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response(
+                {"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED
+            )

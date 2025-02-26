@@ -16,12 +16,10 @@ def training_edit(request, pk=None):
     else:
         training = None
 
-    if request.method == 'POST':
+    if request.method == "POST":
         training_form = TrainingForm(request.POST, instance=training)
         exercise_formset = ExerciseFormSet(
-            request.POST,
-            instance=training,
-            form_kwargs={'user': request.user}
+            request.POST, instance=training, form_kwargs={"user": request.user}
         )
         if training_form.is_valid() and exercise_formset.is_valid():
             training = training_form.save(commit=False)
@@ -34,8 +32,7 @@ def training_edit(request, pk=None):
 
     training_form = TrainingForm(instance=training)
     exercise_formset = ExerciseFormSet(
-        instance=training,
-        form_kwargs={'user': request.user}
+        instance=training, form_kwargs={"user": request.user}
     )
     exercise_grouped_formset, exercise_types = exercise_formset.grouped_by_order()
     ziped = zip(exercise_grouped_formset, exercise_types)
@@ -44,31 +41,29 @@ def training_edit(request, pk=None):
 
     return render(
         request,
-        'training/edit.html',
+        "training/edit.html",
         {
-            'training': training,
-            'training_form': training_form,
-            'ziped': ziped,
-            'management_form': management_form,
-            'empty_form': empty_form,
-            'user_has_previous_training': Training.objects.filter(owner=request.user).exists(),
-        }
+            "training": training,
+            "training_form": training_form,
+            "ziped": ziped,
+            "management_form": management_form,
+            "empty_form": empty_form,
+            "user_has_previous_training": Training.objects.filter(
+                owner=request.user
+            ).exists(),
+        },
     )
 
 
 @login_required
 def training_details(request, pk):
-    training = get_object_or_404(
-        Training,
-        pk=pk,
-        owner=request.user
-    )
+    training = get_object_or_404(Training, pk=pk, owner=request.user)
     return render(
         request,
-        'training/view.html',
+        "training/view.html",
         {
-            'training': training,
-        }
+            "training": training,
+        },
     )
 
 
@@ -77,7 +72,7 @@ def training_details(request, pk):
 def training_delete(request, pk):
     training = get_object_or_404(Training, pk=pk, owner=request.user)
     training.delete()
-    return redirect('user:trainings')
+    return redirect("user:trainings")
 
 
 @login_required
@@ -89,7 +84,7 @@ def create_exercise(request, pk=None):
     else:
         exercise = None
 
-    if request.method == 'POST':
+    if request.method == "POST":
         exercise_form = ExerciseTypeForm(request.POST, instance=exercise)
         if exercise_form.is_valid():
             exercise = exercise_form.save(commit=False)
@@ -101,11 +96,11 @@ def create_exercise(request, pk=None):
     exercise_form = ExerciseTypeForm(instance=exercise)
     return render(
         request,
-        'exercise/edit.html',
+        "exercise/edit.html",
         {
-            'exercise': exercise,
-            'exercise_form': exercise_form,
-        }
+            "exercise": exercise,
+            "exercise_form": exercise_form,
+        },
     )
 
 
@@ -115,13 +110,12 @@ def exercise_details(request, pk):
         user = request.user
 
     exercise = get_object_or_404(
-        ExerciseType,
-        models.Q(pk=pk) & (models.Q(private=False) | models.Q(owner=user))
+        ExerciseType, models.Q(pk=pk) & (models.Q(private=False) | models.Q(owner=user))
     )
     return render(
         request,
-        'exercise/view.html',
+        "exercise/view.html",
         {
-            'exercise': exercise,
-        }
+            "exercise": exercise,
+        },
     )
