@@ -1,5 +1,7 @@
 import { getCSRFToken } from './django.js'
 
+const serverDomain = import.meta.env.VITE_BASE_URL
+
 export const Client = Object.freeze({
   APP: 'app',
   BROWSER: 'browser'
@@ -7,7 +9,7 @@ export const Client = Object.freeze({
 
 export const settings = {
   client: Client.BROWSER,
-  baseUrl: `/_allauth/${Client.BROWSER}/v1`,
+  baseUrl: `${serverDomain}${Client.BROWSER}/v1`,
   withCredentials: false
 }
 
