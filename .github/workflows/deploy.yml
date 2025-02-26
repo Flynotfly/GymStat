@@ -48,12 +48,13 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       
       - name: Build and push web image
-        working-directory: gymstat
-        run: |
-          docker build \
-            -t ${{ secrets.DOCKERHUB_USERNAME }}/gymstat-web:${{ steps.version.outputs.new_version }} \
-            .
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/gymstat-web:${{ steps.version.outputs.new_version }}
+        uses: docker/build-push-action@v3
+        with:
+          context: gymstat
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/gymstat-web:${{ steps.version.outputs.new_version }}
+          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/gymstat-web:cache
+          cache-to: type=inline
       
       - name: Build and push nginx image
         run: |
