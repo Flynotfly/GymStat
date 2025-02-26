@@ -59,7 +59,7 @@ jobs:
         with:
           context: gymstat
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/gymstat-web:${{ steps.version.outputs.new_version }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/gymstat-web:${{ needs.version.outputs.new_version }}
           cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/gymstat-web:cache
           cache-to: type=inline
   
@@ -83,7 +83,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          dockerfile: docker/nginx.Dockerfile
+          file: docker/nginx.Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/gymstat-nginx:${{ needs.version.outputs.new_version }}
           cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/gymstat-nginx:cache
@@ -100,13 +100,13 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git tag ${{ steps.version.outputs.new_version }}
-          git push origin ${{ steps.version.outputs.new_version }} 
+          git tag ${{ needs.version.outputs.new_version }}
+          git push origin ${{ needs.version.outputs.new_version }}
       
       - name: Creave .env file
         run: |
           echo "DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" > .env
-          echo "TAG=${{ steps.version.outputs.new_version }}" >> .env
+          echo "TAG=${{ needs.version.outputs.new_version }}" >> .env
           cat .env
           
       - name: Set up SSH
