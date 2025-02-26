@@ -6,8 +6,8 @@ import { useAuthChange, AuthChangeEvent, useAuthStatus } from './hooks'
 import { Flows, AuthenticatorType } from '../lib/allauth'
 
 export const URLs = Object.freeze({
-  LOGIN_URL: '/account/login',
-  LOGIN_REDIRECT_URL: '/calculator',
+  LOGIN_URL: '/sign-in',
+  LOGIN_REDIRECT_URL: '/app',
   LOGOUT_REDIRECT_URL: '/'
 })
 
