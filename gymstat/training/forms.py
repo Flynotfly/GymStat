@@ -75,8 +75,8 @@ class ExerciseForm(forms.ModelForm):
         user = kwargs.pop("user", None)
         super().__init__(*args, **kwargs)
         if user:
-            self.fields["exercise_type"].queryset = ExerciseType.objects.filter(
-                bookmarked=user
+            self.fields["exercise_type"].queryset = (
+                ExerciseType.objects.filter(bookmarked=user)
             )
         else:
             self.fields["exercise_type"].queryset = ExerciseType.objects.none()

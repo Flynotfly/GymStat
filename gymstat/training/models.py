@@ -50,7 +50,9 @@ class ExerciseType(models.Model):
         on_delete=models.CASCADE,
     )
     bookmarked = models.ManyToManyField(
-        settings.AUTH_USER_MODEL, related_name="bookmarked_exercises", blank=True
+        settings.AUTH_USER_MODEL,
+        related_name="bookmarked_exercises",
+        blank=True,
     )
     name = models.CharField(max_length=50)
     private = models.BooleanField(default=True)

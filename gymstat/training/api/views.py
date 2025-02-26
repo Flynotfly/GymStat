@@ -58,11 +58,14 @@ class GetAllTrainingsAPIView(APIView):
         trainings = Training.objects.filter(owner=request.user).all()
         if not trainings.exists():
             return Response(
-                {"error": "No trainings found"}, status=status.HTTP_404_NOT_FOUND
+                {"error": "No trainings found"},
+                status=status.HTTP_404_NOT_FOUND,
             )
 
         serializer = TrainingSummarySerializer(
-            trainings, many=True, context={"exercise_type_id": exercise_type_id}
+            trainings,
+            many=True,
+            context={"exercise_type_id": exercise_type_id},
         )
 
         return Response(serializer.data, status=status.HTTP_200_OK)

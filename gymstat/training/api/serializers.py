@@ -56,7 +56,9 @@ class TrainingSummarySerializer(serializers.ModelSerializer):
         exercises = obj.exercises.filter(exercise_type__id=exercise_type_id)
         if not exercises.exists():
             return None
-        max_weight = exercises.aggregate(max_weight=Max("weight"))["max_weight"]
+        max_weight = exercises.aggregate(max_weight=Max("weight"))[
+            "max_weight"
+        ]
         return max_weight
 
     def get_max_repetitions(self, obj):

@@ -12,7 +12,11 @@ urlpatterns = [
     path("logout/", auth_views.LogoutView.as_view(), name="logout"),
     path("trainings/", views.training_list, name="trainings"),
     path("exercises/", views.exercises_list, name="exercises"),
-    path("post/bookmark/exercise/", views.bookmark_exercise, name="bookmark_exercise"),
+    path(
+        "post/bookmark/exercise/",
+        views.bookmark_exercise,
+        name="bookmark_exercise",
+    ),
     path(
         "statistic/by_exercise_type/",
         views.exercise_type_statistic,

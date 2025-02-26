@@ -13,7 +13,12 @@ DATABASES = {
     }
 }
 
-ALLOWED_HOSTS = ["mysite.example", "localhost", "127.0.0.1", "api.mysite.example"]
+ALLOWED_HOSTS = [
+    "mysite.example",
+    "localhost",
+    "127.0.0.1",
+    "api.mysite.example",
+]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",

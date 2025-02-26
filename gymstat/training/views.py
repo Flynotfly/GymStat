@@ -23,7 +23,9 @@ def training_edit(request, pk=None):
         )
         if training_form.is_valid() and exercise_formset.is_valid():
             training = training_form.save(commit=False)
-            if not training.pk:  # Only set the owner for new training instances
+            if (
+                not training.pk
+            ):  # Only set the owner for new training instances
                 training.owner = request.user
             training.save()
             exercise_formset.instance = training
@@ -34,7 +36,9 @@ def training_edit(request, pk=None):
     exercise_formset = ExerciseFormSet(
         instance=training, form_kwargs={"user": request.user}
     )
-    exercise_grouped_formset, exercise_types = exercise_formset.grouped_by_order()
+    exercise_grouped_formset, exercise_types = (
+        exercise_formset.grouped_by_order()
+    )
     ziped = zip(exercise_grouped_formset, exercise_types)
     management_form = exercise_formset.management_form
     empty_form = exercise_formset.empty_form
@@ -80,7 +84,9 @@ def create_exercise(request, pk=None):
     if pk:
         exercise = get_object_or_404(ExerciseType, pk=pk)
         if exercise.owner != request.user and exercise.private:
-            raise PermissionDenied("You don't have permission to edit exercise")
+            raise PermissionDenied(
+                "You don't have permission to edit exercise"
+            )
     else:
         exercise = None
 
@@ -110,7 +116,8 @@ def exercise_details(request, pk):
         user = request.user
 
     exercise = get_object_or_404(
-        ExerciseType, models.Q(pk=pk) & (models.Q(private=False) | models.Q(owner=user))
+        ExerciseType,
+        models.Q(pk=pk) & (models.Q(private=False) | models.Q(owner=user)),
     )
     return render(
         request,
