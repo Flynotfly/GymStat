@@ -39,7 +39,7 @@ jobs:
           echo "::set-output name=new_version::$new_version"
 
   build-web:
-    needs: vesion
+    needs: version
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -64,7 +64,7 @@ jobs:
           cache-to: type=inline
   
   build-nginx:
-    needs: vesion
+    needs: version
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
