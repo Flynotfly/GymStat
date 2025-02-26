@@ -40,12 +40,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.postgres',
+    'django.contrib.sites',
     'corsheaders',
     'redisboard',
     'training',
     'user',
     'debug_toolbar',
     'rest_framework',
+    'allauth',
+    'allauth.account',
+    'allauth.headless',
 ]
 
 MIDDLEWARE = [
@@ -58,6 +62,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'gymstat.urls'
@@ -86,6 +91,11 @@ ASGI_APPLICATION = 'gymstat.asgi.application'
 
 
 AUTH_USER_MODEL = "user.CustomUser"
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -156,3 +166,25 @@ CACHES = {
         'LOCATION': 'redis://127.0.0.1:6379',
     }
 }
+
+SITE_ID = 1
+
+# allauth settings
+# https://docs.allauth.org/en/latest/account/configuration.html
+
+ACCOUNT_LOGIN_METHODS = {'email'}
+ACCOUNT_CHANGE_EMAIL = True
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 1
+ACCOUNT_EMAIL_NOTIFICATIONS = True
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_UNKNOWN_ACCOUNTS = False
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
+ACCOUNT_LOGIN_ON_PASSWORD_RESET = True
+ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
+ACCOUNT_PRESERVE_USERNAME_CASING = False
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+HEADLESS_ONLY = True
+ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*", "first_name*", "last_name*"]

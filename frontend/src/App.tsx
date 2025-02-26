@@ -14,6 +14,7 @@ import Header from "./dashboard/components/Header.tsx";
 import {alpha} from "@mui/material/styles";
 import {lazy} from "react";
 import Copyright from "./dashboard/internals/components/Copyright.tsx";
+import {AnonymousRoute} from "./auth";
 
 const xThemeComponents = {
   ...chartsCustomizations,
@@ -107,7 +108,7 @@ function RouteLayout(props: { disableCustomTheme?: boolean }) {
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Promo/>,
+    element: <Promo />,
   },
   {
     path: "/app",
@@ -120,13 +121,17 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "/sign-in",
-    element: <SignIn/>,
+    path: "/account/sign-in",
+    element: <AnonymousRoute><SignIn/></AnonymousRoute>,
   },
   {
-    path: "/sign-up",
-    element: <SignUp/>,
-  }
+    path: "/account/sign-up",
+    element: <AnonymousRoute><SignUp/></AnonymousRoute>,
+  },
+  // {
+  //   path: "/account/logout",
+  //   element: <AnonymousRoute></AnonymousRoute>
+  // }
 ]);
 
 
