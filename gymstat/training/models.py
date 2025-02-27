@@ -6,7 +6,7 @@ from django.urls import reverse
 class Training(models.Model):
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        related_name='trainings',
+        related_name="trainings",
         on_delete=models.CASCADE,
     )
     conducted = models.DateTimeField()
@@ -15,25 +15,23 @@ class Training(models.Model):
     description = models.TextField(blank=True, null=True)
 
     class Meta:
-        indexes = [models.Index(fields=['-conducted'])]
-        ordering = ['-conducted']
+        indexes = [models.Index(fields=["-conducted"])]
+        ordering = ["-conducted"]
 
     def get_absolute_url(self):
-        return reverse('training:details', args=[self.id])
+        return reverse("training:details", args=[self.id])
 
 
 class Exercise(models.Model):
     training = models.ForeignKey(
-        Training,
-        related_name='exercises',
-        on_delete=models.CASCADE
+        Training, related_name="exercises", on_delete=models.CASCADE
     )
     exercise_type = models.ForeignKey(
-        'ExerciseType',
-        related_name='exercises',
+        "ExerciseType",
+        related_name="exercises",
         on_delete=models.SET_NULL,
         null=True,
-        blank=True
+        blank=True,
     )
     order = models.PositiveIntegerField()
     suborder = models.PositiveIntegerField()
@@ -41,20 +39,20 @@ class Exercise(models.Model):
     repetitions = models.PositiveIntegerField()
 
     class Meta:
-        indexes = [models.Index(fields=['order', 'suborder'])]
-        ordering = ['order', 'suborder']
+        indexes = [models.Index(fields=["order", "suborder"])]
+        ordering = ["order", "suborder"]
 
 
 class ExerciseType(models.Model):
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        related_name='owned_exercises',
+        related_name="owned_exercises",
         on_delete=models.CASCADE,
     )
     bookmarked = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
-        related_name='bookmarked_exercises',
-        blank=True
+        related_name="bookmarked_exercises",
+        blank=True,
     )
     name = models.CharField(max_length=50)
     private = models.BooleanField(default=True)
@@ -64,10 +62,10 @@ class ExerciseType(models.Model):
         return self.name
 
     def __repr__(self):
-        return f'Exercise {self.pk} - {self.name}'
+        return f"Exercise {self.pk} - {self.name}"
 
     def get_absolute_url(self):
-        return reverse('training:exercise_detail', args=[self.id])
+        return reverse("training:exercise_detail", args=[self.id])
 
     class Meta:
-        ordering = ['name']
+        ordering = ["name"]

@@ -1,14 +1,13 @@
 from django.db.models import Max
-
 from rest_framework import serializers
 
-from ..models import Training, Exercise
+from ..models import Exercise, Training
 
 
 class ExerciseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Exercise
-        fields = ['exercise_type', 'order', 'weight', 'repetitions']
+        fields = ["exercise_type", "order", "weight", "repetitions"]
 
 
 class TrainingSerializer(serializers.ModelSerializer):
@@ -16,7 +15,7 @@ class TrainingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Training
-        fields = ['conducted', 'description', 'exercises']
+        fields = ["conducted", "description", "exercises"]
 
 
 class TrainingSummarySerializer(serializers.ModelSerializer):
@@ -26,30 +25,40 @@ class TrainingSummarySerializer(serializers.ModelSerializer):
     max_weight = serializers.SerializerMethodField()
     max_repetitions = serializers.SerializerMethodField()
 
-
     class Meta:
         model = Training
-        fields = ['id', 'date', 'time', 'title', 'duration', 'quantity_exercises', 'max_weight', 'max_repetitions']
+        fields = [
+            "id",
+            "date",
+            "time",
+            "title",
+            "duration",
+            "quantity_exercises",
+            "max_weight",
+            "max_repetitions",
+        ]
 
     def get_date(self, obj):
-        return obj.conducted.strftime('%Y-%m-%d') if obj.conducted else None
+        return obj.conducted.strftime("%Y-%m-%d") if obj.conducted else None
 
     def get_time(self, obj):
-        return obj.conducted.strftime('%H:%S') if obj.conducted else None
+        return obj.conducted.strftime("%H:%S") if obj.conducted else None
 
     def get_quantity_exercises(self, obj):
         return obj.exercises.count()
 
     # TODO: optimise get_max_weight and get_max_repetitions
     def get_max_weight(self, obj):
-        exercise_type_id = self.context.get('exercise_type_id')
+        exercise_type_id = self.context.get("exercise_type_id")
         if not exercise_type_id:
             return None
 
         exercises = obj.exercises.filter(exercise_type__id=exercise_type_id)
         if not exercises.exists():
             return None
-        max_weight = exercises.aggregate(max_weight=Max('weight'))['max_weight']
+        max_weight = exercises.aggregate(max_weight=Max("weight"))[
+            "max_weight"
+        ]
         return max_weight
 
     def get_max_repetitions(self, obj):
@@ -57,9 +66,9 @@ class TrainingSummarySerializer(serializers.ModelSerializer):
         if not max_weight:
             return None
 
-        exercise_type_id = self.context.get('exercise_type_id')
+        exercise_type_id = self.context.get("exercise_type_id")
         exercises = obj.exercises.filter(exercise_type__id=exercise_type_id)
         max_repetitions = exercises.filter(weight=max_weight).aggregate(
-            max_repetitions=Max('repetitions')
-        )['max_repetitions']
+            max_repetitions=Max("repetitions")
+        )["max_repetitions"]
         return max_repetitions
