@@ -4,6 +4,12 @@
 # self assigned certs
 ssl/
 
+# configuration files
+.flake8
+.pre-commit-config.yaml
+.safety-project.ini
+pyproject.toml
+
 # Git
 .git
 .gitignore
