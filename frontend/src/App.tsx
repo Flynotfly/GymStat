@@ -14,7 +14,7 @@ import Header from "./dashboard/components/Header.tsx";
 import {alpha} from "@mui/material/styles";
 import {lazy} from "react";
 import Copyright from "./dashboard/internals/components/Copyright.tsx";
-import {AnonymousRoute, AuthChangeRedirector} from "./auth";
+import {AnonymousRoute, AuthChangeRedirector, AuthenticatedRoute} from "./auth";
 
 const xThemeComponents = {
   ...chartsCustomizations,
@@ -113,7 +113,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/app",
-    element: <AuthChangeRedirector><RouteLayout/></AuthChangeRedirector>,
+    element: <AuthChangeRedirector><AuthenticatedRoute><RouteLayout/></AuthenticatedRoute></AuthChangeRedirector>,
     children: [
       { index: true, element: <Home/> },
       { path: "trainings", element: <Training/> },
