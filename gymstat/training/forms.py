@@ -1,62 +1,85 @@
 from django import forms
 
-from .models import Training, Exercise, ExerciseType
+from .models import Exercise, ExerciseType, Training
 
 
 class TrainingForm(forms.ModelForm):
     class Meta:
         model = Training
-        fields = ['conducted', 'description']
+        fields = ["conducted", "description"]
         widgets = {
-            'conducted': forms.DateTimeInput(attrs={
-                'type': 'datetime-local',
-                'class': 'form-control',
-                'placeholder': 'YYYY-MM-DD HH:MM',
-            }),
-            'description': forms.Textarea(attrs={
-                'class': 'form-control',
-                'rows': 3,
-                'placeholder': 'Description of the trainings session...',
-            }),
+            "conducted": forms.DateTimeInput(
+                attrs={
+                    "type": "datetime-local",
+                    "class": "form-control",
+                    "placeholder": "YYYY-MM-DD HH:MM",
+                }
+            ),
+            "description": forms.Textarea(
+                attrs={
+                    "class": "form-control",
+                    "rows": 3,
+                    "placeholder": "Description of the trainings session...",
+                }
+            ),
         }
 
 
 class ExerciseForm(forms.ModelForm):
-    template_name_div = 'training/forms/exercise.html'
+    template_name_div = "training/forms/exercise.html"
 
     class Meta:
         model = Exercise
-        fields = ['training', 'exercise_type', 'order', 'suborder', 'weight', 'repetitions']
+        fields = [
+            "training",
+            "exercise_type",
+            "order",
+            "suborder",
+            "weight",
+            "repetitions",
+        ]
         widgets = {
-            'training': forms.HiddenInput(),
-            'exercise_type': forms.Select(attrs={
-                'class': 'form-control exercise-type-input',
-                'x-model': 'exercise_type',
-                'placeholder': 'Choose exercise type',
-            }),
-            'order': forms.HiddenInput(attrs={
-                'class': 'order-input',
-            }),
-            'suborder': forms.HiddenInput(attrs={
-                'class': 'suborder-input',
-            }),
-            'weight': forms.NumberInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Weight in kg',
-            }),
-            'repetitions': forms.NumberInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Number of repetitions',
-            }),
+            "training": forms.HiddenInput(),
+            "exercise_type": forms.Select(
+                attrs={
+                    "class": "form-control exercise-type-input",
+                    "x-model": "exercise_type",
+                    "placeholder": "Choose exercise type",
+                }
+            ),
+            "order": forms.HiddenInput(
+                attrs={
+                    "class": "order-input",
+                }
+            ),
+            "suborder": forms.HiddenInput(
+                attrs={
+                    "class": "suborder-input",
+                }
+            ),
+            "weight": forms.NumberInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Weight in kg",
+                }
+            ),
+            "repetitions": forms.NumberInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Number of repetitions",
+                }
+            ),
         }
 
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user', None)
+        user = kwargs.pop("user", None)
         super().__init__(*args, **kwargs)
         if user:
-            self.fields['exercise_type'].queryset = ExerciseType.objects.filter(bookmarked=user)
+            self.fields["exercise_type"].queryset = (
+                ExerciseType.objects.filter(bookmarked=user)
+            )
         else:
-            self.fields['exercise_type'].queryset = ExerciseType.objects.none()
+            self.fields["exercise_type"].queryset = ExerciseType.objects.none()
 
 
 class GroupByOrderFormset(forms.BaseInlineFormSet):
@@ -70,7 +93,7 @@ class GroupByOrderFormset(forms.BaseInlineFormSet):
                     data.append([form])
                     exercise_types.append(form.instance.exercise_type.id)
                 else:
-                    data[order-1].append(form)
+                    data[order - 1].append(form)
             return data, exercise_types
         return None
 
@@ -88,13 +111,17 @@ ExerciseFormSet = forms.inlineformset_factory(
 class ExerciseTypeForm(forms.ModelForm):
     class Meta:
         model = ExerciseType
-        fields = ['name', 'private']
+        fields = ["name", "private"]
         widgets = {
-            'name': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Enter name of exercise',
-            }),
-            'private': forms.CheckboxInput(attrs={
-                'class': 'form-check-input',
-            }),
+            "name": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Enter name of exercise",
+                }
+            ),
+            "private": forms.CheckboxInput(
+                attrs={
+                    "class": "form-check-input",
+                }
+            ),
         }

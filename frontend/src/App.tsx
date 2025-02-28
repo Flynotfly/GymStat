@@ -108,7 +108,7 @@ function RouteLayout(props: { disableCustomTheme?: boolean }) {
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <AuthChangeRedirector><Promo /></AuthChangeRedirector>,
+    element: <AuthChangeRedirector><AnonymousRoute><Promo /></AnonymousRoute></AuthChangeRedirector>,
   },
   {
     path: "/app",
