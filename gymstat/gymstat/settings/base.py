@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 from decouple import config
@@ -194,3 +195,49 @@ ACCOUNT_SIGNUP_FIELDS = [
     "first_name*",
     "last_name*",
 ]
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,  # preserves any default loggers
+    'formatters': {
+        'verbose': {
+            'format': '[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s',
+            'datefmt': '%Y-%m-%d %H:%M:%S',
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s',
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',  # capture all logs at DEBUG level and above
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'debug.log'),
+            'formatter': 'verbose',
+        },
+        'console': {
+            'level': 'DEBUG',  # useful during testing or when streaming logs to your console
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        # Default Django logger
+        'django': {
+            'handlers': ['file', 'console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        # Allauth and its submodules for detailed debug logging
+        'allauth': {
+            'handlers': ['file', 'console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'allauth.account': {
+            'handlers': ['file', 'console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    },
+}
