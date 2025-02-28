@@ -30,6 +30,7 @@ const Tasks = lazy(() => import("./pages/Tasks.tsx"));
 const SignIn = lazy(() => import("./sign-in/SignIn.tsx"));
 const SignUp = lazy(() => import("./sign-up/SignUp.tsx"));
 const Promo = lazy(() => import("./pages/Promo.tsx"));
+const VerifyEmail = lazy(() => import("./pages/VerifyEmail.tsx"));
 
 // function useRouteMatch(patterns: readonly string[]) {
 //   const {pathname} = useLocation();
@@ -128,6 +129,10 @@ const router = createBrowserRouter([
     path: "/sign-up",
     element: <AuthChangeRedirector><AnonymousRoute><SignUp/></AnonymousRoute></AuthChangeRedirector>,
   },
+  {
+    path: "/verify-email",
+    element: <VerifyEmail/>
+  }
   // {
   //   path: "/account/logout",
   //   element: <AnonymousRoute></AnonymousRoute>
