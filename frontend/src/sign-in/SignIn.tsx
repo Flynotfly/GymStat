@@ -121,10 +121,10 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
       return;
     }
 
-    const username = emailField.toString()
+    const email = emailField.toString()
     const password = passwordField.toString()
     setFetching(true);
-    login({username, password}).then(() => setFetching(false))
+    login({email, password}).then(() => setFetching(false))
       .catch((e) => {
         console.error(e);
         window.alert(e)
