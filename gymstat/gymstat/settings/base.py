@@ -10,7 +10,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
-import os
 from pathlib import Path
 
 from decouple import config
@@ -198,7 +197,7 @@ ACCOUNT_SIGNUP_FIELDS = [
 
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': False,  # preserves any default loggers
+    'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
             'format': '[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s',
@@ -216,20 +215,18 @@ LOGGING = {
         },
     },
     'loggers': {
-        # Default Django logger
         'django': {
-            'handlers': ['file', 'console'],
+            'handlers': ['console'],
             'level': 'INFO',
             'propagate': True,
         },
-        # Allauth and its submodules for detailed debug logging
         'allauth': {
-            'handlers': ['file', 'console'],
+            'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': False,
         },
         'allauth.account': {
-            'handlers': ['file', 'console'],
+            'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': False,
         },
