@@ -10,7 +10,7 @@ export const Client = Object.freeze({
 export const settings = {
   client: Client.BROWSER,
   baseUrl: `${serverDomain}_allauth/${Client.BROWSER}/v1`,
-  withCredentials: false
+  withCredentials: true
 }
 
 const ACCEPT_JSON = {
@@ -128,7 +128,7 @@ async function request (method, path, data, headers) {
       // IMPORTANT!: Do NOT use `Client.APP` in a browser context, as you will
       // be vulnerable to CSRF attacks. This logic is only here for
       // development/demonstration/testing purposes...
-      options.headers['User-Agent'] = 'django-allauth example app'
+      options.headers['User-Agent'] = 'gymstatistic web app'
       const sessionToken = getSessionToken()
       if (sessionToken) {
         options.headers['X-Session-Token'] = sessionToken
