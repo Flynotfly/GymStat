@@ -9,7 +9,7 @@ import Typography from '@mui/material/Typography';
 import FacebookIcon from '@mui/icons-material/GitHub';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import TwitterIcon from '@mui/icons-material/X';
-import SitemarkIcon from './SitemarkIcon';
+import SitemarkIcon from '../../icons/SitemarkIcon.tsx';
 import { Link as RouterLink } from "react-router-dom";
 import Link from '@mui/material/Link';
 
