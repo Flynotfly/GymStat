@@ -2,8 +2,7 @@ import {styled} from "@mui/material/styles";
 import Stack from "@mui/material/Stack";
 
 const SignInContainer = styled(Stack)(({ theme }) => ({
-  height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
-  minHeight: '100%',
+  height: '100vh',
   padding: theme.spacing(2),
   overflowY: 'auto',
   [theme.breakpoints.up('sm')]: {

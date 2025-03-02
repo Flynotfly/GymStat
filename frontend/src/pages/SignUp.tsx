@@ -80,7 +80,7 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
       <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
-      <SignUpContainer direction="column" justifyContent="space-between">
+      <SignUpContainer direction="column" justifyContent="flex-start">
         <Card variant="outlined">
           <SitemarkIcon />
           <Typography
