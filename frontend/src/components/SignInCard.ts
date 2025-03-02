@@ -8,6 +8,8 @@ const SignInCard = styled(MuiCard)(({ theme }) => ({
   width: '100%',
   padding: theme.spacing(4),
   gap: theme.spacing(2),
+  margin: theme.spacing(4, 'auto'),
+  flexShrink: 0,
   [theme.breakpoints.up('sm')]: {
     maxWidth: '450px',
   },
