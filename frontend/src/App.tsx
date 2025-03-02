@@ -27,8 +27,8 @@ const Home = lazy(() => import("./pages/Home.tsx"));
 const Training = lazy(() => import("./pages/Training.tsx"));
 const Body = lazy(() => import("./pages/Body.tsx"));
 const Tasks = lazy(() => import("./pages/Tasks.tsx"));
-const SignIn = lazy(() => import("./sign-in/SignIn.tsx"));
-const SignUp = lazy(() => import("./sign-up/SignUp.tsx"));
+const SignIn = lazy(() => import("./pages/SignIn.tsx"));
+const SignUp = lazy(() => import("./pages/SignUp.tsx"));
 const Promo = lazy(() => import("./pages/Promo.tsx"));
 const VerifyEmail = lazy(() => import("./pages/VerifyEmail.tsx"));
 
