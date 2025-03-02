@@ -121,7 +121,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
       <CssBaseline enableColorScheme />
       <SignInContainer direction="column" justifyContent="flex-start">
         <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
-        <Card variant="outlined"}>
+        <Card variant="outlined">
           <SitemarkIcon />
           <Typography
             component="h1"
