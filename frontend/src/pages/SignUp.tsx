@@ -181,6 +181,7 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
                 error={firstNameError}
                 helperText={firstNameErrorMessage}
                 color={firstNameError ? 'error' : 'primary'}
+                ref={firstNameRef}
               />
             </FormControl>
             <FormControl>
@@ -195,6 +196,7 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
                 error={lastNameError}
                 helperText={lastNameErrorMessage}
                 color={lastNameError ? 'error' : 'primary'}
+                ref={lastNameRef}
               />
             </FormControl>
             <FormControl>
@@ -210,6 +212,7 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
                 error={emailError}
                 helperText={emailErrorMessage}
                 color={passwordError ? 'error' : 'primary'}
+                ref={emailRef}
               />
             </FormControl>
             <FormControl>
@@ -226,6 +229,7 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
                 error={passwordError}
                 helperText={passwordErrorMessage}
                 color={passwordError ? 'error' : 'primary'}
+                ref={passwordRef}
               />
             </FormControl>
             <FormControl>
@@ -242,6 +246,7 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
                 error={password2Error}
                 helperText={password2ErrorMessage}
                 color={password2Error ? 'error' : 'primary'}
+                ref={password2Ref}
               />
             </FormControl>
             {/*<FormControlLabel*/}
