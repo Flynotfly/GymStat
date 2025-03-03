@@ -1,5 +1,7 @@
 from .base import *
 
+from corsheaders.defaults import default_headers
+
 DEBUG = False
 
 ADMINS = [
@@ -44,6 +46,11 @@ CSRF_TRUSTED_ORIGINS = [
 SECURE_HSTS_SECONDS = 3600
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
+
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'x-email-verification-key',
+]
 
 CORS_ALLOWED_ORIGINS = [
     "https://backend.orange-city.ru",
