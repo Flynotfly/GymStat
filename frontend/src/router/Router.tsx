@@ -2,6 +2,7 @@ import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import {AnonymousRoute, AuthenticatedRoute, useConfig} from "../auth";
 import {lazy, useEffect, useState} from "react";
 import AuthenticationLayout from "./AuthenticationLayout.tsx";
+import VerifyEmail, { loader as verifyEmailLoader } from "../pages/VerifyEmail.tsx";
 
 const AppRouteLayout = lazy(() => import("./AppRouteLayout.tsx"));
 const Home = lazy(() => import("../pages/Home.tsx"));
@@ -45,6 +46,11 @@ function createRouter() {
           path: "verify-email",
           element: <VerificationEmailSent />
         },
+        {
+          path: "verify-email/:key",
+          element: <VerifyEmail />,
+          loader: verifyEmailLoader,
+        }
       ]
     }
   ]);
