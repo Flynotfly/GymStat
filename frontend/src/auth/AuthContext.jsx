@@ -1,11 +1,12 @@
 import { useEffect, createContext, useState } from 'react'
 import { getAuth, getConfig } from '../lib/allauth'
+import Loading from "../pages/Loading.js";
 
 export const AuthContext = createContext(null)
 
-function Loading () {
-  return <div>Starting...</div>
-}
+// function Loading () {
+//   return <div>Starting...</div>
+// }
 
 function LoadingError () {
   return <div>Loading error!</div>
