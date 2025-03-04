@@ -1,7 +1,7 @@
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import {AnonymousRoute, AuthenticatedRoute, useConfig} from "../auth";
 import {lazy, useEffect, useState} from "react";
-import AuthenticationLayout from "./AuthenticationLayout.tsx";
+import MainLayout from "./MainLayout.tsx";
 import VerifyEmail, { loader as verifyEmailLoader } from "../pages/VerifyEmail.tsx";
 import PageNotFound from "../pages/PageNotFound.tsx";
 
@@ -19,7 +19,7 @@ function createRouter() {
   return createBrowserRouter([
     {
       path: "/",
-      element: <AuthenticationLayout/>,
+      element: <MainLayout/>,
       errorElement: <PageNotFound/>,
       children: [
         {
