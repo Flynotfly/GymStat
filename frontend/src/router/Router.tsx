@@ -20,7 +20,6 @@ function createRouter() {
     {
       path: "/",
       element: <MainLayout/>,
-      errorElement: <PageNotFound/>,
       children: [
         {
           index: true,
