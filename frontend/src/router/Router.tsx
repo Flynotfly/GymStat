@@ -3,7 +3,6 @@ import {AnonymousRoute, AuthenticatedRoute, useConfig} from "../auth";
 import {lazy, useEffect, useState} from "react";
 import MainLayout from "./MainLayout.tsx";
 import VerifyEmail, { loader as verifyEmailLoader } from "../pages/VerifyEmail.tsx";
-import PageNotFound from "../pages/PageNotFound.tsx";
 
 const AppRouteLayout = lazy(() => import("./AppRouteLayout.tsx"));
 const Home = lazy(() => import("../pages/Home.tsx"));
@@ -20,7 +19,6 @@ function createRouter() {
     {
       path: "/",
       element: <MainLayout/>,
-      errorElement: <PageNotFound/>,
       children: [
         {
           index: true,
@@ -49,7 +47,7 @@ function createRouter() {
           element: <VerificationEmailSent />
         },
         {
-          path: "verify-email/:token",
+          path: "verify-email/:key",
           element: <VerifyEmail />,
           loader: verifyEmailLoader,
         }
