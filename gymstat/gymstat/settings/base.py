@@ -187,8 +187,7 @@ ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 HEADLESS_ONLY = True
 ACCOUNT_SIGNUP_FIELDS = [
     "email*",
-    "password1*",
-    "password2*",
+    "password*",
     "first_name*",
     "last_name*",
 ]
