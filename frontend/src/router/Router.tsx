@@ -43,11 +43,11 @@ function createRouter() {
           element: <AnonymousRoute><SignUp/></AnonymousRoute>,
         },
         {
-          path: "verify-email",
+          path: "account/verify-email",
           element: <VerificationEmailSent />
         },
         {
-          path: "verify-email/:key",
+          path: "account/verify-email/:key",
           element: <VerifyEmail />,
           loader: verifyEmailLoader,
         }
