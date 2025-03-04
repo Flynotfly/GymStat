@@ -8,7 +8,8 @@ ADMINS = [
     ("Mikhail Kudryashov", "Alteria2004@gmail.com"),
 ]
 
-ALLOWED_HOSTS = ["backend.orange-city.ru", "system.orange-city.ru", '89.110.70.211:443'] #TODO remove host after make email server
+ALLOWED_HOSTS = ["backend.orange-city.ru", "system.orange-city.ru", '89.110.70.211:443',
+                 '89.110.70.211'] #TODO remove host after make email server
 
 DATABASES = {
     "default": {
