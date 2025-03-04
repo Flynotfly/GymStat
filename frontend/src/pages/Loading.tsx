@@ -9,6 +9,7 @@ export default function Loading() {
         height: '100vh',
         alignItems: 'center',
         justifyContent: 'center',
+        backgroundColor: 'background.default' // Adapts to dark/light mode
       }}
     >
       <CircularProgress />
