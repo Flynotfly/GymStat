@@ -14,7 +14,7 @@ interface ResponseState {
 }
 
 export async function loader ({ params }: LoaderFunctionArgs) {
-  const key = params.token;
+  const key = params.key;
   const resp = await getEmailVerification(key)
   return { key, verification: resp }
 }
