@@ -49,7 +49,7 @@ function createRouter() {
           element: <VerificationEmailSent />
         },
         {
-          path: "verify-email/:key",
+          path: "verify-email/:token",
           element: <VerifyEmail />,
           loader: verifyEmailLoader,
         }
