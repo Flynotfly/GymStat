@@ -1,10 +1,27 @@
 import {AuthChangeRedirector} from "../auth";
 import {Outlet} from "react-router-dom";
+import {
+  chartsCustomizations,
+  dataGridCustomizations,
+  datePickersCustomizations, treeViewCustomizations
+} from "../dashboard/theme/customizations";
+import CssBaseline from "@mui/material/CssBaseline";
+import AppTheme from "../shared-theme/AppTheme.tsx";
 
-export default function MainLayout() {
+const xThemeComponents = {
+  ...chartsCustomizations,
+  ...dataGridCustomizations,
+  ...datePickersCustomizations,
+  ...treeViewCustomizations,
+};
+
+export default function MainLayout(props: { disableCustomTheme?: boolean }) {
   return (
     <AuthChangeRedirector>
-      <Outlet/>
+      <AppTheme {...props} themeComponents={xThemeComponents}>
+        <CssBaseline enableColorScheme />
+        <Outlet/>
+      </AppTheme>
     </AuthChangeRedirector>
   );
 }
