@@ -36,7 +36,7 @@ export default function VerifyEmail() {
   }
 
   if (response.content && [200, 401].includes(response.content.status)) {
-    return <Navigate to='/account/email' />;
+    return <Navigate to='/app' />;
   }
 
   let body = null
