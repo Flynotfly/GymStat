@@ -20,7 +20,7 @@ export async function loader ({ params }: LoaderFunctionArgs) {
 }
 
 export default function VerifyEmail() {
-  const [key, verification] = useLoaderData();
+  const {key, verification} = useLoaderData();
   const [response, setResponse] = useState<ResponseState>({ fetching: false, content: null});
 
   function submit () {
