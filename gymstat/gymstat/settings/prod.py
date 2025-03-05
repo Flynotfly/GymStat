@@ -1,12 +1,15 @@
 from .base import *
 
+from corsheaders.defaults import default_headers
+
 DEBUG = False
 
 ADMINS = [
     ("Mikhail Kudryashov", "Alteria2004@gmail.com"),
 ]
 
-ALLOWED_HOSTS = ["backend.orange-city.ru", "system.orange-city.ru"]
+ALLOWED_HOSTS = ["backend.orange-city.ru", "system.orange-city.ru", '89.110.70.211:443',
+                 '89.110.70.211'] #TODO remove host after make email server
 
 DATABASES = {
     "default": {
@@ -44,6 +47,11 @@ CSRF_TRUSTED_ORIGINS = [
 SECURE_HSTS_SECONDS = 3600
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
+
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'x-email-verification-key',
+]
 
 CORS_ALLOWED_ORIGINS = [
     "https://backend.orange-city.ru",
