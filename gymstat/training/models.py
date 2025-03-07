@@ -50,6 +50,9 @@ class ExerciseType(models.Model):
         on_delete=models.CASCADE,
     )
     name = models.CharField(max_length=50)
+    description = models.TextField(blank=True, null=True)
+    iconId = models.IntegerField(default=1)
+    iconColor = models.CharField(max_length=8, default='blue')
     base = models.BooleanField(default=False)
 
     def __str__(self):
