@@ -22,8 +22,8 @@ services:
         volumes:
             - ./config/uwsgi:/code/config/uwsgi
             - uwsgi_socket:/run/uwsgi
-            - static_volume:/code/gymstat/static
-            - media_volume:/code/gymstat/media
+            - static_volume:/code/static
+            - media_volume:/code/media
         environment:
             - DJANGO_SETTINGS_MODULE=gymstat.settings.prod
             - POSTGRES_DB=postgres
@@ -43,8 +43,8 @@ services:
         volumes:
             - uwsgi_socket:/run/uwsgi:ro
             - /etc/letsencrypt:/etc/letsencrypt:ro
-            - static_volume:/code/gymstat/static:ro
-            - media_volume:/code/gymstat/media:ro
+            - static_volume:/code/static:ro
+            - media_volume:/code/media:ro
         ports:
             - "80:80"
             - "443:443"
