@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState, SyntheticEvent } from "react";
 import {
   Box,
   Tabs,
@@ -11,8 +11,21 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
+// Define types for icon and exercise
+interface IconProps {
+  shape: "circle" | "square";
+  color: string;
+}
+
+export interface Exercise {
+  id: number;
+  name: string;
+  description: string;
+  icon: IconProps;
+}
+
 // Dummy exercise data
-const userExercises = [
+const userExercises: Exercise[] = [
   {
     id: 1,
     name: "Push Ups",
@@ -27,7 +40,7 @@ const userExercises = [
   },
 ];
 
-const baseExercises = [
+const baseExercises: Exercise[] = [
   {
     id: 3,
     name: "Running",
@@ -42,8 +55,20 @@ const baseExercises = [
   },
 ];
 
-// Component for each exercise card
-const ExerciseCard = ({ exercise, isUserExercise, onEdit, onDelete }) => {
+// Define props for the ExerciseCard component
+interface ExerciseCardProps {
+  exercise: Exercise;
+  isUserExercise: boolean;
+  onEdit: (exercise: Exercise) => void;
+  onDelete: (exercise: Exercise) => void;
+}
+
+const ExerciseCard: React.FC<ExerciseCardProps> = ({
+                                                     exercise,
+                                                     isUserExercise,
+                                                     onEdit,
+                                                     onDelete,
+                                                   }) => {
   // Define icon styles based on shape and color
   const iconStyles = {
     width: 40,
@@ -78,18 +103,18 @@ const ExerciseCard = ({ exercise, isUserExercise, onEdit, onDelete }) => {
 };
 
 export default function Exercises() {
-  const [tab, setTab] = useState(0);
+  const [tab, setTab] = useState<number>(0);
 
-  const handleTabChange = (event, newValue) => {
+  const handleTabChange = (_event: SyntheticEvent, newValue: number) => {
     setTab(newValue);
   };
 
-  // Placeholder handlers for edit and delete actions
-  const handleEdit = (exercise) => {
+  // Placeholder handlers for edit and delete actions with type annotations
+  const handleEdit = (exercise: Exercise) => {
     console.log("Edit exercise", exercise);
   };
 
-  const handleDelete = (exercise) => {
+  const handleDelete = (exercise: Exercise) => {
     console.log("Delete exercise", exercise);
   };
 
