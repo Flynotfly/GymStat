@@ -49,13 +49,7 @@ class ExerciseType(models.Model):
         related_name="owned_exercises",
         on_delete=models.CASCADE,
     )
-    bookmarked = models.ManyToManyField(
-        settings.AUTH_USER_MODEL,
-        related_name="bookmarked_exercises",
-        blank=True,
-    )
     name = models.CharField(max_length=50)
-    private = models.BooleanField(default=True)
     base = models.BooleanField(default=False)
 
     def __str__(self):
