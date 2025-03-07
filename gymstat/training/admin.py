@@ -18,4 +18,4 @@ class TrainingAdmin(admin.ModelAdmin):
 @admin.register(ExerciseType)
 class ExerciseAdmin(admin.ModelAdmin):
     list_display = ["owner", "name", "base"]
-    filter = ["owner", "base"]
+    list_filter = ["owner", "base"]
