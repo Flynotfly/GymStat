@@ -159,3 +159,13 @@ jobs:
             cd ~/deploy
             docker-compose exec web python manage.py migrate
           EOF
+          
+      - name: Delete previous Docker images
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
+            current_version="${{ needs.version.outputs.new_version }}"
+            echo "Deleting old gymstat-web images..."
+            docker images --format "{{.Repository}}:{{.Tag}} {{.ID}}" | grep "${{ secrets.DOCKERHUB_USERNAME }}/gymstat-web" | grep -v "$current_version" | awk '{print $2}' | xargs -r docker rmi -f || true
+            echo "Deleting old gymstat-nginx images..."
+            docker images --format "{{.Repository}}:{{.Tag}} {{.ID}}" | grep "${{ secrets.DOCKERHUB_USERNAME }}/gymstat-nginx" | grep -v "$current_version" | awk '{print $2}' | xargs -r docker rmi -f || true
+          EOF
