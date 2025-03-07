@@ -24,11 +24,11 @@ server {
 	}
 	
 	location /static/ {
-		alias /code/gymstat/static/;
+		alias /code/static/;
 	}
 	
 	location /media/ {
-		alias /code/gymstat/media/;
+		alias /code/media/;
 	}
 }
 
