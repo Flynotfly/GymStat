@@ -1,7 +1,14 @@
 from django.db.models import Max
 from rest_framework import serializers
 
-from ..models import Exercise, Training
+from ..models import Exercise, Training, ExerciseType
+
+
+class ExerciseTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ExerciseType
+        fields = ['id', 'owner', 'name', 'description', 'iconId', 'iconColor', 'base']
+        read_only_fields = ['id', 'owner']
 
 
 class ExerciseSerializer(serializers.ModelSerializer):
