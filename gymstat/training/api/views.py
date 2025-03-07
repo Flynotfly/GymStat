@@ -1,10 +1,27 @@
 from rest_framework import status
+from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from ..models import Training
-from .serializers import TrainingSerializer, TrainingSummarySerializer
+from ..models import Training, ExerciseType
+from .serializers import TrainingSerializer, TrainingSummarySerializer, ExerciseTypeSerializer
+
+
+class UserExerciseTypeListView(ListAPIView):
+    serializer_class = ExerciseTypeSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return ExerciseType.objects.filter(owner=self.request.user)
+
+
+class BaseExerciseTypeListView(ListAPIView):
+    serializer_class = ExerciseTypeSerializer
+    permission_classes = [IsAuthenticated]  # Adjust permission as needed
+
+    def get_queryset(self):
+        return ExerciseType.objects.filter(base=True)
 
 
 class LastTrainingAPIView(APIView):
