@@ -17,5 +17,5 @@ class TrainingAdmin(admin.ModelAdmin):
 
 @admin.register(ExerciseType)
 class ExerciseAdmin(admin.ModelAdmin):
-    list_display = ["owner", "name", "private"]
-    filter = ["owner", "private"]
+    list_display = ["owner", "name", "base"]
+    filter = ["owner", "base"]
