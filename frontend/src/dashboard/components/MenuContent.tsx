@@ -16,8 +16,8 @@ import { Link } from "react-router-dom";
 
 const mainListItems = [
   { text: 'Home', icon: <HomeRoundedIcon />, path: "/app" },
-  { text: 'Trainings', icon: <FitnessCenterIcon />, path: "/app/trainings" },
-  { text: 'Exercises', icon: <AnalyticsRoundedIcon />, path: "/app/exercises" },
+  { text: 'Trainings', icon: <AnalyticsRoundedIcon />, path: "/app/trainings" },
+  { text: 'Exercises', icon: <FitnessCenterIcon />, path: "/app/exercises" },
   { text: 'Body', icon: <PeopleRoundedIcon />, path: "/app/body" },
   { text: 'Tasks', icon: <AssignmentRoundedIcon />, path: "/app/tasks" },
 ];
