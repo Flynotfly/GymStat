@@ -29,7 +29,7 @@ export function APILogin(csrfToken: string, username: string, password: string):
 }
 
 export function getAllTrainings(): Promise<any> {
-  return fetch(`${trainingAPIURL}/all-trainings/?exercise_type=1`, {
+  return fetch(`${trainingAPIURL}all-trainings/?exercise_type=1`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
