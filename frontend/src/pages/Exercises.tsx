@@ -71,6 +71,8 @@ export default function Exercises() {
   const [tab, setTab] = useState<number>(0);
   const [userExercises, setUserExercises] = useState<Exercise[]>([]);
   const [baseExercises, setBaseExercises] = useState<Exercise[]>([]);
+  const [loadingUser, setLoadingUser] = useState<boolean>(true);
+  const [loadingBase, setLoadingBase] = useState<boolean>(true);
 
   useEffect(() => {
     getUserExercises()
@@ -78,7 +80,8 @@ export default function Exercises() {
         setUserExercises(data);
         console.log("User's exercises: ", data);
       })
-      .catch(err => console.log("Error fetching user's exercises: ", err));
+      .catch(err => console.log("Error fetching user's exercises: ", err))
+      .finally(() => setLoadingUser(false));
   }, []);
 
   useEffect(() => {
@@ -87,7 +90,8 @@ export default function Exercises() {
         setBaseExercises(data);
         console.log("Base exercises: ", data);
       })
-      .catch(err => console.log("Error fetching base exercises: ", err));
+      .catch(err => console.log("Error fetching base exercises: ", err))
+      .finally(() => setLoadingBase(false));
   }, []);
 
   const handleTabChange = (_event: SyntheticEvent, newValue: number) => {
@@ -104,7 +108,8 @@ export default function Exercises() {
   };
 
   // Determine which list of exercises to show based on the selected tab
-  const exercisesToShow = tab === 0 ? userExercises : baseExercises;
+  const exercisesToShow: Exercise[] = tab === 0 ? userExercises : baseExercises;
+  const isLoading: boolean = tab === 0 ? loadingUser : loadingBase;
 
   return (
     <Box sx={{ p: 2 }}>
@@ -116,7 +121,11 @@ export default function Exercises() {
         <Tab label="Base Exercises" />
       </Tabs>
       <Box>
-        {exercisesToShow ? (
+        {isLoading ? (
+          <Box>Loading...</Box>
+        ) : exercisesToShow.length === 0 ? (
+          <Box>No exercises available</Box>
+        ) : (
           exercisesToShow.map((exercise) => (
             <ExerciseCard
               key={exercise.id}
@@ -126,8 +135,6 @@ export default function Exercises() {
               onDelete={handleDelete}
             />
           ))
-        ) : (
-          <Box>Loading...</Box>
         )}
       </Box>
     </Box>
