@@ -2,6 +2,25 @@ const baseURL = import.meta.env.VITE_BASE_URL;
 const userAPIURL = `${baseURL}user/api/`;
 const trainingAPIURL = `${baseURL}training/api/`;
 
+function getRequest(url: string): Promise<any>{
+  return fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+  }).then((response) => {
+    if (!response.ok) {
+      return response.json().then((errorData) => {
+        // Optionally, you can check errorData for more details.
+        throw new Error(errorData.detail || 'Fetch training failed');
+      });
+    }
+    return response.json();
+  });
+}
+
+
 export function fetchCsrf(): Promise<any> {
   return fetch(`${userAPIURL}csrf/`, {
     credentials: "include"
@@ -47,21 +66,11 @@ export function getAllTrainings(): Promise<any> {
 }
 
 export function getUserExercises(): Promise<any> {
-  return fetch(`${trainingAPIURL}my-exercises/`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    credentials: 'include',
-  }).then((response) => {
-    if (!response.ok) {
-      return response.json().then((errorData) => {
-        // Optionally, you can check errorData for more details.
-        throw new Error(errorData.detail || 'Fetch training failed');
-      });
-    }
-    return response.json();
-  });
+  return getRequest(`${trainingAPIURL}my-exercises`);
+}
+
+export function getBaseExercises(): Promise<any> {
+  return getRequest(`${trainingAPIURL}base-exercises`);
 }
 
 //
