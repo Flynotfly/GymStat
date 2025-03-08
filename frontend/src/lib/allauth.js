@@ -109,7 +109,7 @@ export function getSessionToken () {
   return tokenStorage.getItem('sessionToken')
 }
 
-async function request (method, path, data, headers) {
+export async function request (method, path, data, headers) {
   const options = {
     method,
     headers: {
