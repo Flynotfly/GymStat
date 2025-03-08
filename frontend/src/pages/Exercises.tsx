@@ -20,38 +20,6 @@ interface Exercise {
   iconColor: string;
 }
 
-// Dummy exercise data
-// const userExercises: Exercise[] = [
-//   {
-//     id: 1,
-//     name: "Push Ups",
-//     description: "Do 20 push ups",
-//     icon: { shape: "circle", color: "primary.main" },
-//   },
-//   {
-//     id: 2,
-//     name: "Squats",
-//     description: "Do 30 squats",
-//     icon: { shape: "square", color: "secondary.main" },
-//   },
-// ];
-//
-// const baseExercises: Exercise[] = [
-//   {
-//     id: 3,
-//     name: "Running",
-//     description: "Run 5 km",
-//     icon: { shape: "circle", color: "info.main" },
-//   },
-//   {
-//     id: 4,
-//     name: "Cycling",
-//     description: "Cycle 10 km",
-//     icon: { shape: "square", color: "success.main" },
-//   },
-// ];
-
-
 // Define props for the ExerciseCard component
 interface ExerciseCardProps {
   exercise: Exercise;
