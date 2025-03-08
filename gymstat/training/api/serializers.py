@@ -7,8 +7,8 @@ from ..models import Exercise, Training, ExerciseType
 class ExerciseTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExerciseType
-        fields = ['id', 'owner', 'name', 'description', 'iconId', 'iconColor', 'base']
-        read_only_fields = ['id', 'owner']
+        fields = ['id', 'name', 'description', 'iconId', 'iconColor']
+        read_only_fields = ['id']
 
 
 class ExerciseSerializer(serializers.ModelSerializer):
