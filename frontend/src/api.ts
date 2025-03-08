@@ -45,6 +45,25 @@ export function getAllTrainings(): Promise<any> {
     return response.json();
   });
 }
+
+export function getUserExercises(): Promise<any> {
+  return fetch(`${trainingAPIURL}my-exercises/`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+  }).then((response) => {
+    if (!response.ok) {
+      return response.json().then((errorData) => {
+        // Optionally, you can check errorData for more details.
+        throw new Error(errorData.detail || 'Fetch training failed');
+      });
+    }
+    return response.json();
+  });
+}
+
 //
 //
 // export function APILogin(username: FormDataEntryValue | null, password: FormDataEntryValue | null): Promise<any> {
