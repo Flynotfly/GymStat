@@ -1,6 +1,27 @@
+import {getCSRFToken} from "./utils.ts";
+
 const baseURL = import.meta.env.VITE_BASE_URL;
 const userAPIURL = `${baseURL}user/api/`;
 const trainingAPIURL = `${baseURL}training/api/`;
+
+function postRequest(url: string, data: object): Promise<any>{
+  return fetch(url, {
+    method: "POST",
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': getCSRFToken() ?? '',
+    },
+    credentials: 'include',
+    body: JSON.stringify(data),
+  }).then((response) => {
+    if (!response.ok) {
+      return response.json().then((errorData) => {
+        throw new Error(errorData.detail || 'Post data failed');
+      });
+    }
+    return response.json();
+  });
+}
 
 function getRequest(url: string): Promise<any>{
   return fetch(url, {
@@ -12,8 +33,7 @@ function getRequest(url: string): Promise<any>{
   }).then((response) => {
     if (!response.ok) {
       return response.json().then((errorData) => {
-        // Optionally, you can check errorData for more details.
-        throw new Error(errorData.detail || 'Fetch training failed');
+        throw new Error(errorData.detail || 'Fetch data failed');
       });
     }
     return response.json();
@@ -71,6 +91,10 @@ export function getUserExercises(): Promise<any> {
 
 export function getBaseExercises(): Promise<any> {
   return getRequest(`${trainingAPIURL}base-exercises`);
+}
+
+export function createExercise(data: object): Promise<any> {
+  return postRequest(`${trainingAPIURL}create-exercise-type/`, data);
 }
 
 //
