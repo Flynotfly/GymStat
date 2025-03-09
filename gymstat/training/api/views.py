@@ -1,5 +1,5 @@
 from rest_framework import status
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, CreateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -22,6 +22,15 @@ class BaseExerciseTypeListView(ListAPIView):
 
     def get_queryset(self):
         return ExerciseType.objects.filter(base=True)
+
+
+class ExerciseTypeCreateView(CreateAPIView):
+    queryset = ExerciseType.objects.all()
+    serializer_class = ExerciseTypeSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
 
 
 class LastTrainingAPIView(APIView):
