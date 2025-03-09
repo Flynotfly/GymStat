@@ -20,7 +20,7 @@ const xThemeComponents = {
 export default function MainLayout(props: { disableCustomTheme?: boolean }) {
   return (
     <AuthChangeRedirector>
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='ru'>
         <AppTheme {...props} themeComponents={xThemeComponents}>
           <CssBaseline enableColorScheme />
           <Outlet/>
