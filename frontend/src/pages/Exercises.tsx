@@ -1,16 +1,22 @@
 import {useState, SyntheticEvent, useEffect} from "react";
 import {
   Box,
+  Button,
   Tabs,
   Tab,
   Typography,
   Tooltip,
   IconButton,
+  Dialog,
   Paper,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {getBaseExercises, getUserExercises} from "../api.ts";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import TextField from "@mui/material/TextField";
+import DialogActions from "@mui/material/DialogActions";
 
 interface Exercise {
   id: number;
@@ -73,6 +79,13 @@ export default function Exercises() {
   const [baseExercises, setBaseExercises] = useState<Exercise[]>([]);
   const [loadingUser, setLoadingUser] = useState<boolean>(true);
   const [loadingBase, setLoadingBase] = useState<boolean>(true);
+  const [open, setOpen] = useState<boolean>(false);
+  const [newExercise, setNewExercise] = useState({
+    name: "",
+    description: "",
+    iconId: 0,
+    iconColor: "#000000",
+  });
 
   useEffect(() => {
     getUserExercises()
@@ -107,6 +120,23 @@ export default function Exercises() {
     console.log("Delete exercise", exercise);
   };
 
+  const handleOpenDialog = () => {
+    setOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpen(false);
+    // Optionally clear form fields
+    setNewExercise({ name: "", description: "", iconId: 0, iconColor: "#000000" });
+  };
+
+  // Handler for creating a new exercise
+  const handleCreate = () => {
+    console.log("Creating new exercise:", newExercise);
+    // Add your create logic here (e.g., API call)
+    handleCloseDialog();
+  };
+
   // Determine which list of exercises to show based on the selected tab
   const exercisesToShow: Exercise[] = tab === 0 ? userExercises : baseExercises;
   const isLoading: boolean = tab === 0 ? loadingUser : loadingBase;
@@ -116,6 +146,9 @@ export default function Exercises() {
       <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
         Exercises
       </Typography>
+      <Button variant="contained" onClick={handleOpenDialog}>
+        Create New Exercise
+      </Button>
       <Tabs value={tab} onChange={handleTabChange} sx={{ mb: 2 }}>
         <Tab label="User's Exercises" />
         <Tab label="Base Exercises" />
@@ -137,6 +170,67 @@ export default function Exercises() {
           ))
         )}
       </Box>
+
+      {/* Create New Exercise Dialog */}
+      <Dialog
+        open={open}
+        onClose={handleCloseDialog}
+        fullWidth
+        maxWidth="sm"
+      >
+        <DialogTitle>Create New Exercise</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Name"
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={newExercise.name}
+            onChange={(e) =>
+              setNewExercise({ ...newExercise, name: e.target.value })
+            }
+          />
+          <TextField
+            margin="dense"
+            label="Description"
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={newExercise.description}
+            onChange={(e) =>
+              setNewExercise({ ...newExercise, description: e.target.value })
+            }
+          />
+          <TextField
+            margin="dense"
+            label="Icon Color"
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={newExercise.iconColor}
+            onChange={(e) =>
+              setNewExercise({ ...newExercise, iconColor: e.target.value })
+            }
+          />
+          <TextField
+            margin="dense"
+            label="Icon ID"
+            type="number"
+            fullWidth
+            variant="outlined"
+            value={newExercise.iconId}
+            onChange={(e) =>
+              setNewExercise({ ...newExercise, iconId: parseInt(e.target.value) || 0 })
+            }
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog}>Cancel</Button>
+          <Button onClick={handleCreate}>Create</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }
