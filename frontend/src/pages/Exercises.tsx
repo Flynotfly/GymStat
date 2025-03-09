@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import {fetchCsrf, getBaseExercises, getUserExercises} from "../api.ts";
+import {createExercise, fetchCsrf, getBaseExercises, getUserExercises} from "../api.ts";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import TextField from "@mui/material/TextField";
@@ -137,8 +137,10 @@ export default function Exercises() {
   // Handler for creating a new exercise
   const handleCreate = () => {
     console.log("Creating new exercise:", newExercise);
-    // Add your create logic here (e.g., API call)
-    handleCloseDialog();
+    createExercise(newExercise)
+      .then()
+      .catch((err) => console.error(err))
+      .finally(() => handleCloseDialog());
   };
 
   // Determine which list of exercises to show based on the selected tab
