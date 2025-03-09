@@ -50,7 +50,7 @@ export default function Training() {
 
       <Grid container spacing={3}>
         {/* Calendar and Actions */}
-        <Grid sx={{xs: 12, md: 4}}>
+        <Grid size={{xs: 12, md: 4}}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Typography variant="subtitle1" gutterBottom>
               Select Date
@@ -86,7 +86,7 @@ export default function Training() {
         </Grid>
 
         {/* Training Results */}
-        <Grid sx={{xs: 12, md: 8}}>
+        <Grid size={{xs: 12, md: 8}}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
               <Typography variant="subtitle1">
