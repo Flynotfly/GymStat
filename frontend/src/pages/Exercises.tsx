@@ -185,52 +185,54 @@ export default function Exercises() {
         maxWidth="sm"
       >
         <DialogTitle>Create New Exercise</DialogTitle>
-        <DialogContent sx={{ gap: 2 }}>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Name"
-            type="text"
-            fullWidth
-            variant="outlined"
-            value={newExercise.name}
-            onChange={(e) =>
-              setNewExercise({ ...newExercise, name: e.target.value })
-            }
-          />
-          <TextField
-            margin="dense"
-            label="Description"
-            type="text"
-            fullWidth
-            variant="outlined"
-            value={newExercise.description}
-            onChange={(e) =>
-              setNewExercise({ ...newExercise, description: e.target.value })
-            }
-          />
-          <TextField
-            margin="dense"
-            label="Icon Color"
-            type="text"
-            fullWidth
-            variant="outlined"
-            value={newExercise.iconColor}
-            onChange={(e) =>
-              setNewExercise({ ...newExercise, iconColor: e.target.value })
-            }
-          />
-          <TextField
-            margin="dense"
-            label="Icon ID"
-            type="number"
-            fullWidth
-            variant="outlined"
-            value={newExercise.iconId}
-            onChange={(e) =>
-              setNewExercise({ ...newExercise, iconId: parseInt(e.target.value) || 0 })
-            }
-          />
+        <DialogContent>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <TextField
+              autoFocus
+              margin="dense"
+              label="Name"
+              type="text"
+              fullWidth
+              variant="outlined"
+              value={newExercise.name}
+              onChange={(e) =>
+                setNewExercise({ ...newExercise, name: e.target.value })
+              }
+            />
+            <TextField
+              margin="dense"
+              label="Description"
+              type="text"
+              fullWidth
+              variant="outlined"
+              value={newExercise.description}
+              onChange={(e) =>
+                setNewExercise({ ...newExercise, description: e.target.value })
+              }
+            />
+            <TextField
+              margin="dense"
+              label="Icon Color"
+              type="text"
+              fullWidth
+              variant="outlined"
+              value={newExercise.iconColor}
+              onChange={(e) =>
+                setNewExercise({ ...newExercise, iconColor: e.target.value })
+              }
+            />
+            <TextField
+              margin="dense"
+              label="Icon ID"
+              type="number"
+              fullWidth
+              variant="outlined"
+              value={newExercise.iconId}
+              onChange={(e) =>
+                setNewExercise({ ...newExercise, iconId: parseInt(e.target.value) || 0 })
+              }
+            />
+          </Box>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDialog}>Cancel</Button>
