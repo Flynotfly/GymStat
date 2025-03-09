@@ -7,6 +7,8 @@ import {
 } from "../dashboard/theme/customizations";
 import CssBaseline from "@mui/material/CssBaseline";
 import AppTheme from "../shared-theme/AppTheme.tsx";
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 const xThemeComponents = {
   ...chartsCustomizations,
@@ -18,10 +20,12 @@ const xThemeComponents = {
 export default function MainLayout(props: { disableCustomTheme?: boolean }) {
   return (
     <AuthChangeRedirector>
-      <AppTheme {...props} themeComponents={xThemeComponents}>
-        <CssBaseline enableColorScheme />
-        <Outlet/>
-      </AppTheme>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <AppTheme {...props} themeComponents={xThemeComponents}>
+          <CssBaseline enableColorScheme />
+          <Outlet/>
+        </AppTheme>
+      </LocalizationProvider>
     </AuthChangeRedirector>
   );
 }
