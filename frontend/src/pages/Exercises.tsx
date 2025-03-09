@@ -152,7 +152,7 @@ export default function Exercises() {
       <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
         Exercises
       </Typography>
-      <Button variant="contained" onClick={handleOpenDialog}>
+      <Button variant="contained" onClick={handleOpenDialog} sx={{ mb: 2}}>
         Create New Exercise
       </Button>
       <Tabs value={tab} onChange={handleTabChange} sx={{ mb: 2 }}>
@@ -185,7 +185,7 @@ export default function Exercises() {
         maxWidth="sm"
       >
         <DialogTitle>Create New Exercise</DialogTitle>
-        <DialogContent>
+        <DialogContent sx={{ gap: 2 }}>
           <TextField
             autoFocus
             margin="dense"
