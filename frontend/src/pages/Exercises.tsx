@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import {getBaseExercises, getUserExercises} from "../api.ts";
+import {fetchCsrf, getBaseExercises, getUserExercises} from "../api.ts";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import TextField from "@mui/material/TextField";
@@ -86,6 +86,10 @@ export default function Exercises() {
     iconId: 0,
     iconColor: "#000000",
   });
+
+  useEffect(() => {
+    fetchCsrf().catch(console.error);
+  }, []);
 
   useEffect(() => {
     getUserExercises()
