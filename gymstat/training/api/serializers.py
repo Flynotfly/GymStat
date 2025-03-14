@@ -14,9 +14,9 @@ class TrainingShortSerializer(serializers.ModelSerializer):
         model = Training
         fields = ("id", "date")
 
-    def get_date(self, obj):
-        # Returns the date part of the conducted datetime as ISO string.
-        return obj.conducted.date().isoformat()
+    def get_time(self, obj):
+        # Returns the time part of the conducted datetime as ISO string.
+        return obj.conducted.time().isoformat(timespec="seconds")
 
 
 class TrainingOverallSerializer(serializers.ModelSerializer):
