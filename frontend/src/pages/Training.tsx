@@ -372,7 +372,7 @@ export default function Training() {
     }
   };
 
-  // Navigate to the previous training date (if none, default to today)
+  // Navigate to the previous training date (if none, then do not change date)
   const goToPrevTrainingDate = () => {
     const dates = trainings
       .map(t => dayjs(t.date))
@@ -380,8 +380,6 @@ export default function Training() {
     dates.sort((a, b) => b.diff(a));
     if (dates.length > 0) {
       setSelectedDate(dates[0]);
-    } else {
-      setSelectedDate(dayjs());
     }
   };
 
