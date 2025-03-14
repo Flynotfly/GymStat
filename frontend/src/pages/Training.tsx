@@ -9,16 +9,21 @@ import Divider from "@mui/material/Divider";
 import AddIcon from '@mui/icons-material/Add';
 import EventIcon from '@mui/icons-material/Event';
 import dayjs, { Dayjs } from 'dayjs';
-// Import your API and types as needed
-import { getAllTrainings } from "../api";
-import CustomDatePicker from "../components/CustomDatePicker.tsx"
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemText from '@mui/material/ListItemText';
 
+// Import your API and types as needed
+import { getAllTrainings, getTraining } from "../api";
+import CustomDatePicker from "../components/CustomDatePicker.tsx";
+
+// ===== Interfaces =====
 export interface TrainingShortInterface {
   id: number;
   date: string;
 }
 
-// Extend your training interface with additional fields.
 export interface TrainingInterface extends TrainingShortInterface {
   title: string;
   description: string;
@@ -39,7 +44,6 @@ export interface TrainingInterface extends TrainingShortInterface {
 
 interface TrainingDetailsProps {
   training: TrainingInterface;
-  onUpdate: (updatedTraining: TrainingInterface) => void;
 }
 function TrainingDetails({ training }: TrainingDetailsProps) {
   const [localTraining, setLocalTraining] = useState(training);
@@ -62,6 +66,7 @@ function TrainingDetails({ training }: TrainingDetailsProps) {
               key={exercise.index}
               sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}
             >
+              {/* Render exercise details if needed */}
             </Box>
           ))}
         </Box>
@@ -75,7 +80,10 @@ function TrainingDetails({ training }: TrainingDetailsProps) {
 export default function Training() {
   const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs());
   const [trainings, setTrainings] = useState<TrainingShortInterface[]>([]);
+  const [selectedTrainingDetails, setSelectedTrainingDetails] = useState<TrainingInterface | null>(null);
+  const [selectedTrainingId, setSelectedTrainingId] = useState<number | null>(null);
 
+  // Fetch all trainings on mount.
   useEffect(() => {
     getAllTrainings()
       .then((data: TrainingShortInterface[]) => {
@@ -85,7 +93,7 @@ export default function Training() {
       .catch(err => console.log("Error fetching trainings: ", err));
   }, []);
 
-  // Navigate to the next training date (if none, default to today)
+  // Navigation functions
   const goToNextTrainingDate = () => {
     const dates = trainings
       .map(t => dayjs(t.date))
@@ -98,7 +106,6 @@ export default function Training() {
     }
   };
 
-  // Navigate to the previous training date (if none, then do not change date)
   const goToPrevTrainingDate = () => {
     const dates = trainings
       .map(t => dayjs(t.date))
@@ -117,16 +124,42 @@ export default function Training() {
     console.info('Handle add Training for selected day');
   };
 
-  // Add new training to the list.
-  // const handleSaveTraining = (newTraining: TrainingInterface) => {
-  //   setTrainings(prev => [...prev, newTraining]);
-  //   setAddingTraining(null);
-  // };
-
-  // Filter the trainings for the selected day.
+  // Filter trainings for the selected day.
   const trainingsForSelectedDate = trainings.filter(t =>
     dayjs(t.date).isSame(selectedDate, 'day')
   );
+
+  // Function to fetch training details using getTraining API.
+  const fetchTrainingDetails = (trainingId: number) => {
+    getTraining(trainingId)
+      .then((data: TrainingInterface) => {
+        setSelectedTrainingDetails(data);
+        setSelectedTrainingId(trainingId);
+      })
+      .catch(err => {
+        console.log("Error fetching training details: ", err);
+        setSelectedTrainingDetails(null);
+      });
+  };
+
+  // When selectedDate or trainings update, automatically pick the last training (if exists).
+  useEffect(() => {
+    if (trainingsForSelectedDate.length > 0) {
+      // Sort by date (and fallback to id) to choose the last training.
+      const sortedTrainings = trainingsForSelectedDate.sort((a, b) => {
+        const diff = dayjs(a.date).diff(dayjs(b.date));
+        return diff !== 0 ? diff : a.id - b.id;
+      });
+      const lastTraining = sortedTrainings[sortedTrainings.length - 1];
+      if (selectedTrainingId !== lastTraining.id) {
+        fetchTrainingDetails(lastTraining.id);
+      }
+    } else {
+      setSelectedTrainingDetails(null);
+      setSelectedTrainingId(null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedDate, trainings]);
 
   return (
     <Box sx={{ p: 2 }}>
@@ -186,19 +219,25 @@ export default function Training() {
             {trainingsForSelectedDate.length === 0 ? (
               <Typography>No trainings for this day.</Typography>
             ) : (
-              trainingsForSelectedDate.map(training => (
-                <TrainingDetails
-                  key={training.id}
-                  training={training}
-                  onUpdate={(updatedTraining) => {
-                    setTrainings(prev =>
-                      prev.map(t =>
-                        t.id === updatedTraining.id ? updatedTraining : t
-                      )
-                    );
-                  }}
-                />
-              ))
+              <>
+                {/* Trainings list */}
+                <List>
+                  {trainingsForSelectedDate.map((training) => (
+                    <ListItem key={training.id} disablePadding>
+                      <ListItemButton
+                        selected={selectedTrainingId === training.id}
+                        onClick={() => fetchTrainingDetails(training.id)}
+                      >
+                        <ListItemText primary={`Training ID: ${training.id} - ${dayjs(training.date).format('HH:mm')}`} />
+                      </ListItemButton>
+                    </ListItem>
+                  ))}
+                </List>
+                {/* Training details */}
+                {selectedTrainingDetails && (
+                  <TrainingDetails training={selectedTrainingDetails} />
+                )}
+              </>
             )}
           </Paper>
         </Grid>
