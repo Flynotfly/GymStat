@@ -230,7 +230,7 @@ export default function Training() {
                         selected={selectedTrainingId === training.id}
                         onClick={() => fetchTrainingDetails(training.id)}
                       >
-                        <ListItemText primary={`${training.title} - ${dayjs(training.time).format('HH:mm')}`} />
+                        <ListItemText primary={`${training.title} - ${dayjs(`${training.date}T${training.time}`).format('HH:mm')}`} />
                       </ListItemButton>
                     </ListItem>
                   ))}
