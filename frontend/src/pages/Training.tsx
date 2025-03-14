@@ -387,7 +387,6 @@ export default function Training() {
     setAddingTraining({
       id: Date.now(),
       date: dayjs().format('YYYY-MM-DD'),
-      name: '',
       title: '',
       description: '',
       time: dayjs().format('HH:mm'),
@@ -404,7 +403,6 @@ export default function Training() {
     setAddingTraining({
       id: Date.now(),
       date: selectedDate.format('YYYY-MM-DD'),
-      name: '',
       title: '',
       description: '',
       time: '00:00',
