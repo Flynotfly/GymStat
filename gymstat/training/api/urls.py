@@ -15,6 +15,7 @@ urlpatterns = [
         api_views.AllTrainingsList.as_view(),
         name="all_trainings",
     ),
+    path("training/<int:pk>/", api_views.GetTraining.as_view(), name="get-training"),
     path(
         "my-exercises/",
         api_views.UserExerciseTypeListView.as_view(),
