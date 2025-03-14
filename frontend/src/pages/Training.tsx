@@ -473,14 +473,6 @@ export default function Training() {
                 Add Training for Selected Day
               </Button>
             </Stack>
-            {/* Show the add training form if addingTraining is not null */}
-            {addingTraining && (
-              <AddTrainingForm
-                initialTraining={addingTraining}
-                onSave={handleSaveTraining}
-                onCancel={() => setAddingTraining(null)}
-              />
-            )}
           </Paper>
         </Grid>
 
