@@ -6,7 +6,6 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
-import TextField from '@mui/material/TextField';
 import AddIcon from '@mui/icons-material/Add';
 import EventIcon from '@mui/icons-material/Event';
 import dayjs, { Dayjs } from 'dayjs';
@@ -42,7 +41,7 @@ interface TrainingDetailsProps {
   training: TrainingInterface;
   onUpdate: (updatedTraining: TrainingInterface) => void;
 }
-function TrainingDetails({ training, onUpdate }: TrainingDetailsProps) {
+function TrainingDetails({ training }: TrainingDetailsProps) {
   const [localTraining, setLocalTraining] = useState(training);
 
   useEffect(() => {
@@ -56,9 +55,9 @@ function TrainingDetails({ training, onUpdate }: TrainingDetailsProps) {
       <Typography variant="body2">Time: {localTraining.time}</Typography>
       <Typography variant="body2">Score: {localTraining.score}</Typography>
       <Divider sx={{ my: 1 }} />
-      {localTraining.sets.map((set, setIndex) => (
+      {localTraining.sets.map((set) => (
         <Box key={set.index} sx={{ mb: 1, p: 1, border: '1px solid #eee' }}>
-          {set.exercises.map((exercise, exIndex) => (
+          {set.exercises.map((exercise) => (
             <Box
               key={exercise.index}
               sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}
@@ -76,7 +75,6 @@ function TrainingDetails({ training, onUpdate }: TrainingDetailsProps) {
 export default function Training() {
   const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs());
   const [trainings, setTrainings] = useState<TrainingShortInterface[]>([]);
-  const [addingTraining, setAddingTraining] = useState<TrainingInterface | null>(null);
 
   useEffect(() => {
     getAllTrainings()
@@ -112,27 +110,11 @@ export default function Training() {
   };
 
   const handleAddTrainingNow = () => {
-    setAddingTraining({
-      id: Date.now(),
-      date: dayjs().format('YYYY-MM-DD'),
-      title: '',
-      description: '',
-      time: dayjs().format('HH:mm'),
-      score: 0,
-      sets: []
-    });
+    console.info('Handle add Training now');
   };
 
   const handleAddTrainingForSelectedDay = () => {
-    setAddingTraining({
-      id: Date.now(),
-      date: selectedDate.format('YYYY-MM-DD'),
-      title: '',
-      description: '',
-      time: '00:00',
-      score: 0,
-      sets: []
-    });
+    console.info('Handle add Training for selected day');
   };
 
   // Add new training to the list.
