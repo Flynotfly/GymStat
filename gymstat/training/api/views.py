@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from ..models import Training, ExerciseType
-from .serializers import TrainingSerializer, TrainingSummarySerializer, ExerciseTypeSerializer, TrainingOverallSerializer
+from .serializers import TrainingSerializer, TrainingSummarySerializer, ExerciseTypeSerializer, TrainingOverallSerializer, TrainingShortSerializer
 
 
 class UserExerciseTypeListView(ListAPIView):
@@ -54,6 +54,14 @@ class TrainingOverallListView(ListAPIView):
 
     def get_queryset(self):
         # Return only trainings owned by the logged-in user.
+        return Training.objects.filter(owner=self.request.user)
+
+
+class AllTrainingsList(ListAPIView):
+    serializer_class = TrainingShortSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
         return Training.objects.filter(owner=self.request.user)
 
 
