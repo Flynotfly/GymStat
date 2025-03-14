@@ -119,10 +119,6 @@ export default function Training() {
       description: '',
       time: dayjs().format('HH:mm'),
       score: 0,
-      duration: "0", // changed from number to string
-      quantity_exercises: "0", // changed from number to string
-      max_weight: 0,
-      max_repetitions: 0,
       sets: []
     });
   };
@@ -135,14 +131,9 @@ export default function Training() {
       description: '',
       time: '00:00',
       score: 0,
-      duration: "0", // changed from number to string
-      quantity_exercises: "0", // changed from number to string
-      max_weight: 0,
-      max_repetitions: 0,
       sets: []
     });
   };
-
 
   // Add new training to the list.
   const handleSaveTraining = (newTraining: TrainingInterface) => {
