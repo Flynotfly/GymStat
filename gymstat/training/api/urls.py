@@ -12,7 +12,7 @@ urlpatterns = [
     # ),
     path(
         "all-trainings/",
-        api_views.TrainingOverallListView.as_view(),
+        api_views.AllTrainingsList.as_view(),
         name="all_trainings",
     ),
     path('my-exercises/', api_views.UserExerciseTypeListView.as_view(), name='user-exercise-types'),
