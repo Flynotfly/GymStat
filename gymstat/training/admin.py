@@ -11,7 +11,7 @@ class TrainingInline(admin.StackedInline):
 @admin.register(Training)
 class TrainingAdmin(admin.ModelAdmin):
     list_display = ["owner", "conducted", "description"]
-    filter = ["owner"]
+    list_filter = ["owner"]
     inlines = [TrainingInline]
 
 
