@@ -8,15 +8,14 @@ from ..models import Exercise, ExerciseType, Training
 
 class TrainingShortSerializer(serializers.ModelSerializer):
     date = serializers.SerializerMethodField()
-    time = serializers.SerializerMethodField()
 
     class Meta:
         model = Training
         fields = ("id", "date")
 
-    def get_time(self, obj):
-        # Returns the time part of the conducted datetime as ISO string.
-        return obj.conducted.time().isoformat(timespec="seconds")
+    def get_date(self, obj):
+        # Returns the date part of the conducted datetime as ISO string.
+        return obj.conducted.date().isoformat()
 
 
 class TrainingOverallSerializer(serializers.ModelSerializer):
