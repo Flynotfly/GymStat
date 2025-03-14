@@ -347,12 +347,12 @@ function TrainingDetails({ training, onUpdate }: TrainingDetailsProps) {
 
 export default function Training() {
   const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs());
-  const [trainings, setTrainings] = useState<TrainingInterface[]>([]);
+  const [trainings, setTrainings] = useState<TrainingShortInterface[]>([]);
   const [addingTraining, setAddingTraining] = useState<TrainingInterface | null>(null);
 
   useEffect(() => {
     getAllTrainings()
-      .then((data: TrainingInterface[]) => {
+      .then((data: TrainingShortInterface[]) => {
         setTrainings(data);
         console.log('trainings: ', data);
       })
