@@ -72,11 +72,11 @@ export function getAllTrainings(): Promise<any> {
 }
 
 export function getUserExercises(): Promise<any> {
-  return getRequest(`${trainingAPIURL}my-exercises`);
+  return getRequest(`${trainingAPIURL}my-exercises/`);
 }
 
 export function getBaseExercises(): Promise<any> {
-  return getRequest(`${trainingAPIURL}base-exercises`);
+  return getRequest(`${trainingAPIURL}base-exercises/`);
 }
 
 export function createExercise(data: object): Promise<any> {
