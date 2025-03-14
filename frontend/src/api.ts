@@ -51,6 +51,10 @@ export function getAllTrainings(): Promise<any> {
   return getRequest(`${trainingAPIURL}all-trainings/`);
 }
 
+export function getTraining(pk: number): Promise<any> {
+  return getRequest(`${trainingAPIURL}training/${pk}/`);
+}
+
 export function getUserExercises(): Promise<any> {
   return getRequest(`${trainingAPIURL}my-exercises/`);
 }
