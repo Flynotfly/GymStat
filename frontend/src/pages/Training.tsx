@@ -49,133 +49,24 @@ function TrainingDetails({ training, onUpdate }: TrainingDetailsProps) {
     setLocalTraining(training);
   }, [training]);
 
-  const handleAddSet = () => {
-    const newSet = {
-      id: Date.now(),
-      exerciseType: '',
-      exercises: []
-    };
-    const updatedTraining = {
-      ...localTraining,
-      sets: [...localTraining.sets, newSet]
-    };
-    setLocalTraining(updatedTraining);
-    onUpdate(updatedTraining);
-  };
-
-  const handleAddExercise = (setIndex: number) => {
-    const newExercise = {
-      id: Date.now(),
-      repetitions: 0,
-      weight: 0
-    };
-    const updatedSets = localTraining.sets.map((s, i) => {
-      if (i === setIndex) {
-        return { ...s, exercises: [...s.exercises, newExercise] };
-      }
-      return s;
-    });
-    const updatedTraining = { ...localTraining, sets: updatedSets };
-    setLocalTraining(updatedTraining);
-    onUpdate(updatedTraining);
-  };
-
-  const handleExerciseTypeChange = (setIndex: number, newType: string) => {
-    const updatedSets = localTraining.sets.map((s, i) => {
-      if (i === setIndex) {
-        return { ...s, exerciseType: newType };
-      }
-      return s;
-    });
-    const updatedTraining = { ...localTraining, sets: updatedSets };
-    setLocalTraining(updatedTraining);
-    onUpdate(updatedTraining);
-  };
-
-  const handleExerciseChange = (
-    setIndex: number,
-    exerciseIndex: number,
-    field: 'repetitions' | 'weight',
-    value: number
-  ) => {
-    const updatedSets = localTraining.sets.map((s, i) => {
-      if (i === setIndex) {
-        const updatedExercises = s.exercises.map((ex, j) => {
-          if (j === exerciseIndex) {
-            return { ...ex, [field]: value };
-          }
-          return ex;
-        });
-        return { ...s, exercises: updatedExercises };
-      }
-      return s;
-    });
-    const updatedTraining = { ...localTraining, sets: updatedSets };
-    setLocalTraining(updatedTraining);
-    onUpdate(updatedTraining);
-  };
-
   return (
     <Box sx={{ border: '1px solid #ccc', p: 2, mb: 2 }}>
-      <Typography variant="h6">{localTraining.name}</Typography>
+      <Typography variant="h6">{localTraining.title}</Typography>
       <Typography variant="body2">{localTraining.description}</Typography>
       <Typography variant="body2">Time: {localTraining.time}</Typography>
       <Typography variant="body2">Score: {localTraining.score}</Typography>
       <Divider sx={{ my: 1 }} />
       {localTraining.sets.map((set, setIndex) => (
-        <Box key={set.id} sx={{ mb: 1, p: 1, border: '1px solid #eee' }}>
-          <TextField
-            label="Exercise Type"
-            value={set.exerciseType}
-            onChange={(e) => handleExerciseTypeChange(setIndex, e.target.value)}
-            size="small"
-            sx={{ mb: 1 }}
-          />
+        <Box key={set.index} sx={{ mb: 1, p: 1, border: '1px solid #eee' }}>
           {set.exercises.map((exercise, exIndex) => (
             <Box
-              key={exercise.id}
+              key={exercise.index}
               sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}
             >
-              <TextField
-                label="Reps"
-                type="number"
-                value={exercise.repetitions}
-                onChange={(e) =>
-                  handleExerciseChange(
-                    setIndex,
-                    exIndex,
-                    'repetitions',
-                    parseInt(e.target.value)
-                  )
-                }
-                size="small"
-                sx={{ width: '80px' }}
-              />
-              <TextField
-                label="Weight"
-                type="number"
-                value={exercise.weight}
-                onChange={(e) =>
-                  handleExerciseChange(
-                    setIndex,
-                    exIndex,
-                    'weight',
-                    parseFloat(e.target.value)
-                  )
-                }
-                size="small"
-                sx={{ width: '80px' }}
-              />
             </Box>
           ))}
-          <Button size="small" onClick={() => handleAddExercise(setIndex)}>
-            Add Exercise
-          </Button>
         </Box>
       ))}
-      <Button size="small" onClick={handleAddSet}>
-        Add Set
-      </Button>
     </Box>
   );
 }
