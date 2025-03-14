@@ -47,26 +47,6 @@ export function fetchCsrf(): Promise<any> {
   });
 }
 
-export function APILogin(csrfToken: string, username: string, password: string): Promise<any> {
-  return fetch(`${userAPIURL}login/`, {
-    method: "POST",
-    headers: {
-      'Content-Type': 'application/json',
-      'X-CSRFToken': csrfToken,
-    },
-    credentials: 'include',
-    body: JSON.stringify({ username, password}),
-  }).then((response) => {
-    if (!response.ok) {
-      return response.json().then((errorData) => {
-        // Optionally, you can check errorData for more details.
-        throw new Error(errorData.detail || 'Login failed');
-      });
-    }
-    return response.json();
-  });
-}
-
 export function getAllTrainings(): Promise<any> {
   return getRequest(`${trainingAPIURL}all-trainings/`);
 }
