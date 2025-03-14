@@ -62,22 +62,3 @@ export function getBaseExercises(): Promise<any> {
 export function createExercise(data: object): Promise<any> {
   return postRequest(`${trainingAPIURL}create-exercise-type/`, data);
 }
-
-//
-//
-// export function APILogin(username: FormDataEntryValue | null, password: FormDataEntryValue | null): Promise<any> {
-//   return fetch(`${baseURL}user/api/token/`, {
-//     method: 'POST',
-//     headers: {'Content-Type': 'application/json'},
-//     body: JSON.stringify({username, password})
-//   }).then((response) => {
-//     if (!response.ok) {
-//       return response.json().then((errorData) => {
-//         // Optionally, you can check errorData for more details.
-//         throw new Error(errorData.detail || 'Login failed');
-//       });
-//     }
-//     return response.json();
-//   });
-// }
-
