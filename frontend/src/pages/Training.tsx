@@ -18,8 +18,9 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { getAllTrainings } from "../api";
 import { TrainingInterface } from "../dashboard/internals/data/gridDataMy";
 
-// Extend your training interface to include the needed properties.
-interface TrainingInterfaceExtended extends TrainingInterface {
+// Extend your training interface with additional fields.
+export interface TrainingInterfaceExtended extends TrainingInterface {
+  id: number;
   date: string;
   name: string;
   description: string;
@@ -32,21 +33,19 @@ interface TrainingInterfaceExtended extends TrainingInterface {
       id: number;
       repetitions: number;
       weight: number;
-    }[]
-  }[]
+    }[];
+  }[];
 }
 
 // ===== Custom DatePicker Components =====
 
-// A custom button field that will be used as the trigger for the DatePicker pop-up.
+// A custom button field to trigger the pop-up DatePicker.
 interface ButtonFieldProps {
   setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
   label?: string;
   id?: string;
   disabled?: boolean;
-  inputProps?: any;
 }
-
 function ButtonField(props: ButtonFieldProps) {
   const { setOpen, label, id, disabled } = props;
   return (
@@ -64,12 +63,11 @@ function ButtonField(props: ButtonFieldProps) {
   );
 }
 
-// A controlled custom date picker that accepts value and onChange.
+// A controlled pop-up DatePicker.
 interface CustomDatePickerProps {
   value: Dayjs;
   onChange: (newValue: Dayjs | null) => void;
 }
-
 function CustomDatePicker({ value, onChange }: CustomDatePickerProps) {
   const [open, setOpen] = useState(false);
   return (
@@ -98,7 +96,6 @@ interface TrainingDetailsProps {
   training: TrainingInterfaceExtended;
   onUpdate: (updatedTraining: TrainingInterfaceExtended) => void;
 }
-
 function TrainingDetails({ training, onUpdate }: TrainingDetailsProps) {
   const [localTraining, setLocalTraining] = useState(training);
 
@@ -108,7 +105,7 @@ function TrainingDetails({ training, onUpdate }: TrainingDetailsProps) {
 
   const handleAddSet = () => {
     const newSet = {
-      id: Date.now(), // dummy id; in production, use a better id scheme
+      id: Date.now(),
       exerciseType: '',
       exercises: []
     };
@@ -127,7 +124,7 @@ function TrainingDetails({ training, onUpdate }: TrainingDetailsProps) {
       weight: 0
     };
     const updatedSets = localTraining.sets.map((s, i) => {
-      if(i === setIndex) {
+      if (i === setIndex) {
         return { ...s, exercises: [...s.exercises, newExercise] };
       }
       return s;
@@ -139,7 +136,7 @@ function TrainingDetails({ training, onUpdate }: TrainingDetailsProps) {
 
   const handleExerciseTypeChange = (setIndex: number, newType: string) => {
     const updatedSets = localTraining.sets.map((s, i) => {
-      if(i === setIndex) {
+      if (i === setIndex) {
         return { ...s, exerciseType: newType };
       }
       return s;
@@ -156,9 +153,9 @@ function TrainingDetails({ training, onUpdate }: TrainingDetailsProps) {
     value: number
   ) => {
     const updatedSets = localTraining.sets.map((s, i) => {
-      if(i === setIndex) {
+      if (i === setIndex) {
         const updatedExercises = s.exercises.map((ex, j) => {
-          if(j === exerciseIndex) {
+          if (j === exerciseIndex) {
             return { ...ex, [field]: value };
           }
           return ex;
@@ -237,11 +234,175 @@ function TrainingDetails({ training, onUpdate }: TrainingDetailsProps) {
   );
 }
 
+// ===== Add Training Form Component =====
+
+interface AddTrainingFormProps {
+  initialTraining: TrainingInterfaceExtended;
+  onSave: (newTraining: TrainingInterfaceExtended) => void;
+  onCancel: () => void;
+}
+function AddTrainingForm({ initialTraining, onSave, onCancel }: AddTrainingFormProps) {
+  const [training, setTraining] = useState(initialTraining);
+
+  const handleChange = (field: string, value: string | number) => {
+    setTraining(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleAddSet = () => {
+    const newSet = {
+      id: Date.now(),
+      exerciseType: '',
+      exercises: []
+    };
+    setTraining(prev => ({ ...prev, sets: [...prev.sets, newSet] }));
+  };
+
+  const handleAddExercise = (setIndex: number) => {
+    const newExercise = {
+      id: Date.now(),
+      repetitions: 0,
+      weight: 0,
+    };
+    const newSets = training.sets.map((s, index) => {
+      if (index === setIndex) {
+        return { ...s, exercises: [...s.exercises, newExercise] };
+      }
+      return s;
+    });
+    setTraining(prev => ({ ...prev, sets: newSets }));
+  };
+
+  const handleSetExerciseType = (setIndex: number, value: string) => {
+    const newSets = training.sets.map((s, index) => {
+      if (index === setIndex) {
+        return { ...s, exerciseType: value };
+      }
+      return s;
+    });
+    setTraining(prev => ({ ...prev, sets: newSets }));
+  };
+
+  const handleExerciseChange = (
+    setIndex: number,
+    exerciseIndex: number,
+    field: 'repetitions' | 'weight',
+    value: number
+  ) => {
+    const newSets = training.sets.map((s, i) => {
+      if (i === setIndex) {
+        const newExercises = s.exercises.map((ex, j) => {
+          if (j === exerciseIndex) {
+            return { ...ex, [field]: value };
+          }
+          return ex;
+        });
+        return { ...s, exercises: newExercises };
+      }
+      return s;
+    });
+    setTraining(prev => ({ ...prev, sets: newSets }));
+  };
+
+  return (
+    <Paper sx={{ p: 2, mt: 2 }}>
+      <Typography variant="h6" gutterBottom>
+        New Training
+      </Typography>
+      <Stack spacing={2}>
+        <TextField
+          label="Name"
+          value={training.name}
+          onChange={(e) => handleChange('name', e.target.value)}
+        />
+        <TextField
+          label="Description"
+          value={training.description}
+          onChange={(e) => handleChange('description', e.target.value)}
+        />
+        <TextField
+          label="Time"
+          type="time"
+          value={training.time}
+          onChange={(e) => handleChange('time', e.target.value)}
+          InputLabelProps={{ shrink: true }}
+        />
+        <TextField
+          label="Score"
+          type="number"
+          value={training.score}
+          onChange={(e) => handleChange('score', parseInt(e.target.value))}
+        />
+      </Stack>
+
+      <Typography variant="subtitle1" sx={{ mt: 2 }}>
+        Sets
+      </Typography>
+      {training.sets.map((set, setIndex) => (
+        <Box key={set.id} sx={{ border: '1px solid #ccc', p: 1, mt: 1 }}>
+          <TextField
+            label="Exercise Type"
+            value={set.exerciseType}
+            onChange={(e) => handleSetExerciseType(setIndex, e.target.value)}
+            size="small"
+          />
+          {set.exercises.map((exercise, exIndex) => (
+            <Box key={exercise.id} sx={{ display: 'flex', gap: 1, mt: 1 }}>
+              <TextField
+                label="Reps"
+                type="number"
+                value={exercise.repetitions}
+                onChange={(e) =>
+                  handleExerciseChange(
+                    setIndex,
+                    exIndex,
+                    'repetitions',
+                    parseInt(e.target.value)
+                  )
+                }
+                size="small"
+              />
+              <TextField
+                label="Weight"
+                type="number"
+                value={exercise.weight}
+                onChange={(e) =>
+                  handleExerciseChange(
+                    setIndex,
+                    exIndex,
+                    'weight',
+                    parseFloat(e.target.value)
+                  )
+                }
+                size="small"
+              />
+            </Box>
+          ))}
+          <Button onClick={() => handleAddExercise(setIndex)} size="small">
+            Add Exercise
+          </Button>
+        </Box>
+      ))}
+      <Button onClick={handleAddSet} sx={{ mt: 1 }} size="small">
+        Add Set
+      </Button>
+      <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
+        <Button variant="contained" onClick={() => onSave(training)}>
+          Save Training
+        </Button>
+        <Button variant="outlined" onClick={onCancel}>
+          Cancel
+        </Button>
+      </Stack>
+    </Paper>
+  );
+}
+
 // ===== Main Training Page =====
 
 export default function Training() {
   const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs());
   const [trainings, setTrainings] = useState<TrainingInterfaceExtended[]>([]);
+  const [addingTraining, setAddingTraining] = useState<TrainingInterfaceExtended | null>(null);
 
   useEffect(() => {
     getAllTrainings()
@@ -279,16 +440,47 @@ export default function Training() {
   };
 
   const handleAddTrainingNow = () => {
-    // Add your logic to create a training record for the current date/time.
-    console.log("Add training now");
+    setAddingTraining({
+      id: Date.now(),
+      date: dayjs().format('YYYY-MM-DD'),
+      name: '',
+      title: '',
+      description: '',
+      time: dayjs().format('HH:mm'),
+      score: 0,
+      duration: "0", // changed from number to string
+      quantity_exercises: "0", // changed from number to string
+      max_weight: 0,
+      max_repetitions: 0,
+      sets: []
+    });
   };
 
   const handleAddTrainingForSelectedDay = () => {
-    // Add your logic to create a training record for the selected date.
-    console.log("Add training for: ", selectedDate.format());
+    setAddingTraining({
+      id: Date.now(),
+      date: selectedDate.format('YYYY-MM-DD'),
+      name: '',
+      title: '',
+      description: '',
+      time: '00:00',
+      score: 0,
+      duration: "0", // changed from number to string
+      quantity_exercises: "0", // changed from number to string
+      max_weight: 0,
+      max_repetitions: 0,
+      sets: []
+    });
   };
 
-  // Filter the trainings that match the selected day.
+
+  // Add new training to the list.
+  const handleSaveTraining = (newTraining: TrainingInterfaceExtended) => {
+    setTrainings(prev => [...prev, newTraining]);
+    setAddingTraining(null);
+  };
+
+  // Filter the trainings for the selected day.
   const trainingsForSelectedDate = trainings.filter(t =>
     dayjs(t.date).isSame(selectedDate, 'day')
   );
@@ -299,7 +491,7 @@ export default function Training() {
         Training Statistics
       </Typography>
       <Grid container spacing={3}>
-        {/* Left Panel: Date Picker and Navigation */}
+        {/* Left Panel: Date Picker, Navigation & Add Training */}
         <Grid item xs={12} md={4}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Typography variant="subtitle1" gutterBottom>
@@ -339,6 +531,14 @@ export default function Training() {
                 Add Training for Selected Day
               </Button>
             </Stack>
+            {/* Show the add training form if addingTraining is not null */}
+            {addingTraining && (
+              <AddTrainingForm
+                initialTraining={addingTraining}
+                onSave={handleSaveTraining}
+                onCancel={() => setAddingTraining(null)}
+              />
+            )}
           </Paper>
         </Grid>
 
