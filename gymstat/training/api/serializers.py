@@ -20,7 +20,7 @@ class TrainingShortSerializer(serializers.ModelSerializer):
 
     def get_time(self, obj):
         # Returns the time part of the conducted datetime as ISO string.
-        return obj.conducted.time().isoformat(timespec='seconds')
+        return obj.conducted.time().isoformat(timespec="seconds")
 
 
 class TrainingOverallSerializer(serializers.ModelSerializer):
@@ -30,7 +30,15 @@ class TrainingOverallSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Training
-        fields = ("id", "date", "time", "title", "description", "score", "sets")
+        fields = (
+            "id",
+            "date",
+            "time",
+            "title",
+            "description",
+            "score",
+            "sets",
+        )
 
     def get_date(self, obj):
         # Returns the date part of the conducted datetime as ISO string.
@@ -38,7 +46,7 @@ class TrainingOverallSerializer(serializers.ModelSerializer):
 
     def get_time(self, obj):
         # Returns the time part of the conducted datetime as ISO string.
-        return obj.conducted.time().isoformat(timespec='seconds')
+        return obj.conducted.time().isoformat(timespec="seconds")
 
     def get_sets(self, obj):
         # Get the exercises for this training.
@@ -50,27 +58,33 @@ class TrainingOverallSerializer(serializers.ModelSerializer):
         for order, group in groupby(exercises, key=lambda ex: ex.order):
             group_list = list(group)
             # Assume that all exercises in the same set share the same exercise_type.
-            exercise_type_id = group_list[0].exercise_type.id if group_list[0].exercise_type else None
-            sets.append({
-                "index": order,
-                "exerciseType": exercise_type_id,
-                "exercises": [
-                    {
-                        "index": ex.suborder,
-                        "repetitions": ex.repetitions,
-                        "weight": ex.weight,
-                    }
-                    for ex in group_list
-                ]
-            })
+            exercise_type_id = (
+                group_list[0].exercise_type.id
+                if group_list[0].exercise_type
+                else None
+            )
+            sets.append(
+                {
+                    "index": order,
+                    "exerciseType": exercise_type_id,
+                    "exercises": [
+                        {
+                            "index": ex.suborder,
+                            "repetitions": ex.repetitions,
+                            "weight": ex.weight,
+                        }
+                        for ex in group_list
+                    ],
+                }
+            )
         return sets
 
 
 class ExerciseTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExerciseType
-        fields = ['id', 'name', 'description', 'iconId', 'iconColor']
-        read_only_fields = ['id']
+        fields = ["id", "name", "description", "iconId", "iconColor"]
+        read_only_fields = ["id"]
 
 
 class ExerciseSerializer(serializers.ModelSerializer):

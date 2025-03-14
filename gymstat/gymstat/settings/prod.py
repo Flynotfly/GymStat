@@ -8,8 +8,12 @@ ADMINS = [
     ("Mikhail Kudryashov", "Alteria2004@gmail.com"),
 ]
 
-ALLOWED_HOSTS = ["backend.orange-city.ru", "system.orange-city.ru", '89.110.70.211:443',
-                 '89.110.70.211'] #TODO remove host after make email server
+ALLOWED_HOSTS = [
+    "backend.orange-city.ru",
+    "system.orange-city.ru",
+    "89.110.70.211:443",
+    "89.110.70.211",
+]  # TODO remove host after make email server
 
 DATABASES = {
     "default": {
@@ -50,7 +54,7 @@ SECURE_HSTS_PRELOAD = True
 
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
-    'x-email-verification-key',
+    "x-email-verification-key",
 ]
 
 CORS_ALLOWED_ORIGINS = [

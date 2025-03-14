@@ -5,7 +5,13 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from ..models import Training, ExerciseType
-from .serializers import TrainingSerializer, TrainingSummarySerializer, ExerciseTypeSerializer, TrainingOverallSerializer, TrainingShortSerializer
+from .serializers import (
+    TrainingSerializer,
+    TrainingSummarySerializer,
+    ExerciseTypeSerializer,
+    TrainingOverallSerializer,
+    TrainingShortSerializer,
+)
 
 
 class UserExerciseTypeListView(ListAPIView):
