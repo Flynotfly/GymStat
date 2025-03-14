@@ -68,21 +68,7 @@ export function APILogin(csrfToken: string, username: string, password: string):
 }
 
 export function getAllTrainings(): Promise<any> {
-  return fetch(`${trainingAPIURL}all-trainings/?exercise_type=1`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    credentials: 'include',
-  }).then((response) => {
-    if (!response.ok) {
-      return response.json().then((errorData) => {
-        // Optionally, you can check errorData for more details.
-        throw new Error(errorData.detail || 'Fetch training failed');
-      });
-    }
-    return response.json();
-  });
+  return getRequest(`${trainingAPIURL}all-trainings/`);
 }
 
 export function getUserExercises(): Promise<any> {
