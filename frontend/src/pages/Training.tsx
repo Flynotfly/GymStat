@@ -19,18 +19,18 @@ import { getAllTrainings } from "../api";
 import { TrainingInterface } from "../dashboard/internals/data/gridDataMy";
 
 // Extend your training interface with additional fields.
-export interface TrainingInterface {
+export interface TrainingInterfaceExtended extends TrainingInterface {
   id: number;
   date: string;
-  title: string;
+  name: string;
   description: string;
   time: string;
   score: number;
   sets: {
-    index: number;
-    exerciseType: number;
+    id: number;
+    exerciseType: string;
     exercises: {
-      index: number;
+      id: number;
       repetitions: number;
       weight: number;
     }[];
@@ -93,8 +93,8 @@ function CustomDatePicker({ value, onChange }: CustomDatePickerProps) {
 // ===== Training Details Component =====
 
 interface TrainingDetailsProps {
-  training: TrainingInterface;
-  onUpdate: (updatedTraining: TrainingInterface) => void;
+  training: TrainingInterfaceExtended;
+  onUpdate: (updatedTraining: TrainingInterfaceExtended) => void;
 }
 function TrainingDetails({ training, onUpdate }: TrainingDetailsProps) {
   const [localTraining, setLocalTraining] = useState(training);
@@ -237,8 +237,8 @@ function TrainingDetails({ training, onUpdate }: TrainingDetailsProps) {
 // ===== Add Training Form Component =====
 
 interface AddTrainingFormProps {
-  initialTraining: TrainingInterface;
-  onSave: (newTraining: TrainingInterface) => void;
+  initialTraining: TrainingInterfaceExtended;
+  onSave: (newTraining: TrainingInterfaceExtended) => void;
   onCancel: () => void;
 }
 function AddTrainingForm({ initialTraining, onSave, onCancel }: AddTrainingFormProps) {
@@ -401,12 +401,12 @@ function AddTrainingForm({ initialTraining, onSave, onCancel }: AddTrainingFormP
 
 export default function Training() {
   const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs());
-  const [trainings, setTrainings] = useState<TrainingInterface[]>([]);
-  const [addingTraining, setAddingTraining] = useState<TrainingInterface | null>(null);
+  const [trainings, setTrainings] = useState<TrainingInterfaceExtended[]>([]);
+  const [addingTraining, setAddingTraining] = useState<TrainingInterfaceExtended | null>(null);
 
   useEffect(() => {
     getAllTrainings()
-      .then((data: TrainingInterface[]) => {
+      .then((data: TrainingInterfaceExtended[]) => {
         setTrainings(data);
         console.log('trainings: ', data);
       })
@@ -475,7 +475,7 @@ export default function Training() {
 
 
   // Add new training to the list.
-  const handleSaveTraining = (newTraining: TrainingInterface) => {
+  const handleSaveTraining = (newTraining: TrainingInterfaceExtended) => {
     setTrainings(prev => [...prev, newTraining]);
     setAddingTraining(null);
   };
