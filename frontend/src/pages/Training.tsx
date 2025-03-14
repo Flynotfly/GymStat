@@ -21,7 +21,9 @@ import CustomDatePicker from "../components/CustomDatePicker.tsx";
 // ===== Interfaces =====
 export interface TrainingShortInterface {
   id: number;
+  title: string;
   date: string;
+  time: string;
 }
 
 export interface TrainingInterface extends TrainingShortInterface {
@@ -228,7 +230,7 @@ export default function Training() {
                         selected={selectedTrainingId === training.id}
                         onClick={() => fetchTrainingDetails(training.id)}
                       >
-                        <ListItemText primary={`Training ID: ${training.id} - ${dayjs(training.date).format('HH:mm')}`} />
+                        <ListItemText primary={`${training.title} - ${dayjs(training.time).format('HH:mm')}`} />
                       </ListItemButton>
                     </ListItem>
                   ))}
