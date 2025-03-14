@@ -136,10 +136,10 @@ export default function Training() {
   };
 
   // Add new training to the list.
-  const handleSaveTraining = (newTraining: TrainingInterface) => {
-    setTrainings(prev => [...prev, newTraining]);
-    setAddingTraining(null);
-  };
+  // const handleSaveTraining = (newTraining: TrainingInterface) => {
+  //   setTrainings(prev => [...prev, newTraining]);
+  //   setAddingTraining(null);
+  // };
 
   // Filter the trainings for the selected day.
   const trainingsForSelectedDate = trainings.filter(t =>
