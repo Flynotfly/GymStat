@@ -1,6 +1,6 @@
-from .base import *
-
 from corsheaders.defaults import default_headers
+
+from .base import *
 
 DEBUG = False
 

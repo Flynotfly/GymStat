@@ -3,7 +3,7 @@ from itertools import groupby
 from django.db.models import Max
 from rest_framework import serializers
 
-from ..models import Exercise, Training, ExerciseType
+from ..models import Exercise, ExerciseType, Training
 
 
 class TrainingShortSerializer(serializers.ModelSerializer):

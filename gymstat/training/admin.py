@@ -1,6 +1,7 @@
 # admin.py
 from django.contrib import admin
-from .models import Training, Exercise, ExerciseType
+
+from .models import Exercise, ExerciseType, Training
 
 
 class ExerciseInline(admin.TabularInline):
