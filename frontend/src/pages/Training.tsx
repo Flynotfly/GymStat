@@ -157,7 +157,9 @@ export default function Training() {
     if (trainingsForSelectedDate.length > 0) {
       // Sort by date (and fallback to id) to choose the last training.
       const sortedTrainings = trainingsForSelectedDate.sort((a, b) => {
-        const diff = dayjs(a.date).diff(dayjs(b.date));
+        const aDateTime = dayjs(`${a.date} ${a.time}`);
+        const bDateTime = dayjs(`${b.date} ${b.time}`);
+        const diff = aDateTime.diff(bDateTime);
         return diff !== 0 ? diff : a.id - b.id;
       });
       const lastTraining = sortedTrainings[sortedTrainings.length - 1];
