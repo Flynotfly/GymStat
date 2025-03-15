@@ -4,6 +4,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from django.db.models import Q
+
 from ..models import ExerciseType, Training
 from .serializers import (
     ExerciseTypeSerializer,
@@ -24,10 +26,18 @@ class UserExerciseTypeListView(ListAPIView):
 
 class BaseExerciseTypeListView(ListAPIView):
     serializer_class = ExerciseTypeSerializer
-    permission_classes = [IsAuthenticated]  # Adjust permission as needed
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return ExerciseType.objects.filter(base=True)
+
+
+class BaseAndUserExerciseTypeListView(ListAPIView):
+    serializer_class = ExerciseTypeSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return ExerciseType.objects.filter(Q(base=True) | Q(owner=self.request.user))
 
 
 class ExerciseTypeCreateView(CreateAPIView):
