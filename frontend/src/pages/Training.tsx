@@ -63,12 +63,17 @@ function TrainingDetails({ training }: TrainingDetailsProps) {
       <Divider sx={{ my: 1 }} />
       {localTraining.sets.map((set) => (
         <Box key={set.index} sx={{ mb: 1, p: 1, border: '1px solid #eee' }}>
+          <Typography variant="subtitle2">
+            Set {set.index} - Type: {set.exerciseType}
+          </Typography>
           {set.exercises.map((exercise) => (
             <Box
               key={exercise.index}
-              sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}
+              sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}
             >
-              {/* Render exercise details if needed */}
+              <Typography variant="body2">
+                Exercise {exercise.index}: {exercise.repetitions} reps, {exercise.weight} kg
+              </Typography>
             </Box>
           ))}
         </Box>
