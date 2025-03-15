@@ -26,6 +26,7 @@ urlpatterns = [
         api_views.BaseExerciseTypeListView.as_view(),
         name="base-exercise-types",
     ),
+    path("exercises/", api_views.BaseAndUserExerciseTypeListView.as_view(), name="exercise-types"),
     path(
         "create-exercise-type/",
         api_views.ExerciseTypeCreateView.as_view(),
