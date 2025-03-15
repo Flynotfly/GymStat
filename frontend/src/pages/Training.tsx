@@ -19,6 +19,8 @@ import Rating from '@mui/material/Rating';
 // Import your API and types as needed
 import { getAllTrainings, getTraining } from "../api";
 import CustomDatePicker from "../components/CustomDatePicker.tsx";
+import {TimePicker} from "@mui/x-date-pickers";
+import {DatePicker} from "@mui/x-date-pickers/DatePicker";
 
 // ===== Interfaces =====
 export interface TrainingShortInterface {
@@ -94,15 +96,16 @@ interface CreateTrainingFormProps {
 function CreateTrainingForm({ onSave, initialDate }: CreateTrainingFormProps) {
   const [title, setTitle] = useState("");
   const [date, setDate] = useState<Dayjs>(initialDate || dayjs());
-  const [time, setTime] = useState("");
+  const [time, setTime] = useState<Dayjs | null>(dayjs());
   const [description, setDescription] = useState("");
   const [score, setScore] = useState<number | null>(null);
 
   const handleSave = () => {
+    const formattedTime = time ? time.format("HH:mm") : "";
     const newTraining = {
       title,
       date: date.format("YYYY-MM-DD"),
-      time,
+      formattedTime,
       description,
       score: score || 0,
       sets: [] // Default empty sets; adjust as needed
@@ -123,21 +126,20 @@ function CreateTrainingForm({ onSave, initialDate }: CreateTrainingFormProps) {
           onChange={(e) => setTitle(e.target.value)}
           fullWidth
         />
-        <CustomDatePicker
+        <DatePicker
+          label="Choose date"
           value={date}
           onChange={(newValue) => {
-            if (newValue) setDate(newValue);
+            // Check newValue for null before updating state.
+            if (newValue) {
+              setDate(newValue);
+            }
           }}
         />
-        <TextField
-          label="Time"
-          type="time"
+        <TimePicker
+          label="Enter time"
           value={time}
-          onChange={(e) => setTime(e.target.value)}
-          fullWidth
-          InputLabelProps={{
-            shrink: true,
-          }}
+          onChange={(newValue) => setTime(newValue)}
         />
         <TextField
           label="Description"
@@ -163,6 +165,7 @@ function CreateTrainingForm({ onSave, initialDate }: CreateTrainingFormProps) {
       </Stack>
     </Box>
   );
+
 }
 
 // ===== Main Training Page =====
