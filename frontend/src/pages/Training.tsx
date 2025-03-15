@@ -14,6 +14,13 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import TextField from '@mui/material/TextField';
+
 // Import your API and types as needed
 import { getAllTrainings, getTraining } from "../api";
 import CustomDatePicker from "../components/CustomDatePicker.tsx";
@@ -41,6 +48,108 @@ export interface TrainingInterface extends TrainingShortInterface {
       weight: number;
     }[];
   }[];
+}
+
+// ===== AddTrainingForm Component =====
+interface AddTrainingFormProps {
+  open: boolean;
+  handleClose: () => void;
+  onSubmit: (training: TrainingInterface) => void;
+  initialDate?: Dayjs;
+}
+
+function AddTrainingForm({ open, handleClose, onSubmit, initialDate }: AddTrainingFormProps) {
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [date, setDate] = useState<Dayjs>(initialDate || dayjs());
+  const [time, setTime] = useState('');
+  const [score, setScore] = useState<number>(0);
+
+  useEffect(() => {
+    if (initialDate) {
+      setDate(initialDate);
+    }
+  }, [initialDate]);
+
+  const handleSubmit = () => {
+    const newTraining: TrainingInterface = {
+      id: Date.now(), // Temporary ID. Replace with your actual ID logic if needed.
+      title,
+      description,
+      date: date.format('YYYY-MM-DD'),
+      time,
+      score,
+      sets: [] // New training starts with no sets.
+    };
+    onSubmit(newTraining);
+    // Reset the form fields.
+    setTitle('');
+    setDescription('');
+    setDate(dayjs());
+    setTime('');
+    setScore(0);
+    handleClose();
+  };
+
+  return (
+    <Dialog open={open} onClose={handleClose}>
+      <DialogTitle>Add New Training</DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          Fill out the details for the new training.
+        </DialogContentText>
+        <TextField
+          autoFocus
+          margin="dense"
+          label="Title"
+          fullWidth
+          variant="outlined"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+        <TextField
+          margin="dense"
+          label="Description"
+          fullWidth
+          variant="outlined"
+          multiline
+          rows={3}
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
+        <CustomDatePicker
+          value={date}
+          onChange={(newValue) => {
+            if (newValue) setDate(newValue);
+          }}
+        />
+        <TextField
+          margin="dense"
+          label="Time"
+          fullWidth
+          variant="outlined"
+          value={time}
+          onChange={(e) => setTime(e.target.value)}
+          placeholder="HH:mm"
+        />
+        <TextField
+          margin="dense"
+          label="Score"
+          fullWidth
+          variant="outlined"
+          type="number"
+          value={score}
+          onChange={(e) => setScore(Number(e.target.value))}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleClose}>Cancel</Button>
+        <Button onClick={handleSubmit} variant="contained" color="primary">
+          Add Training
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 }
 
 // ===== Training Details Component =====
@@ -90,6 +199,8 @@ export default function Training() {
   const [trainings, setTrainings] = useState<TrainingShortInterface[]>([]);
   const [selectedTrainingDetails, setSelectedTrainingDetails] = useState<TrainingInterface | null>(null);
   const [selectedTrainingId, setSelectedTrainingId] = useState<number | null>(null);
+  const [openAddForm, setOpenAddForm] = useState(false);
+  const [initialTrainingDate, setInitialTrainingDate] = useState<Dayjs>(dayjs());
 
   // Fetch all trainings on mount.
   useEffect(() => {
@@ -124,12 +235,21 @@ export default function Training() {
     }
   };
 
+  // Open the add training form with the appropriate initial date.
   const handleAddTrainingNow = () => {
-    console.info('Handle add Training now');
+    setInitialTrainingDate(dayjs());
+    setOpenAddForm(true);
   };
 
   const handleAddTrainingForSelectedDay = () => {
-    console.info('Handle add Training for selected day');
+    setInitialTrainingDate(selectedDate);
+    setOpenAddForm(true);
+  };
+
+  // Handle new training submission.
+  const handleNewTrainingSubmit = (newTraining: TrainingInterface) => {
+    setTrainings([...trainings, newTraining]);
+    console.log("New training added: ", newTraining);
   };
 
   // Filter trainings for the selected day.
@@ -260,7 +380,13 @@ export default function Training() {
           </Paper>
         </Grid>
       </Grid>
+      {/* Render the AddTrainingForm modal */}
+      <AddTrainingForm
+        open={openAddForm}
+        handleClose={() => setOpenAddForm(false)}
+        onSubmit={handleNewTrainingSubmit}
+        initialDate={initialTrainingDate}
+      />
     </Box>
   );
-
 }
