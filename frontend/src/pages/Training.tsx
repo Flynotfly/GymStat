@@ -133,6 +133,7 @@ export default function Training() {
 
   // Function to fetch training details using getTraining API.
   const fetchTrainingDetails = (trainingId: number) => {
+    console.log('Start fetching training data for training ', trainingId);
     getTraining(trainingId)
       .then((data: TrainingInterface) => {
         setSelectedTrainingDetails(data);
