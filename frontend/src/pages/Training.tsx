@@ -124,7 +124,6 @@ function CreateTrainingForm({ onSave, initialDate }: CreateTrainingFormProps) {
           fullWidth
         />
         <CustomDatePicker
-          label="Date"
           value={date}
           onChange={(newValue) => {
             if (newValue) setDate(newValue);
@@ -153,7 +152,7 @@ function CreateTrainingForm({ onSave, initialDate }: CreateTrainingFormProps) {
           <Rating
             name="score"
             value={score}
-            onChange={(event, newValue) => {
+            onChange={(_, newValue) => {
               setScore(newValue);
             }}
           />
