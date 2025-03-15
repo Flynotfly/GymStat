@@ -246,7 +246,6 @@ function CreateTrainingForm({ onSave, initialDate }: CreateTrainingFormProps) {
           onChange={(e) => setDescription(e.target.value)}
           fullWidth
           multiline
-          minRows={4}
           maxRows={4}
         />
         <Box>
