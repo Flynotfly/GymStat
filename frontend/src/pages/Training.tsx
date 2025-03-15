@@ -13,6 +13,8 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
+import TextField from '@mui/material/TextField';
+import Rating from '@mui/material/Rating';
 
 // Import your API and types as needed
 import { getAllTrainings, getTraining } from "../api";
@@ -83,6 +85,87 @@ function TrainingDetails({ training }: TrainingDetailsProps) {
   );
 }
 
+// ===== Create Training Form Component =====
+
+interface CreateTrainingFormProps {
+  onSave: (data: Partial<TrainingInterface>) => void;
+  initialDate?: Dayjs;
+}
+function CreateTrainingForm({ onSave, initialDate }: CreateTrainingFormProps) {
+  const [title, setTitle] = useState("");
+  const [date, setDate] = useState<Dayjs>(initialDate || dayjs());
+  const [time, setTime] = useState("");
+  const [description, setDescription] = useState("");
+  const [score, setScore] = useState<number | null>(null);
+
+  const handleSave = () => {
+    const newTraining = {
+      title,
+      date: date.format("YYYY-MM-DD"),
+      time,
+      description,
+      score: score || 0,
+      sets: [] // Default empty sets; adjust as needed
+    };
+    console.info("New Training Data:", newTraining);
+    onSave(newTraining);
+  };
+
+  return (
+    <Box sx={{ p: 2 }}>
+      <Typography variant="h6" gutterBottom>
+        Create New Training
+      </Typography>
+      <Stack spacing={2}>
+        <TextField
+          label="Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          fullWidth
+        />
+        <CustomDatePicker
+          label="Date"
+          value={date}
+          onChange={(newValue) => {
+            if (newValue) setDate(newValue);
+          }}
+        />
+        <TextField
+          label="Time"
+          type="time"
+          value={time}
+          onChange={(e) => setTime(e.target.value)}
+          fullWidth
+          InputLabelProps={{
+            shrink: true,
+          }}
+        />
+        <TextField
+          label="Description"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          fullWidth
+          multiline
+          rows={4}
+        />
+        <Box>
+          <Typography component="legend">Score</Typography>
+          <Rating
+            name="score"
+            value={score}
+            onChange={(event, newValue) => {
+              setScore(newValue);
+            }}
+          />
+        </Box>
+        <Button variant="contained" onClick={handleSave}>
+          Save
+        </Button>
+      </Stack>
+    </Box>
+  );
+}
+
 // ===== Main Training Page =====
 
 export default function Training() {
@@ -90,6 +173,7 @@ export default function Training() {
   const [trainings, setTrainings] = useState<TrainingShortInterface[]>([]);
   const [selectedTrainingDetails, setSelectedTrainingDetails] = useState<TrainingInterface | null>(null);
   const [selectedTrainingId, setSelectedTrainingId] = useState<number | null>(null);
+  const [isCreatingTraining, setIsCreatingTraining] = useState(false);
 
   // Fetch all trainings on mount.
   useEffect(() => {
@@ -125,11 +209,11 @@ export default function Training() {
   };
 
   const handleAddTrainingNow = () => {
-    console.info('Handle add Training now');
+    setIsCreatingTraining(true);
   };
 
   const handleAddTrainingForSelectedDay = () => {
-    console.info('Handle add Training for selected day');
+    setIsCreatingTraining(true);
   };
 
   // Filter trainings for the selected day.
@@ -144,6 +228,8 @@ export default function Training() {
       .then((data: TrainingInterface) => {
         setSelectedTrainingDetails(data);
         setSelectedTrainingId(trainingId);
+        // When viewing an existing training, hide the create form.
+        setIsCreatingTraining(false);
         console.log('Fetch training: ', data);
       })
       .catch(err => {
@@ -172,6 +258,13 @@ export default function Training() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate, trainings]);
+
+  const handleSaveTraining = (newTrainingData: Partial<TrainingInterface>) => {
+    console.info("Saving new training...", newTrainingData);
+    // TODO: Call your API to save the new training.
+    // After saving, hide the form:
+    setIsCreatingTraining(false);
+  };
 
   return (
     <Box sx={{ p: 2 }}>
@@ -247,10 +340,12 @@ export default function Training() {
           </Paper>
         </Grid>
 
-        {/* Right Panel: Training Details */}
+        {/* Right Panel: Training Details or Create Training Form */}
         <Grid item xs={12} md={8}>
           <Paper elevation={3} sx={{ p: 2 }}>
-            {selectedTrainingDetails ? (
+            {isCreatingTraining ? (
+              <CreateTrainingForm onSave={handleSaveTraining} initialDate={selectedDate} />
+            ) : selectedTrainingDetails ? (
               <TrainingDetails training={selectedTrainingDetails} />
             ) : (
               <Typography variant="subtitle1">
@@ -262,5 +357,4 @@ export default function Training() {
       </Grid>
     </Box>
   );
-
 }
