@@ -34,6 +34,7 @@ export interface TrainingInterface extends TrainingShortInterface {
   sets: {
     index: number;
     exerciseType: number;
+    exerciseName: string;
     exercises: {
       index: number;
       repetitions: number;
@@ -64,7 +65,7 @@ function TrainingDetails({ training }: TrainingDetailsProps) {
       {localTraining.sets.map((set) => (
         <Box key={set.index} sx={{ mb: 1, p: 1, border: '1px solid #eee' }}>
           <Typography variant="subtitle2">
-            Set {set.index} - Type: {set.exerciseType}
+            Set {set.index} - Type: {set.exerciseName}
           </Typography>
           {set.exercises.map((exercise) => (
             <Box
