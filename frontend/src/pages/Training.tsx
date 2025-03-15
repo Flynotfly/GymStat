@@ -137,6 +137,7 @@ export default function Training() {
       .then((data: TrainingInterface) => {
         setSelectedTrainingDetails(data);
         setSelectedTrainingId(trainingId);
+        console.log('Fetch training: ', data);
       })
       .catch(err => {
         console.log("Error fetching training details: ", err);
