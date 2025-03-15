@@ -58,15 +58,12 @@ class TrainingOverallSerializer(serializers.ModelSerializer):
         for order, group in groupby(exercises, key=lambda ex: ex.order):
             group_list = list(group)
             # Assume that all exercises in the same set share the same exercise_type.
-            exercise_type_id = (
-                group_list[0].exercise_type.id
-                if group_list[0].exercise_type
-                else None
-            )
+            exercise_type = group_list[0].exercise_type
             sets.append(
                 {
                     "index": order,
-                    "exerciseType": exercise_type_id,
+                    "exerciseType": exercise_type.id if exercise_type else None,
+                    "exerciseName": exercise_type.name if exercise_type else None,
                     "exercises": [
                         {
                             "index": ex.suborder,
