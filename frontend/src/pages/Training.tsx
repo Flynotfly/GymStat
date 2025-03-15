@@ -179,9 +179,9 @@ export default function Training() {
         Training Statistics
       </Typography>
       <Grid container spacing={3}>
-        {/* Left Panel: Date Picker, Navigation & Add Training */}
+        {/* Left Panel: Calendar, Navigation, Add Training Buttons, and Trainings List */}
         <Grid item xs={12} md={4}>
-          <Paper elevation={3} sx={{ p: 2 }}>
+          <Paper elevation={3} sx={{ p: 2, mb: 2 }}>
             <Typography variant="subtitle1" gutterBottom>
               Select Date
             </Typography>
@@ -220,40 +220,47 @@ export default function Training() {
               </Button>
             </Stack>
           </Paper>
-        </Grid>
-
-        {/* Right Panel: Trainings List and Details */}
-        <Grid item xs={12} md={8}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Typography variant="subtitle1" sx={{ mb: 2 }}>
-              Trainings on {selectedDate.format('DD MMM YYYY')}
+              Trainings on {selectedDate.format("DD MMM YYYY")}
             </Typography>
             {trainingsForSelectedDate.length === 0 ? (
               <Typography>No trainings for this day.</Typography>
             ) : (
-              <>
-                {/* Trainings list */}
-                <List>
-                  {trainingsForSelectedDate.map((training) => (
-                    <ListItem key={training.id} disablePadding>
-                      <ListItemButton
-                        selected={selectedTrainingId === training.id}
-                        onClick={() => fetchTrainingDetails(training.id)}
-                      >
-                        <ListItemText primary={`${training.title} - ${dayjs(`${training.date}T${training.time}`).format('HH:mm')}`} />
-                      </ListItemButton>
-                    </ListItem>
-                  ))}
-                </List>
-                {/* Training details */}
-                {selectedTrainingDetails && (
-                  <TrainingDetails training={selectedTrainingDetails} />
-                )}
-              </>
+              <List>
+                {trainingsForSelectedDate.map((training) => (
+                  <ListItem key={training.id} disablePadding>
+                    <ListItemButton
+                      selected={selectedTrainingId === training.id}
+                      onClick={() => fetchTrainingDetails(training.id)}
+                    >
+                      <ListItemText
+                        primary={`${training.title} - ${dayjs(
+                          `${training.date}T${training.time}`
+                        ).format("HH:mm")}`}
+                      />
+                    </ListItemButton>
+                  </ListItem>
+                ))}
+              </List>
+            )}
+          </Paper>
+        </Grid>
+
+        {/* Right Panel: Training Details */}
+        <Grid item xs={12} md={8}>
+          <Paper elevation={3} sx={{ p: 2 }}>
+            {selectedTrainingDetails ? (
+              <TrainingDetails training={selectedTrainingDetails} />
+            ) : (
+              <Typography variant="subtitle1">
+                Select a training to view details.
+              </Typography>
             )}
           </Paper>
         </Grid>
       </Grid>
     </Box>
   );
+
 }
