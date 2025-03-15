@@ -21,6 +21,8 @@ import { getAllTrainings, getTraining } from "../api";
 import CustomDatePicker from "../components/CustomDatePicker.tsx";
 import {TimePicker} from "@mui/x-date-pickers";
 import {DatePicker} from "@mui/x-date-pickers/DatePicker";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
 
 // ===== Interfaces =====
 export interface TrainingShortInterface {
@@ -269,94 +271,96 @@ export default function Training() {
   };
 
   return (
-    <Box sx={{ p: 2 }}>
-      <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>
-        Training Statistics
-      </Typography>
-      <Grid container spacing={3}>
-        {/* Left Panel: Calendar, Navigation, Add Training Buttons, and Trainings List */}
-        <Grid item xs={12} md={4}>
-          <Paper elevation={3} sx={{ p: 2, mb: 2 }}>
-            <Typography variant="subtitle1" gutterBottom>
-              Select Date
-            </Typography>
-            <CustomDatePicker
-              value={selectedDate}
-              onChange={(newValue) => {
-                if (newValue) setSelectedDate(newValue);
-              }}
-            />
-            <Stack direction="row" spacing={1} sx={{ mt: 2, mb: 2 }}>
-              <Button variant="outlined" onClick={goToPrevTrainingDate}>
-                Previous Training
-              </Button>
-              <Button variant="outlined" onClick={goToNextTrainingDate}>
-                Next Training
-              </Button>
-            </Stack>
-            <Stack spacing={2}>
-              <Button
-                variant="contained"
-                color="primary"
-                startIcon={<AddIcon />}
-                fullWidth
-                onClick={handleAddTrainingNow}
-              >
-                Add Training Now
-              </Button>
-              <Button
-                variant="outlined"
-                color="primary"
-                startIcon={<EventIcon />}
-                fullWidth
-                onClick={handleAddTrainingForSelectedDay}
-              >
-                Add Training for Selected Day
-              </Button>
-            </Stack>
-          </Paper>
-          <Paper elevation={3} sx={{ p: 2 }}>
-            <Typography variant="subtitle1" sx={{ mb: 2 }}>
-              Trainings on {selectedDate.format("DD MMM YYYY")}
-            </Typography>
-            {trainingsForSelectedDate.length === 0 ? (
-              <Typography>No trainings for this day.</Typography>
-            ) : (
-              <List>
-                {trainingsForSelectedDate.map((training) => (
-                  <ListItem key={training.id} disablePadding>
-                    <ListItemButton
-                      selected={selectedTrainingId === training.id}
-                      onClick={() => fetchTrainingDetails(training.id)}
-                    >
-                      <ListItemText
-                        primary={`${training.title} - ${dayjs(
-                          `${training.date}T${training.time}`
-                        ).format("HH:mm")}`}
-                      />
-                    </ListItemButton>
-                  </ListItem>
-                ))}
-              </List>
-            )}
-          </Paper>
-        </Grid>
-
-        {/* Right Panel: Training Details or Create Training Form */}
-        <Grid item xs={12} md={8}>
-          <Paper elevation={3} sx={{ p: 2 }}>
-            {isCreatingTraining ? (
-              <CreateTrainingForm onSave={handleSaveTraining} initialDate={selectedDate} />
-            ) : selectedTrainingDetails ? (
-              <TrainingDetails training={selectedTrainingDetails} />
-            ) : (
-              <Typography variant="subtitle1">
-                Select a training to view details.
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <Box sx={{ p: 2 }}>
+        <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>
+          Training Statistics
+        </Typography>
+        <Grid container spacing={3}>
+          {/* Left Panel: Calendar, Navigation, Add Training Buttons, and Trainings List */}
+          <Grid item xs={12} md={4}>
+            <Paper elevation={3} sx={{ p: 2, mb: 2 }}>
+              <Typography variant="subtitle1" gutterBottom>
+                Select Date
               </Typography>
-            )}
-          </Paper>
+              <CustomDatePicker
+                value={selectedDate}
+                onChange={(newValue) => {
+                  if (newValue) setSelectedDate(newValue);
+                }}
+              />
+              <Stack direction="row" spacing={1} sx={{ mt: 2, mb: 2 }}>
+                <Button variant="outlined" onClick={goToPrevTrainingDate}>
+                  Previous Training
+                </Button>
+                <Button variant="outlined" onClick={goToNextTrainingDate}>
+                  Next Training
+                </Button>
+              </Stack>
+              <Stack spacing={2}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  startIcon={<AddIcon />}
+                  fullWidth
+                  onClick={handleAddTrainingNow}
+                >
+                  Add Training Now
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  startIcon={<EventIcon />}
+                  fullWidth
+                  onClick={handleAddTrainingForSelectedDay}
+                >
+                  Add Training for Selected Day
+                </Button>
+              </Stack>
+            </Paper>
+            <Paper elevation={3} sx={{ p: 2 }}>
+              <Typography variant="subtitle1" sx={{ mb: 2 }}>
+                Trainings on {selectedDate.format("DD MMM YYYY")}
+              </Typography>
+              {trainingsForSelectedDate.length === 0 ? (
+                <Typography>No trainings for this day.</Typography>
+              ) : (
+                <List>
+                  {trainingsForSelectedDate.map((training) => (
+                    <ListItem key={training.id} disablePadding>
+                      <ListItemButton
+                        selected={selectedTrainingId === training.id}
+                        onClick={() => fetchTrainingDetails(training.id)}
+                      >
+                        <ListItemText
+                          primary={`${training.title} - ${dayjs(
+                            `${training.date}T${training.time}`
+                          ).format("HH:mm")}`}
+                        />
+                      </ListItemButton>
+                    </ListItem>
+                  ))}
+                </List>
+              )}
+            </Paper>
+          </Grid>
+
+          {/* Right Panel: Training Details or Create Training Form */}
+          <Grid item xs={12} md={8}>
+            <Paper elevation={3} sx={{ p: 2 }}>
+              {isCreatingTraining ? (
+                <CreateTrainingForm onSave={handleSaveTraining} initialDate={selectedDate} />
+              ) : selectedTrainingDetails ? (
+                <TrainingDetails training={selectedTrainingDetails} />
+              ) : (
+                <Typography variant="subtitle1">
+                  Select a training to view details.
+                </Typography>
+              )}
+            </Paper>
+          </Grid>
         </Grid>
-      </Grid>
-    </Box>
+      </Box>
+    </LocalizationProvider>
   );
 }
