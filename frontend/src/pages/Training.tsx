@@ -102,15 +102,113 @@ function CreateTrainingForm({ onSave, initialDate }: CreateTrainingFormProps) {
   const [description, setDescription] = useState("");
   const [score, setScore] = useState<number | null>(null);
 
+  // State for sets – each set contains its own exercises array
+  const [sets, setSets] = useState<
+    {
+      index: number;
+      exerciseType: number;
+      exerciseName: string;
+      exercises: {
+        index: number;
+        repetitions: number;
+        weight: number;
+      }[];
+    }[]
+  >([]);
+
+  // Add a new set with default values
+  const handleAddSet = () => {
+    const newSet = {
+      index: sets.length + 1,
+      exerciseType: 0,
+      exerciseName: "",
+      exercises: []
+    };
+    setSets([...sets, newSet]);
+  };
+
+  // Remove a set by its index in the array
+  const handleRemoveSet = (setIndex: number) => {
+    setSets(sets.filter((_, idx) => idx !== setIndex));
+  };
+
+  // Update a specific field of a set
+  const handleSetChange = (
+    setIndex: number,
+    field: keyof typeof sets[0],
+    value: any
+  ) => {
+    setSets(
+      sets.map((set, idx) =>
+        idx === setIndex ? { ...set, [field]: value } : set
+      )
+    );
+  };
+
+  // Add an exercise to a specific set
+  const handleAddExercise = (setIndex: number) => {
+    setSets(
+      sets.map((set, idx) => {
+        if (idx === setIndex) {
+          const newExercise = {
+            index: set.exercises.length + 1,
+            repetitions: 0,
+            weight: 0
+          };
+          return { ...set, exercises: [...set.exercises, newExercise] };
+        }
+        return set;
+      })
+    );
+  };
+
+  // Update a field in an exercise for a given set
+  const handleExerciseChange = (
+    setIndex: number,
+    exerciseIndex: number,
+    field: keyof { repetitions: number; weight: number },
+    value: any
+  ) => {
+    setSets(
+      sets.map((set, idx) => {
+        if (idx === setIndex) {
+          const updatedExercises = set.exercises.map((ex, exIdx) => {
+            if (exIdx === exerciseIndex) {
+              return { ...ex, [field]: value };
+            }
+            return ex;
+          });
+          return { ...set, exercises: updatedExercises };
+        }
+        return set;
+      })
+    );
+  };
+
+  // Remove an exercise from a set
+  const handleRemoveExercise = (setIndex: number, exerciseIndex: number) => {
+    setSets(
+      sets.map((set, idx) => {
+        if (idx === setIndex) {
+          const updatedExercises = set.exercises.filter(
+            (_, exIdx) => exIdx !== exerciseIndex
+          );
+          return { ...set, exercises: updatedExercises };
+        }
+        return set;
+      })
+    );
+  };
+
   const handleSave = () => {
     const formattedTime = time ? time.format("HH:mm") : "";
     const newTraining = {
       title,
       date: date.format("YYYY-MM-DD"),
-      formattedTime,
+      time: formattedTime,
       description,
       score: score || 0,
-      sets: [] // Default empty sets; adjust as needed
+      sets
     };
     console.info("New Training Data:", newTraining);
     onSave(newTraining);
@@ -132,7 +230,6 @@ function CreateTrainingForm({ onSave, initialDate }: CreateTrainingFormProps) {
           label="Choose date"
           value={date}
           onChange={(newValue) => {
-            // Check newValue for null before updating state.
             if (newValue) {
               setDate(newValue);
             }
@@ -156,10 +253,110 @@ function CreateTrainingForm({ onSave, initialDate }: CreateTrainingFormProps) {
           <Rating
             name="score"
             value={score}
-            onChange={(_, newValue) => {
-              setScore(newValue);
-            }}
+            onChange={(_, newValue) => setScore(newValue)}
           />
+        </Box>
+
+        {/* Sets Section */}
+        <Box>
+          <Typography variant="h6">Sets</Typography>
+          {sets.map((set, setIdx) => (
+            <Box
+              key={setIdx}
+              sx={{ border: "1px solid #ccc", p: 2, mb: 2, borderRadius: 1 }}
+            >
+              <Stack spacing={2}>
+                <TextField
+                  label="Exercise Name"
+                  value={set.exerciseName}
+                  onChange={(e) =>
+                    handleSetChange(setIdx, "exerciseName", e.target.value)
+                  }
+                  fullWidth
+                />
+                <TextField
+                  label="Exercise Type"
+                  type="number"
+                  value={set.exerciseType}
+                  onChange={(e) =>
+                    handleSetChange(setIdx, "exerciseType", Number(e.target.value))
+                  }
+                />
+
+                {/* Exercises within the set */}
+                <Box>
+                  <Typography variant="subtitle1">Exercises</Typography>
+                  {set.exercises.map((exercise, exIdx) => (
+                    <Box
+                      key={exIdx}
+                      sx={{
+                        border: "1px dashed #aaa",
+                        p: 1,
+                        mb: 1,
+                        borderRadius: 1
+                      }}
+                    >
+                      <Stack
+                        direction="row"
+                        spacing={2}
+                        alignItems="center"
+                      >
+                        <TextField
+                          label="Repetitions"
+                          type="number"
+                          value={exercise.repetitions}
+                          onChange={(e) =>
+                            handleExerciseChange(
+                              setIdx,
+                              exIdx,
+                              "repetitions",
+                              Number(e.target.value)
+                            )
+                          }
+                        />
+                        <TextField
+                          label="Weight"
+                          type="number"
+                          value={exercise.weight}
+                          onChange={(e) =>
+                            handleExerciseChange(
+                              setIdx,
+                              exIdx,
+                              "weight",
+                              Number(e.target.value)
+                            )
+                          }
+                        />
+                        <Button
+                          variant="outlined"
+                          color="error"
+                          onClick={() => handleRemoveExercise(setIdx, exIdx)}
+                        >
+                          Remove Exercise
+                        </Button>
+                      </Stack>
+                    </Box>
+                  ))}
+                  <Button
+                    variant="outlined"
+                    onClick={() => handleAddExercise(setIdx)}
+                  >
+                    Add Exercise
+                  </Button>
+                </Box>
+                <Button
+                  variant="outlined"
+                  color="error"
+                  onClick={() => handleRemoveSet(setIdx)}
+                >
+                  Remove Set
+                </Button>
+              </Stack>
+            </Box>
+          ))}
+          <Button variant="outlined" onClick={handleAddSet}>
+            Add Set
+          </Button>
         </Box>
         <Button variant="contained" onClick={handleSave}>
           Save
@@ -167,8 +364,8 @@ function CreateTrainingForm({ onSave, initialDate }: CreateTrainingFormProps) {
       </Stack>
     </Box>
   );
-
 }
+
 
 // ===== Main Training Page =====
 
