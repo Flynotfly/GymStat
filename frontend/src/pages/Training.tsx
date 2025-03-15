@@ -246,7 +246,7 @@ function CreateTrainingForm({ onSave, initialDate }: CreateTrainingFormProps) {
           onChange={(e) => setDescription(e.target.value)}
           fullWidth
           multiline
-          rows={4}
+          maxRows={4}
         />
         <Box>
           <Typography component="legend">Score</Typography>
