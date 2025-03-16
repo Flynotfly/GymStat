@@ -104,15 +104,15 @@ function CreateTrainingForm({ onSave, initialDate }: CreateTrainingFormProps) {
   const [description, setDescription] = useState("");
   const [score, setScore] = useState<number | null>(null);
 
-  // Update state type to an array of Exercise
+  // Store exercise types as an array of Exercise
   const [exerciseTypes, setExerciseTypes] = useState<Exercise[]>([]);
 
   // State for sets – each set contains its own exercises array
   const [sets, setSets] = useState<
     {
       index: number;
-      exerciseType: number;
-      exerciseName: string;
+      exerciseType: number; // Stores the id of the selected exercise
+      exerciseName: string; // Will be auto-filled based on selected exercise type
       exercises: {
         index: number;
         repetitions: number;
@@ -279,16 +279,7 @@ function CreateTrainingForm({ onSave, initialDate }: CreateTrainingFormProps) {
               sx={{ border: "1px solid #ccc", p: 2, mb: 2, borderRadius: 1 }}
             >
               <Stack spacing={2}>
-                <TextField
-                  label="Exercise Name"
-                  value={set.exerciseName}
-                  onChange={(e) =>
-                    handleSetChange(setIdx, "exerciseName", e.target.value)
-                  }
-                  fullWidth
-                />
-
-                {/* Replace the plain TextField with Autocomplete */}
+                {/* Autocomplete for Exercise Type */}
                 <Autocomplete
                   options={exerciseTypes}
                   getOptionLabel={(option) => option.name}
@@ -296,7 +287,9 @@ function CreateTrainingForm({ onSave, initialDate }: CreateTrainingFormProps) {
                     exerciseTypes.find((et) => et.id === set.exerciseType) || null
                   }
                   onChange={(_, newValue) => {
+                    // Automatically update both the exercise type id and name
                     handleSetChange(setIdx, "exerciseType", newValue ? newValue.id : 0);
+                    handleSetChange(setIdx, "exerciseName", newValue ? newValue.name : "");
                   }}
                   renderInput={(params) => (
                     <TextField {...params} label="Exercise Type" variant="outlined" />
@@ -385,6 +378,7 @@ function CreateTrainingForm({ onSave, initialDate }: CreateTrainingFormProps) {
     </Box>
   );
 }
+
 
 
 // ===== Main Training Page =====
