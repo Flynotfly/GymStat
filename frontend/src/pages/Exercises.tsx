@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import { createExercise, fetchCsrf, getBaseExercises, getUserExercises } from "../api.ts";
 
-interface Exercise {
+export interface Exercise {
   id: number;
   name: string;
   description: string;
