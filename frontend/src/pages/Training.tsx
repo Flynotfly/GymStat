@@ -24,6 +24,7 @@ import {DatePicker} from "@mui/x-date-pickers/DatePicker";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
 import { Exercise } from "./Exercises.tsx";
+import {Autocomplete} from "@mui/material";
 
 // ===== Interfaces =====
 export interface TrainingShortInterface {
@@ -102,7 +103,9 @@ function CreateTrainingForm({ onSave, initialDate }: CreateTrainingFormProps) {
   const [time, setTime] = useState<Dayjs | null>(dayjs());
   const [description, setDescription] = useState("");
   const [score, setScore] = useState<number | null>(null);
-  const [exerciseTypes, setExerciseTypes] = useState<Exercise | null>(null)
+
+  // Update state type to an array of Exercise
+  const [exerciseTypes, setExerciseTypes] = useState<Exercise[]>([]);
 
   // State for sets – each set contains its own exercises array
   const [sets, setSets] = useState<
@@ -119,10 +122,11 @@ function CreateTrainingForm({ onSave, initialDate }: CreateTrainingFormProps) {
   >([]);
 
   useEffect(() => {
+    // Replace with your actual API call
     getAllExercises()
       .then((data: Exercise[]) => {
         setExerciseTypes(data);
-        console.log('Exercise types: ', data);
+        console.log("Exercise types: ", data);
       })
       .catch(err => console.log("Error fetching exercise types: ", err));
   }, []);
@@ -283,13 +287,20 @@ function CreateTrainingForm({ onSave, initialDate }: CreateTrainingFormProps) {
                   }
                   fullWidth
                 />
-                <TextField
-                  label="Exercise Type"
-                  type="number"
-                  value={set.exerciseType}
-                  onChange={(e) =>
-                    handleSetChange(setIdx, "exerciseType", Number(e.target.value))
+
+                {/* Replace the plain TextField with Autocomplete */}
+                <Autocomplete
+                  options={exerciseTypes}
+                  getOptionLabel={(option) => option.name}
+                  value={
+                    exerciseTypes.find((et) => et.id === set.exerciseType) || null
                   }
+                  onChange={(_, newValue) => {
+                    handleSetChange(setIdx, "exerciseType", newValue ? newValue.id : 0);
+                  }}
+                  renderInput={(params) => (
+                    <TextField {...params} label="Exercise Type" variant="outlined" />
+                  )}
                 />
 
                 {/* Exercises within the set */}
