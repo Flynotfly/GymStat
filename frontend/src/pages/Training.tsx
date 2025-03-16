@@ -17,12 +17,13 @@ import TextField from '@mui/material/TextField';
 import Rating from '@mui/material/Rating';
 
 // Import your API and types as needed
-import { getAllTrainings, getTraining } from "../api";
+import {getAllExercises, getAllTrainings, getTraining} from "../api";
 import CustomDatePicker from "../components/CustomDatePicker.tsx";
 import {TimePicker} from "@mui/x-date-pickers";
 import {DatePicker} from "@mui/x-date-pickers/DatePicker";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
+import { Exercise } from "./Exercises.tsx";
 
 // ===== Interfaces =====
 export interface TrainingShortInterface {
@@ -101,6 +102,7 @@ function CreateTrainingForm({ onSave, initialDate }: CreateTrainingFormProps) {
   const [time, setTime] = useState<Dayjs | null>(dayjs());
   const [description, setDescription] = useState("");
   const [score, setScore] = useState<number | null>(null);
+  const [exerciseTypes, setExerciseTypes] = useState<Exercise | null>(null)
 
   // State for sets – each set contains its own exercises array
   const [sets, setSets] = useState<
@@ -115,6 +117,15 @@ function CreateTrainingForm({ onSave, initialDate }: CreateTrainingFormProps) {
       }[];
     }[]
   >([]);
+
+  useEffect(() => {
+    getAllExercises()
+      .then((data: Exercise[]) => {
+        setExerciseTypes(data);
+        console.log('Exercise types: ', data);
+      })
+      .catch(err => console.log("Error fetching exercise types: ", err));
+  }, []);
 
   // Add a new set with default values
   const handleAddSet = () => {
