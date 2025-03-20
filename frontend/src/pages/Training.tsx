@@ -283,13 +283,19 @@ function CreateTrainingForm({ onSave, initialDate }: CreateTrainingFormProps) {
                 <Autocomplete
                   options={exerciseTypes}
                   getOptionLabel={(option) => option.name}
-                  value={
-                    exerciseTypes.find((et) => et.id === set.exerciseType) || null
-                  }
+                  value={exerciseTypes.find((et) => et.id === set.exerciseType) || null}
                   onChange={(_, newValue) => {
-                    // Automatically update both the exercise type id and name
-                    handleSetChange(setIdx, "exerciseType", newValue ? newValue.id : 0);
-                    handleSetChange(setIdx, "exerciseName", newValue ? newValue.name : "");
+                    setSets((prevSets) =>
+                      prevSets.map((setItem, idx) =>
+                        idx === setIdx
+                          ? {
+                            ...setItem,
+                            exerciseType: newValue ? newValue.id : 0,
+                            exerciseName: newValue ? newValue.name : "",
+                          }
+                          : setItem
+                      )
+                    );
                   }}
                   renderInput={(params) => (
                     <TextField {...params} label="Exercise Type" variant="outlined" />
