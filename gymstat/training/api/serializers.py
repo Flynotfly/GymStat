@@ -2,6 +2,7 @@ from datetime import datetime
 from itertools import groupby
 
 from django.db.models import Max
+from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
@@ -175,9 +176,9 @@ class TrainingCreateSerializer(serializers.Serializer):
     title = serializers.CharField(allow_blank=True, required=False)
     description = serializers.CharField(allow_blank=True, required=False)
     score = serializers.IntegerField()
-    date = serializers.DateField()  # Separate date field
-    time = serializers.TimeField()  # Separate time field
-    sets = TrainingSetSerializer(many=True)
+    date = serializers.DateField(write_only=True)  # Separate date field
+    time = serializers.TimeField(write_only=True)  # Separate time field
+    sets = TrainingSetSerializer(many=True, write_only=True)
 
     def validate(self, data):
         request = self.context.get("request")
@@ -199,8 +200,9 @@ class TrainingCreateSerializer(serializers.Serializer):
         sets_data = validated_data.pop('sets')
         date_field = validated_data.pop("date")
         time_field = validated_data.pop("time")
-        # Combine date and time into one datetime for Training.conducted
-        conducted_datetime = datetime.combine(date_field, time_field)
+        naive_datetime = datetime.combine(date_field, time_field)
+        # Convert the naive datetime into an aware datetime using the default timezone
+        conducted_datetime = timezone.make_aware(naive_datetime)
         # Create the Training instance
         training = Training.objects.create(
             owner=self.context['request'].user,
