@@ -1,7 +1,9 @@
+from datetime import datetime
 from itertools import groupby
 
 from django.db.models import Max
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from ..models import Exercise, ExerciseType, Training
 
@@ -152,3 +154,70 @@ class TrainingSummarySerializer(serializers.ModelSerializer):
             max_repetitions=Max("repetitions")
         )["max_repetitions"]
         return max_repetitions
+
+
+# Serializer for each exercise inside a set
+class ExerciseInSetSerializer(serializers.Serializer):
+    index = serializers.IntegerField()
+    repetitions = serializers.IntegerField()
+    weight = serializers.DecimalField(max_digits=6, decimal_places=2)
+
+
+# Serializer for each training set (which groups one or more exercises)
+class TrainingSetSerializer(serializers.Serializer):
+    index = serializers.IntegerField()
+    exerciseType = serializers.IntegerField()  # ID of ExerciseType
+    exerciseName = serializers.CharField()       # Provided for UI purposes (not stored)
+    exercises = ExerciseInSetSerializer(many=True)
+
+
+class TrainingCreateSerializer(serializers.Serializer):
+    title = serializers.CharField(allow_blank=True, required=False)
+    description = serializers.CharField(allow_blank=True, required=False)
+    score = serializers.IntegerField()
+    date = serializers.DateField()  # Separate date field
+    time = serializers.TimeField()  # Separate time field
+    sets = TrainingSetSerializer(many=True)
+
+    def validate(self, data):
+        request = self.context.get("request")
+        if not request:
+            raise ValidationError("Request context is required.")
+        # Validate each training set's exercise type
+        for set_data in data.get("sets", []):
+            exercise_type_id = set_data.get("exerciseType")
+            try:
+                et = ExerciseType.objects.get(id=exercise_type_id)
+            except ExerciseType.DoesNotExist:
+                raise ValidationError(f"ExerciseType with id {exercise_type_id} does not exist")
+            # Check that the current user is the owner or the type is base
+            if not (et.base or et.owner == request.user):
+                raise ValidationError(f"Not authorized to use ExerciseType id {exercise_type_id}")
+        return data
+
+    def create(self, validated_data):
+        sets_data = validated_data.pop('sets')
+        date_field = validated_data.pop("date")
+        time_field = validated_data.pop("time")
+        # Combine date and time into one datetime for Training.conducted
+        conducted_datetime = datetime.combine(date_field, time_field)
+        # Create the Training instance
+        training = Training.objects.create(
+            owner=self.context['request'].user,
+            conducted=conducted_datetime,
+            **validated_data
+        )
+        # Create each Exercise entry from the provided sets
+        for set_data in sets_data:
+            order = set_data['index']
+            exercise_type_id = set_data['exerciseType']
+            for exercise in set_data['exercises']:
+                Exercise.objects.create(
+                    training=training,
+                    exercise_type_id=exercise_type_id,
+                    order=order,
+                    suborder=exercise['index'],
+                    weight=exercise['weight'],
+                    repetitions=exercise['repetitions']
+                )
+        return training
