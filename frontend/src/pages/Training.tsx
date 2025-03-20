@@ -148,17 +148,17 @@ function CreateTrainingForm({ onSave, initialDate }: CreateTrainingFormProps) {
   };
 
   // Update a specific field of a set
-  const handleSetChange = (
-    setIndex: number,
-    field: keyof typeof sets[0],
-    value: any
-  ) => {
-    setSets(
-      sets.map((set, idx) =>
-        idx === setIndex ? { ...set, [field]: value } : set
-      )
-    );
-  };
+  // const handleSetChange = (
+  //   setIndex: number,
+  //   field: keyof typeof sets[0],
+  //   value: any
+  // ) => {
+  //   setSets(
+  //     sets.map((set, idx) =>
+  //       idx === setIndex ? { ...set, [field]: value } : set
+  //     )
+  //   );
+  // };
 
   // Add an exercise to a specific set
   const handleAddExercise = (setIndex: number) => {
