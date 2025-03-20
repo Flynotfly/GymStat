@@ -10,9 +10,8 @@ from ..models import ExerciseType, Training
 from .serializers import (
     ExerciseTypeSerializer,
     TrainingOverallSerializer,
-    TrainingSerializer,
     TrainingShortSerializer,
-    TrainingSummarySerializer,
+    TrainingCreateSerializer
 )
 
 
@@ -88,6 +87,13 @@ class GetTraining(RetrieveAPIView):
     def get_queryset(self):
         return Training.objects.filter(owner=self.request.user)
 
+
+class TrainingCreateView(CreateAPIView):
+    serializer_class = TrainingCreateSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Training.objects.filter(owner=self.request.user)
 
 # class GetAllTrainingsAPIView(APIView):
 #     permission_classes = [IsAuthenticated]
