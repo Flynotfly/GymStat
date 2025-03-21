@@ -72,6 +72,6 @@ export function createExercise(data: object): Promise<any> {
   return postRequest(`${trainingAPIURL}create-exercise-type/`, data);
 }
 
-export function createTraining(data: TrainingInterface): Promise<any> {
+export function createTraining(data: Partial<TrainingInterface>): Promise<any> {
   return postRequest(`${trainingAPIURL}training/create/`, data);
 }
