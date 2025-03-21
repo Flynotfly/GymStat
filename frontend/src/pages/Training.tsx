@@ -17,7 +17,7 @@ import TextField from '@mui/material/TextField';
 import Rating from '@mui/material/Rating';
 
 // Import your API and types as needed
-import {getAllExercises, getAllTrainings, getTraining} from "../api";
+import {createTraining, getAllExercises, getAllTrainings, getTraining} from "../api";
 import CustomDatePicker from "../components/CustomDatePicker.tsx";
 import {TimePicker} from "@mui/x-date-pickers";
 import {DatePicker} from "@mui/x-date-pickers/DatePicker";
@@ -482,9 +482,9 @@ export default function Training() {
 
   const handleSaveTraining = (newTrainingData: Partial<TrainingInterface>) => {
     console.info("Saving new training...", newTrainingData);
-    // TODO: Call your API to save the new training.
-    // After saving, hide the form:
-    setIsCreatingTraining(false);
+    createTraining(newTrainingData)
+      .then(() => setIsCreatingTraining(false))
+      .catch((err) => console.error(err));
   };
 
   return (
