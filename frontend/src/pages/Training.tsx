@@ -396,14 +396,18 @@ export default function Training() {
   const [selectedTrainingId, setSelectedTrainingId] = useState<number | null>(null);
   const [isCreatingTraining, setIsCreatingTraining] = useState(false);
 
-  // Fetch all trainings on mount.
-  useEffect(() => {
+  const fetchTrainings = () => {
     getAllTrainings()
       .then((data: TrainingShortInterface[]) => {
         setTrainings(data);
         console.log('trainings: ', data);
       })
       .catch(err => console.log("Error fetching trainings: ", err));
+  }
+
+  // Fetch all trainings on mount.
+  useEffect(() => {
+    fetchTrainings();
   }, []);
 
   // Navigation functions
@@ -483,7 +487,10 @@ export default function Training() {
   const handleSaveTraining = (newTrainingData: Partial<TrainingInterface>) => {
     console.info("Saving new training...", newTrainingData);
     createTraining(newTrainingData)
-      .then(() => setIsCreatingTraining(false))
+      .then(() => {
+        fetchTrainings();
+        setIsCreatingTraining(false);
+      })
       .catch((err) => console.error(err));
   };
 
