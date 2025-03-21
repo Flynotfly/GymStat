@@ -1,4 +1,5 @@
 import {getCSRFToken} from "./utils.ts";
+import {TrainingInterface} from "./pages/Training.tsx";
 
 const baseURL = import.meta.env.VITE_BASE_URL;
 const userAPIURL = `${baseURL}user/api/`;
@@ -69,4 +70,8 @@ export function getAllExercises(): Promise<any> {
 
 export function createExercise(data: object): Promise<any> {
   return postRequest(`${trainingAPIURL}create-exercise-type/`, data);
+}
+
+export function createTraining(data: TrainingInterface): Promise<any> {
+  return postRequest(`${trainingAPIURL}training/create/`, data);
 }
