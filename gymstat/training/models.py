@@ -10,9 +10,9 @@ class Training(models.Model):
         on_delete=models.CASCADE,
     )
     conducted = models.DateTimeField()
-    duration = models.DurationField(blank=True, null=True)
     title = models.CharField(max_length=70, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
+    score = models.PositiveIntegerField(default=10)
 
     class Meta:
         indexes = [models.Index(fields=["-conducted"])]
@@ -49,13 +49,10 @@ class ExerciseType(models.Model):
         related_name="owned_exercises",
         on_delete=models.CASCADE,
     )
-    bookmarked = models.ManyToManyField(
-        settings.AUTH_USER_MODEL,
-        related_name="bookmarked_exercises",
-        blank=True,
-    )
     name = models.CharField(max_length=50)
-    private = models.BooleanField(default=True)
+    description = models.TextField(blank=True, null=True)
+    iconId = models.IntegerField(default=1)
+    iconColor = models.CharField(max_length=8, default="blue")
     base = models.BooleanField(default=False)
 
     def __str__(self):

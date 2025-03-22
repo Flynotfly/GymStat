@@ -1,35 +1,31 @@
+import {getCSRFToken} from "./utils.ts";
+import {TrainingInterface} from "./pages/Training.tsx";
+
 const baseURL = import.meta.env.VITE_BASE_URL;
 const userAPIURL = `${baseURL}user/api/`;
 const trainingAPIURL = `${baseURL}training/api/`;
 
-export function fetchCsrf(): Promise<any> {
-  return fetch(`${userAPIURL}csrf/`, {
-    credentials: "include"
-  });
-}
-
-export function APILogin(csrfToken: string, username: string, password: string): Promise<any> {
-  return fetch(`${userAPIURL}login/`, {
+function postRequest(url: string, data: object): Promise<any>{
+  return fetch(url, {
     method: "POST",
     headers: {
       'Content-Type': 'application/json',
-      'X-CSRFToken': csrfToken,
+      'X-CSRFToken': getCSRFToken() ?? '',
     },
     credentials: 'include',
-    body: JSON.stringify({ username, password}),
+    body: JSON.stringify(data),
   }).then((response) => {
     if (!response.ok) {
       return response.json().then((errorData) => {
-        // Optionally, you can check errorData for more details.
-        throw new Error(errorData.detail || 'Login failed');
+        throw new Error(errorData.detail || 'Post data failed');
       });
     }
     return response.json();
   });
 }
 
-export function getAllTrainings(): Promise<any> {
-  return fetch(`${trainingAPIURL}/all-trainings/?exercise_type=1`, {
+function getRequest(url: string): Promise<any>{
+  return fetch(url, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -38,28 +34,44 @@ export function getAllTrainings(): Promise<any> {
   }).then((response) => {
     if (!response.ok) {
       return response.json().then((errorData) => {
-        // Optionally, you can check errorData for more details.
-        throw new Error(errorData.detail || 'Fetch training failed');
+        throw new Error(errorData.detail || 'Fetch data failed');
       });
     }
     return response.json();
   });
 }
-//
-//
-// export function APILogin(username: FormDataEntryValue | null, password: FormDataEntryValue | null): Promise<any> {
-//   return fetch(`${baseURL}user/api/token/`, {
-//     method: 'POST',
-//     headers: {'Content-Type': 'application/json'},
-//     body: JSON.stringify({username, password})
-//   }).then((response) => {
-//     if (!response.ok) {
-//       return response.json().then((errorData) => {
-//         // Optionally, you can check errorData for more details.
-//         throw new Error(errorData.detail || 'Login failed');
-//       });
-//     }
-//     return response.json();
-//   });
-// }
 
+
+export function fetchCsrf(): Promise<any> {
+  return fetch(`${userAPIURL}csrf/`, {
+    credentials: "include"
+  });
+}
+
+export function getAllTrainings(): Promise<any> {
+  return getRequest(`${trainingAPIURL}all-trainings/`);
+}
+
+export function getTraining(pk: number): Promise<any> {
+  return getRequest(`${trainingAPIURL}training/${pk}/`);
+}
+
+export function getUserExercises(): Promise<any> {
+  return getRequest(`${trainingAPIURL}my-exercises/`);
+}
+
+export function getBaseExercises(): Promise<any> {
+  return getRequest(`${trainingAPIURL}base-exercises/`);
+}
+
+export function getAllExercises(): Promise<any> {
+  return getRequest(`${trainingAPIURL}exercises/`);
+}
+
+export function createExercise(data: object): Promise<any> {
+  return postRequest(`${trainingAPIURL}create-exercise-type/`, data);
+}
+
+export function createTraining(data: Partial<TrainingInterface>): Promise<any> {
+  return postRequest(`${trainingAPIURL}training/create/`, data);
+}

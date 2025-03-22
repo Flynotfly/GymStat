@@ -5,6 +5,7 @@ import MainLayout from "./MainLayout.tsx";
 import VerifyEmail, { loader as verifyEmailLoader } from "../pages/VerifyEmail.tsx";
 
 const AppRouteLayout = lazy(() => import("./AppRouteLayout.tsx"));
+const Exercises = lazy(() => import("../pages/Exercises.tsx"));
 const Home = lazy(() => import("../pages/Home.tsx"));
 const Training = lazy(() => import("../pages/Training.tsx"));
 const Body = lazy(() => import("../pages/Body.tsx"));
@@ -30,6 +31,7 @@ function createRouter() {
           children: [
             { index: true, element: <Home/> },
             { path: "trainings", element: <Training/> },
+            { path: "exercises", element: <Exercises/>},
             { path: "body", element: <Body/> },
             { path: "tasks", element: <Tasks/> },
           ],
