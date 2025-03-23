@@ -76,7 +76,7 @@ export function createTraining(data: Partial<TrainingInterface>): Promise<any> {
   return postRequest(`${trainingAPIURL}trainings/create/`, data);
 }
 
-export function updateTraining(data: TrainingInterface): Promise<any> {
+export function updateTraining(data: Partial<TrainingInterface>): Promise<any> {
   const id = data.id;
   return postRequest(`${trainingAPIURL}trainings/update/${id}/`, data);
 }
