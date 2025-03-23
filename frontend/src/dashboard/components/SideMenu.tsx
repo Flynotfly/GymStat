@@ -37,7 +37,15 @@ export default function SideMenu({selected}: {selected: number}) {
         },
       }}
     >
-      <SitemarkIcon/>
+      <Box
+        sx={{
+          display: 'flex',
+          mt: 'calc(var(--template-frame-height, 0px) + 4px)',
+          p = 1.5,
+        }}
+      >
+        <SitemarkIcon/>
+      </Box>
       <Divider />
       <Box
         sx={{
