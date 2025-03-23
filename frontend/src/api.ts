@@ -5,9 +5,9 @@ const baseURL = import.meta.env.VITE_BASE_URL;
 const userAPIURL = `${baseURL}user/api/`;
 const trainingAPIURL = `${baseURL}training/api/`;
 
-function postRequest(url: string, data: object): Promise<any>{
+function postRequest(url: string, data: object, method: string = "POST"): Promise<any>{
   return fetch(url, {
-    method: "POST",
+    method: method,
     headers: {
       'Content-Type': 'application/json',
       'X-CSRFToken': getCSRFToken() ?? '',
@@ -78,5 +78,5 @@ export function createTraining(data: Partial<TrainingInterface>): Promise<any> {
 
 export function updateTraining(data: Partial<TrainingInterface>): Promise<any> {
   const id = data.id;
-  return postRequest(`${trainingAPIURL}trainings/update/${id}/`, data);
+  return postRequest(`${trainingAPIURL}trainings/update/${id}/`, data, "PUT");
 }
