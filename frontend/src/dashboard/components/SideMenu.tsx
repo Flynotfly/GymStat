@@ -41,7 +41,7 @@ export default function SideMenu({selected}: {selected: number}) {
         sx={{
           display: 'flex',
           mt: 'calc(var(--template-frame-height, 0px) + 4px)',
-          p = 1.5,
+          p: 1.5,
         }}
       >
         <SitemarkIcon/>
