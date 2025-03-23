@@ -1,4 +1,4 @@
-from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView, RetrieveUpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Q
 
@@ -74,4 +74,13 @@ class TrainingCreateView(CreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        return Training.objects.filter(owner=self.request.user)
+
+
+class TrainingUpdateView(RetrieveUpdateAPIView):
+    serializer_class = TrainingCreateSerializer  # Reusing the create serializer for updates
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Allow updates only on trainings owned by the authenticated user.
         return Training.objects.filter(owner=self.request.user)

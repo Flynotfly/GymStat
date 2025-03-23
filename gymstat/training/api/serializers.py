@@ -153,3 +153,35 @@ class TrainingCreateSerializer(serializers.Serializer):
                     repetitions=exercise['repetitions']
                 )
         return training
+
+    def update(self, instance, validated_data):
+        sets_data = validated_data.pop('sets')
+        date_field = validated_data.pop("date")
+        time_field = validated_data.pop("time")
+        naive_datetime = datetime.combine(date_field, time_field)
+        conducted_datetime = timezone.make_aware(naive_datetime)
+
+        # Update the training instance fields
+        instance.title = validated_data.get("title", instance.title)
+        instance.description = validated_data.get("description", instance.description)
+        instance.score = validated_data.get("score", instance.score)
+        instance.conducted = conducted_datetime
+        instance.save()
+
+        # Remove all existing exercises for this training
+        instance.exercises.all().delete()
+
+        # Re-create the exercises based on the updated sets data
+        for set_data in sets_data:
+            order = set_data['index']
+            exercise_type_id = set_data['exerciseType']
+            for exercise in set_data['exercises']:
+                Exercise.objects.create(
+                    training=instance,
+                    exercise_type_id=exercise_type_id,
+                    order=order,
+                    suborder=exercise['index'],
+                    weight=exercise['weight'],
+                    repetitions=exercise['repetitions']
+                )
+        return instance
