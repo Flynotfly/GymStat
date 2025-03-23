@@ -49,19 +49,19 @@ export function fetchCsrf(): Promise<any> {
 }
 
 export function getAllTrainings(): Promise<any> {
-  return getRequest(`${trainingAPIURL}all-trainings/`);
+  return getRequest(`${trainingAPIURL}trainings/`);
 }
 
 export function getTraining(pk: number): Promise<any> {
-  return getRequest(`${trainingAPIURL}training/${pk}/`);
+  return getRequest(`${trainingAPIURL}trainings/${pk}/`);
 }
 
 export function getUserExercises(): Promise<any> {
-  return getRequest(`${trainingAPIURL}my-exercises/`);
+  return getRequest(`${trainingAPIURL}exercises/my/`);
 }
 
 export function getBaseExercises(): Promise<any> {
-  return getRequest(`${trainingAPIURL}base-exercises/`);
+  return getRequest(`${trainingAPIURL}exercises/base/`);
 }
 
 export function getAllExercises(): Promise<any> {
@@ -69,9 +69,9 @@ export function getAllExercises(): Promise<any> {
 }
 
 export function createExercise(data: object): Promise<any> {
-  return postRequest(`${trainingAPIURL}create-exercise-type/`, data);
+  return postRequest(`${trainingAPIURL}exercises/create/`, data);
 }
 
 export function createTraining(data: Partial<TrainingInterface>): Promise<any> {
-  return postRequest(`${trainingAPIURL}training/create/`, data);
+  return postRequest(`${trainingAPIURL}trainings/create/`, data);
 }
