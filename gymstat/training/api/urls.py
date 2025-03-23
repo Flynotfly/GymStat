@@ -12,7 +12,7 @@ urlpatterns = [
     ),
     path("trainings/<int:pk>/", api_views.GetTraining.as_view(), name="get-training"),
     path("trainings/create/", api_views.TrainingCreateView.as_view(), name="create-training"),
-    path("trainings/update/", api_views.TrainingUpdateView.as_view(), name="update-training"),
+    path("trainings/update/<int:pk>/", api_views.TrainingUpdateView.as_view(), name="update-training"),
 
     path(
         "exercises/my/",
