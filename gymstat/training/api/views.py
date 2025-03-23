@@ -61,6 +61,14 @@ class AllTrainingsList(ListAPIView):
         return Training.objects.filter(owner=self.request.user)
 
 
+class GetTraining(RetrieveAPIView):
+    serializer_class = TrainingOverallSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Training.objects.filter(owner=self.request.user)
+
+
 class TrainingCreateView(CreateAPIView):
     serializer_class = TrainingCreateSerializer
     permission_classes = [IsAuthenticated]
