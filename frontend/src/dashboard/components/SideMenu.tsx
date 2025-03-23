@@ -57,7 +57,6 @@ export default function SideMenu({selected}: {selected: number}) {
         }}
       >
         <MenuContent selected={selected}/>
-        <CardAlert />
       </Box>
       <Stack
         direction="row"
