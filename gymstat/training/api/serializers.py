@@ -65,8 +65,12 @@ class TrainingOverallSerializer(serializers.ModelSerializer):
             sets.append(
                 {
                     "index": order,
-                    "exerciseType": exercise_type.id if exercise_type else None,
-                    "exerciseName": exercise_type.name if exercise_type else None,
+                    "exerciseType": (
+                        exercise_type.id if exercise_type else None
+                    ),
+                    "exerciseName": (
+                        exercise_type.name if exercise_type else None
+                    ),
                     "exercises": [
                         {
                             "index": ex.suborder,
@@ -98,7 +102,9 @@ class ExerciseInSetSerializer(serializers.Serializer):
 class TrainingSetSerializer(serializers.Serializer):
     index = serializers.IntegerField()
     exerciseType = serializers.IntegerField()  # ID of ExerciseType
-    exerciseName = serializers.CharField()       # Provided for UI purposes (not stored)
+    exerciseName = (
+        serializers.CharField()
+    )  # Provided for UI purposes (not stored)
     exercises = ExerciseInSetSerializer(many=True)
 
 
@@ -120,14 +126,18 @@ class TrainingCreateSerializer(serializers.Serializer):
             try:
                 et = ExerciseType.objects.get(id=exercise_type_id)
             except ExerciseType.DoesNotExist:
-                raise ValidationError(f"ExerciseType with id {exercise_type_id} does not exist")
+                raise ValidationError(
+                    f"ExerciseType with id {exercise_type_id} does not exist"
+                )
             # Check that the current user is the owner or the type is base
             if not (et.base or et.owner == request.user):
-                raise ValidationError(f"Not authorized to use ExerciseType id {exercise_type_id}")
+                raise ValidationError(
+                    f"Not authorized to use ExerciseType id {exercise_type_id}"
+                )
         return data
 
     def create(self, validated_data):
-        sets_data = validated_data.pop('sets')
+        sets_data = validated_data.pop("sets")
         date_field = validated_data.pop("date")
         time_field = validated_data.pop("time")
         naive_datetime = datetime.combine(date_field, time_field)
@@ -135,27 +145,27 @@ class TrainingCreateSerializer(serializers.Serializer):
         conducted_datetime = timezone.make_aware(naive_datetime)
         # Create the Training instance
         training = Training.objects.create(
-            owner=self.context['request'].user,
+            owner=self.context["request"].user,
             conducted=conducted_datetime,
-            **validated_data
+            **validated_data,
         )
         # Create each Exercise entry from the provided sets
         for set_data in sets_data:
-            order = set_data['index']
-            exercise_type_id = set_data['exerciseType']
-            for exercise in set_data['exercises']:
+            order = set_data["index"]
+            exercise_type_id = set_data["exerciseType"]
+            for exercise in set_data["exercises"]:
                 Exercise.objects.create(
                     training=training,
                     exercise_type_id=exercise_type_id,
                     order=order,
-                    suborder=exercise['index'],
-                    weight=exercise['weight'],
-                    repetitions=exercise['repetitions']
+                    suborder=exercise["index"],
+                    weight=exercise["weight"],
+                    repetitions=exercise["repetitions"],
                 )
         return training
 
     def update(self, instance, validated_data):
-        sets_data = validated_data.pop('sets')
+        sets_data = validated_data.pop("sets")
         date_field = validated_data.pop("date")
         time_field = validated_data.pop("time")
         naive_datetime = datetime.combine(date_field, time_field)
@@ -163,7 +173,9 @@ class TrainingCreateSerializer(serializers.Serializer):
 
         # Update the training instance fields
         instance.title = validated_data.get("title", instance.title)
-        instance.description = validated_data.get("description", instance.description)
+        instance.description = validated_data.get(
+            "description", instance.description
+        )
         instance.score = validated_data.get("score", instance.score)
         instance.conducted = conducted_datetime
         instance.save()
@@ -173,15 +185,15 @@ class TrainingCreateSerializer(serializers.Serializer):
 
         # Re-create the exercises based on the updated sets data
         for set_data in sets_data:
-            order = set_data['index']
-            exercise_type_id = set_data['exerciseType']
-            for exercise in set_data['exercises']:
+            order = set_data["index"]
+            exercise_type_id = set_data["exerciseType"]
+            for exercise in set_data["exercises"]:
                 Exercise.objects.create(
                     training=instance,
                     exercise_type_id=exercise_type_id,
                     order=order,
-                    suborder=exercise['index'],
-                    weight=exercise['weight'],
-                    repetitions=exercise['repetitions']
+                    suborder=exercise["index"],
+                    weight=exercise["weight"],
+                    repetitions=exercise["repetitions"],
                 )
         return instance

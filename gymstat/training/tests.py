@@ -1,11 +1,12 @@
+from datetime import date, datetime, time
+
+from django.contrib.auth import get_user_model
 from django.urls import reverse
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APITestCase
-from django.contrib.auth import get_user_model
-from datetime import date, time, datetime
-from .models import Training, Exercise, ExerciseType
 
-from django.utils import timezone
+from .models import Exercise, ExerciseType, Training
 
 User = get_user_model()
 
@@ -17,13 +18,13 @@ class TrainingCreateViewTests(APITestCase):
             email="test@example.com",
             first_name="Test",
             last_name="User",
-            password="testpass"
+            password="testpass",
         )
         self.other_user = User.objects.create_user(
             email="other@example.com",
             first_name="Other",
             last_name="User",
-            password="otherpass"
+            password="otherpass",
         )
 
         # Create exercise types:
@@ -33,7 +34,7 @@ class TrainingCreateViewTests(APITestCase):
             name="Base Exercise",
             base=True,
             iconId=1,
-            iconColor="blue"
+            iconColor="blue",
         )
 
         # 2. Owned exercise type (owned by test user)
@@ -42,7 +43,7 @@ class TrainingCreateViewTests(APITestCase):
             name="User Owned Exercise",
             base=False,
             iconId=2,
-            iconColor="red"
+            iconColor="red",
         )
 
         # 3. Not owned and not base exercise type (should cause a validation error)
@@ -51,7 +52,7 @@ class TrainingCreateViewTests(APITestCase):
             name="Not Owned Exercise",
             base=False,
             iconId=3,
-            iconColor="green"
+            iconColor="green",
         )
 
         # URL for creating a training using the name "training:api:create-training"
@@ -73,7 +74,7 @@ class TrainingCreateViewTests(APITestCase):
                     "exerciseName": "Push Up",
                     "exercises": [
                         {"index": 1, "repetitions": 15, "weight": "0.00"}
-                    ]
+                    ],
                 },
                 {
                     "index": 2,
@@ -81,9 +82,9 @@ class TrainingCreateViewTests(APITestCase):
                     "exerciseName": "Squat",
                     "exercises": [
                         {"index": 1, "repetitions": 12, "weight": "50.00"}
-                    ]
-                }
-            ]
+                    ],
+                },
+            ],
         }
         response = self.client.post(self.url, payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -112,9 +113,9 @@ class TrainingCreateViewTests(APITestCase):
                     "exerciseName": "Bench Press",
                     "exercises": [
                         {"index": 1, "repetitions": 10, "weight": "80.00"}
-                    ]
+                    ],
                 }
-            ]
+            ],
         }
         response = self.client.post(self.url, payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -131,13 +132,13 @@ class TrainingUpdateViewTests(APITestCase):
             email="test@example.com",
             first_name="Test",
             last_name="User",
-            password="testpass"
+            password="testpass",
         )
         self.other_user = User.objects.create_user(
             email="other@example.com",
             first_name="Other",
             last_name="User",
-            password="otherpass"
+            password="otherpass",
         )
 
         # Create exercise types:
@@ -147,7 +148,7 @@ class TrainingUpdateViewTests(APITestCase):
             name="Base Exercise",
             base=True,
             iconId=1,
-            iconColor="blue"
+            iconColor="blue",
         )
 
         # 2. Owned exercise type (owned by test user)
@@ -156,7 +157,7 @@ class TrainingUpdateViewTests(APITestCase):
             name="User Owned Exercise",
             base=False,
             iconId=2,
-            iconColor="red"
+            iconColor="red",
         )
 
         # 3. Not owned and not base exercise type (should cause a validation error)
@@ -165,17 +166,19 @@ class TrainingUpdateViewTests(APITestCase):
             name="Not Owned Exercise",
             base=False,
             iconId=3,
-            iconColor="green"
+            iconColor="green",
         )
 
         # Create an existing training owned by test user
-        conducted_datetime = timezone.make_aware(datetime.combine(date(2025, 3, 20), time(7, 30, 0)))
+        conducted_datetime = timezone.make_aware(
+            datetime.combine(date(2025, 3, 20), time(7, 30, 0))
+        )
         self.training = Training.objects.create(
             owner=self.user,
             title="Morning Training",
             description="Initial workout session",
             score=15,
-            conducted=conducted_datetime
+            conducted=conducted_datetime,
         )
         # Create an initial exercise for the training.
         Exercise.objects.create(
@@ -184,11 +187,13 @@ class TrainingUpdateViewTests(APITestCase):
             order=1,
             suborder=1,
             weight="0.00",
-            repetitions=15
+            repetitions=15,
         )
 
         # URL for updating a training using the name "training:api:update-training"
-        self.url = reverse("training:api:update-training", kwargs={"pk": self.training.id})
+        self.url = reverse(
+            "training:api:update-training", kwargs={"pk": self.training.id}
+        )
 
     def test_update_training_success(self):
         """Test training update works with valid exercise types."""
@@ -206,7 +211,7 @@ class TrainingUpdateViewTests(APITestCase):
                     "exerciseName": "Push Up Updated",
                     "exercises": [
                         {"index": 1, "repetitions": 20, "weight": "0.00"}
-                    ]
+                    ],
                 },
                 {
                     "index": 2,
@@ -214,9 +219,9 @@ class TrainingUpdateViewTests(APITestCase):
                     "exerciseName": "Squat Updated",
                     "exercises": [
                         {"index": 1, "repetitions": 15, "weight": "50.00"}
-                    ]
-                }
-            ]
+                    ],
+                },
+            ],
         }
         response = self.client.put(self.url, payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -226,7 +231,9 @@ class TrainingUpdateViewTests(APITestCase):
         self.assertEqual(self.training.description, payload["description"])
         self.assertEqual(self.training.score, payload["score"])
         # Check that exercises were re-created. Expect 2 new Exercise records.
-        exercises_count = Exercise.objects.filter(training=self.training).count()
+        exercises_count = Exercise.objects.filter(
+            training=self.training
+        ).count()
         self.assertEqual(exercises_count, 2)
 
     def test_update_training_fail_invalid_exercise_type(self):
@@ -245,9 +252,9 @@ class TrainingUpdateViewTests(APITestCase):
                     "exerciseName": "Bench Press",
                     "exercises": [
                         {"index": 1, "repetitions": 10, "weight": "80.00"}
-                    ]
+                    ],
                 }
-            ]
+            ],
         }
         response = self.client.put(self.url, payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
