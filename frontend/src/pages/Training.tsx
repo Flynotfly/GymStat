@@ -17,14 +17,14 @@ import TextField from '@mui/material/TextField';
 import Rating from '@mui/material/Rating';
 
 // Import your API and types as needed
-import {createTraining, getAllExercises, getAllTrainings, getTraining} from "../api";
+import { createTraining, getAllExercises, getAllTrainings, getTraining, updateTraining } from "../api";
 import CustomDatePicker from "../components/CustomDatePicker.tsx";
-import {TimePicker} from "@mui/x-date-pickers";
-import {DatePicker} from "@mui/x-date-pickers/DatePicker";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
+import { TimePicker } from "@mui/x-date-pickers";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { Exercise } from "./Exercises.tsx";
-import {Autocomplete} from "@mui/material";
+import { Autocomplete } from "@mui/material";
 
 // ===== Interfaces =====
 export interface TrainingShortInterface {
@@ -91,18 +91,20 @@ function TrainingDetails({ training }: TrainingDetailsProps) {
   );
 }
 
-// ===== Create Training Form Component =====
-
+// ===== Create/Edit Training Form Component =====
+// We have added an optional "initialTraining" prop for editing functionality.
 interface CreateTrainingFormProps {
   onSave: (data: Partial<TrainingInterface>) => void;
   initialDate?: Dayjs;
+  initialTraining?: TrainingInterface;
 }
-function CreateTrainingForm({ onSave, initialDate }: CreateTrainingFormProps) {
-  const [title, setTitle] = useState("");
-  const [date, setDate] = useState<Dayjs>(initialDate || dayjs());
-  const [time, setTime] = useState<Dayjs | null>(dayjs());
-  const [description, setDescription] = useState("");
-  const [score, setScore] = useState<number | null>(null);
+function CreateTrainingForm({ onSave, initialDate, initialTraining }: CreateTrainingFormProps) {
+  // Initialize state with initialTraining data if provided (for editing)
+  const [title, setTitle] = useState(initialTraining ? initialTraining.title : "");
+  const [date, setDate] = useState<Dayjs>(initialTraining ? dayjs(initialTraining.date) : (initialDate || dayjs()));
+  const [time, setTime] = useState<Dayjs | null>(initialTraining ? dayjs(initialTraining.time, "HH:mm") : dayjs());
+  const [description, setDescription] = useState(initialTraining ? initialTraining.description : "");
+  const [score, setScore] = useState<number | null>(initialTraining ? initialTraining.score : null);
 
   // Store exercise types as an array of Exercise
   const [exerciseTypes, setExerciseTypes] = useState<Exercise[]>([]);
@@ -111,18 +113,17 @@ function CreateTrainingForm({ onSave, initialDate }: CreateTrainingFormProps) {
   const [sets, setSets] = useState<
     {
       index: number;
-      exerciseType: number; // Stores the id of the selected exercise
-      exerciseName: string; // Will be auto-filled based on selected exercise type
+      exerciseType: number;
+      exerciseName: string;
       exercises: {
         index: number;
         repetitions: number;
         weight: number;
       }[];
     }[]
-  >([]);
+  >(initialTraining ? initialTraining.sets : []);
 
   useEffect(() => {
-    // Replace with your actual API call
     getAllExercises()
       .then((data: Exercise[]) => {
         setExerciseTypes(data);
@@ -146,19 +147,6 @@ function CreateTrainingForm({ onSave, initialDate }: CreateTrainingFormProps) {
   const handleRemoveSet = (setIndex: number) => {
     setSets(sets.filter((_, idx) => idx !== setIndex));
   };
-
-  // Update a specific field of a set
-  // const handleSetChange = (
-  //   setIndex: number,
-  //   field: keyof typeof sets[0],
-  //   value: any
-  // ) => {
-  //   setSets(
-  //     sets.map((set, idx) =>
-  //       idx === setIndex ? { ...set, [field]: value } : set
-  //     )
-  //   );
-  // };
 
   // Add an exercise to a specific set
   const handleAddExercise = (setIndex: number) => {
@@ -217,7 +205,9 @@ function CreateTrainingForm({ onSave, initialDate }: CreateTrainingFormProps) {
 
   const handleSave = () => {
     const formattedTime = time ? time.format("HH:mm") : "";
-    const newTraining = {
+    const trainingData = {
+      // If editing, you might want to include the training id as well.
+      ...(initialTraining && { id: initialTraining.id }),
       title,
       date: date.format("YYYY-MM-DD"),
       time: formattedTime,
@@ -225,14 +215,14 @@ function CreateTrainingForm({ onSave, initialDate }: CreateTrainingFormProps) {
       score: score || 0,
       sets
     };
-    console.info("New Training Data:", newTraining);
-    onSave(newTraining);
+    console.info("Training Data:", trainingData);
+    onSave(trainingData);
   };
 
   return (
     <Box sx={{ p: 2 }}>
       <Typography variant="h6" gutterBottom>
-        Create New Training
+        {initialTraining ? "Edit Training" : "Create New Training"}
       </Typography>
       <Stack spacing={2}>
         <TextField
@@ -245,9 +235,7 @@ function CreateTrainingForm({ onSave, initialDate }: CreateTrainingFormProps) {
           label="Choose date"
           value={date}
           onChange={(newValue) => {
-            if (newValue) {
-              setDate(newValue);
-            }
+            if (newValue) setDate(newValue);
           }}
         />
         <TimePicker
@@ -279,7 +267,6 @@ function CreateTrainingForm({ onSave, initialDate }: CreateTrainingFormProps) {
               sx={{ border: "1px solid #ccc", p: 2, mb: 2, borderRadius: 1 }}
             >
               <Stack spacing={2}>
-                {/* Autocomplete for Exercise Type */}
                 <Autocomplete
                   options={exerciseTypes}
                   getOptionLabel={(option) => option.name}
@@ -385,8 +372,6 @@ function CreateTrainingForm({ onSave, initialDate }: CreateTrainingFormProps) {
   );
 }
 
-
-
 // ===== Main Training Page =====
 
 export default function Training() {
@@ -395,6 +380,8 @@ export default function Training() {
   const [selectedTrainingDetails, setSelectedTrainingDetails] = useState<TrainingInterface | null>(null);
   const [selectedTrainingId, setSelectedTrainingId] = useState<number | null>(null);
   const [isCreatingTraining, setIsCreatingTraining] = useState(false);
+  // New state for editing an existing training.
+  const [isEditingTraining, setIsEditingTraining] = useState(false);
 
   const fetchTrainings = () => {
     getAllTrainings()
@@ -403,7 +390,7 @@ export default function Training() {
         console.log('trainings: ', data);
       })
       .catch(err => console.log("Error fetching trainings: ", err));
-  }
+  };
 
   // Fetch all trainings on mount.
   useEffect(() => {
@@ -435,10 +422,13 @@ export default function Training() {
 
   const handleAddTrainingNow = () => {
     setIsCreatingTraining(true);
+    // Ensure we are not in editing mode.
+    setIsEditingTraining(false);
   };
 
   const handleAddTrainingForSelectedDay = () => {
     setIsCreatingTraining(true);
+    setIsEditingTraining(false);
   };
 
   // Filter trainings for the selected day.
@@ -453,8 +443,9 @@ export default function Training() {
       .then((data: TrainingInterface) => {
         setSelectedTrainingDetails(data);
         setSelectedTrainingId(trainingId);
-        // When viewing an existing training, hide the create form.
+        // When viewing an existing training, hide the create/edit form.
         setIsCreatingTraining(false);
+        setIsEditingTraining(false);
         console.log('Fetch training: ', data);
       })
       .catch(err => {
@@ -490,6 +481,20 @@ export default function Training() {
       .then(() => {
         fetchTrainings();
         setIsCreatingTraining(false);
+      })
+      .catch((err) => console.error(err));
+  };
+
+  // New handler to update an existing training.
+  const handleUpdateTraining = (updatedTrainingData: Partial<TrainingInterface>) => {
+    console.info("Updating training...", updatedTrainingData);
+    updateTraining(updatedTrainingData)
+      .then(() => {
+        fetchTrainings();
+        setIsEditingTraining(false);
+        if(updatedTrainingData.id) {
+          fetchTrainingDetails(updatedTrainingData.id);
+        }
       })
       .catch((err) => console.error(err));
   };
@@ -569,13 +574,23 @@ export default function Training() {
             </Paper>
           </Grid>
 
-          {/* Right Panel: Training Details or Create Training Form */}
+          {/* Right Panel: Training Details, Create Training Form, or Edit Training Form */}
           <Grid item xs={12} md={8}>
             <Paper elevation={3} sx={{ p: 2 }}>
               {isCreatingTraining ? (
                 <CreateTrainingForm onSave={handleSaveTraining} initialDate={selectedDate} />
+              ) : isEditingTraining && selectedTrainingDetails ? (
+                <CreateTrainingForm onSave={handleUpdateTraining} initialTraining={selectedTrainingDetails} />
               ) : selectedTrainingDetails ? (
-                <TrainingDetails training={selectedTrainingDetails} />
+                <>
+                  <TrainingDetails training={selectedTrainingDetails} />
+                  <Button
+                    variant="contained"
+                    onClick={() => setIsEditingTraining(true)}
+                  >
+                    Edit Training
+                  </Button>
+                </>
               ) : (
                 <Typography variant="subtitle1">
                   Select a training to view details.
