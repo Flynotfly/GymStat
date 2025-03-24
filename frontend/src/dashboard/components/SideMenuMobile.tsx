@@ -10,7 +10,7 @@ import MenuButton from './MenuButton';
 import MenuContent from './MenuContent';
 import CardAlert from './CardAlert';
 import {useContext} from "react";
-import UserContext from "../../providers/user/UserContext.ts";
+import {AuthContext} from "../../auth/AuthContext";
 
 interface SideMenuMobileProps {
   open: boolean | undefined;
@@ -18,8 +18,8 @@ interface SideMenuMobileProps {
   selected: number,
 }
 
-export default function SideMenuMobile({ open, toggleDrawer, selected }: SideMenuMobileProps) {
-  const { user } = useContext(UserContext);
+export default function SideMenuMobile({ open, toggleDrawer, selected }: SideMenuMobileProps) {\
+  const { auth } = useContext(AuthContext);
 
   return (
     <Drawer
@@ -51,10 +51,10 @@ export default function SideMenuMobile({ open, toggleDrawer, selected }: SideMen
               src="/static/images/avatar/7.jpg"
               sx={{ width: 24, height: 24 }}
             >
-              {user?.avatarLetter}
+              AA
             </Avatar>
             <Typography component="p" variant="h6">
-              {user?.fullName}
+              {auth?.user?.full_name}
             </Typography>
           </Stack>
           <MenuButton showBadge>
