@@ -1,5 +1,5 @@
 import { useContext, useRef, useState, useEffect } from 'react'
-import { AuthContext } from './AuthContext.jsx'
+import { AuthContext } from './AuthContext.tsx'
 
 export function useAuth () {
   return useContext(AuthContext)?.auth

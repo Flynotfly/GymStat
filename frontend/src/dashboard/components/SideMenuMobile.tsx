@@ -10,7 +10,7 @@ import MenuButton from './MenuButton';
 import MenuContent from './MenuContent';
 import CardAlert from './CardAlert';
 import {useContext} from "react";
-import {AuthContext} from "../../auth/AuthContext";
+import {AuthContext} from "../../auth/AuthContext.tsx";
 
 interface SideMenuMobileProps {
   open: boolean | undefined;

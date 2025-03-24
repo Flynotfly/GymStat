@@ -9,7 +9,7 @@ import MenuContent from './MenuContent';
 import OptionsMenu from './OptionsMenu';
 import {useContext} from "react";
 import SitemarkIcon from "../../icons/SitemarkIcon.tsx";
-import {AuthContext} from "../../auth/AuthContext";
+import {AuthContext} from "../../auth/AuthContext.tsx";
 
 const drawerWidth = 240;
 
