@@ -18,7 +18,7 @@ interface SideMenuMobileProps {
   selected: number,
 }
 
-export default function SideMenuMobile({ open, toggleDrawer, selected }: SideMenuMobileProps) {\
+export default function SideMenuMobile({ open, toggleDrawer, selected }: SideMenuMobileProps) {
   const { auth } = useContext(AuthContext);
 
   return (
