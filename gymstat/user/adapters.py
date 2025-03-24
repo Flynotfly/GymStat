@@ -6,8 +6,6 @@ from allauth.headless.adapter import DefaultHeadlessAdapter
 class CustomHeadlessAdapter(DefaultHeadlessAdapter):
     def serialize_user(self, user) -> Dict[str, Any]:
         ret = super().serialize_user(user)
-        if user.first_name:
-            ret["first_name"] = user.first_name
-        if user.last_name:
-            ret["last_name"] = user.last_name
+        if user.get_full_name():
+            ret["full_name"] = user.get_full_name()
         return ret
