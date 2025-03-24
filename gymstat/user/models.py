@@ -32,4 +32,4 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         send_mail(subject, message, from_email, [self.email], **kwargs)
 
     def __str__(self):
-        return f"User {self.first_name} {self.last_name}"
+        return self.get_full_name()
