@@ -6,20 +6,23 @@ export interface AuthContextValue {
 export interface AuthData {
   user: User;
   methods: AuthMethod[];
+  meta: AuthMeta;
+  status: number;
 }
 
 export interface User {
   id: number;
   display: string;
-  has_usable_password: boolean;
   email: string;
-  username: string;
-  full_name: string;
+  has_usable_password: boolean;
 }
 
 export interface AuthMethod {
-  method: string;
-  at: number; // Unix timestamp
+  at: number;
   email: string;
-  username: string;
+  method: string;
+}
+
+export interface AuthMeta {
+  is_authenticated: boolean;
 }
