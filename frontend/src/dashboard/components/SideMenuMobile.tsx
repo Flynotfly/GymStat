@@ -54,7 +54,7 @@ export default function SideMenuMobile({ open, toggleDrawer, selected }: SideMen
               AA
             </Avatar>
             <Typography component="p" variant="h6">
-              {auth ? auth.user.full_name : ''}
+              {auth ? auth.data.user.display : ''}
             </Typography>
           </Stack>
           <MenuButton showBadge>

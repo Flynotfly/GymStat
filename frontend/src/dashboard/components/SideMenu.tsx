@@ -77,10 +77,10 @@ export default function SideMenu({selected}: {selected: number}) {
         </Avatar>
         <Box sx={{ mr: 'auto' }}>
           <Typography variant="body2" sx={{ fontWeight: 500, lineHeight: '16px' }}>
-            {auth ? auth.user.full_name : ''}
+            {auth ? auth.data.user.display : ''}
           </Typography>
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-            {auth ? auth.user.email : ''}
+            {auth ? auth.data.user.email : ''}
           </Typography>
         </Box>
         <OptionsMenu />
