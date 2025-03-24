@@ -31,7 +31,10 @@ export function AuthContextProvider (props: React.PropsWithChildren) {
     }
 
     document.addEventListener('allauth.auth.change', onAuthChanged)
-    getAuth().then(data => setAuth(data)).catch((e) => {
+    getAuth().then((data) => {
+      setAuth(data);
+      console.log('Auth data: ', data);
+    }).catch((e) => {
       console.error(e)
       setAuth(false)
     })
