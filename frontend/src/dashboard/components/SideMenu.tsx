@@ -8,8 +8,8 @@ import Typography from '@mui/material/Typography';
 import MenuContent from './MenuContent';
 import OptionsMenu from './OptionsMenu';
 import {useContext} from "react";
-import UserContext from "../../providers/user/UserContext.ts";
 import SitemarkIcon from "../../icons/SitemarkIcon.tsx";
+import {AuthContext} from "../../auth/AuthContext";
 
 const drawerWidth = 240;
 
@@ -25,7 +25,7 @@ const Drawer = styled(MuiDrawer)({
 });
 
 export default function SideMenu({selected}: {selected: number}) {
-  const { user } = useContext(UserContext);
+  const { auth } = useContext(AuthContext);
 
   return (
     <Drawer
@@ -73,14 +73,14 @@ export default function SideMenu({selected}: {selected: number}) {
           src="/static/images/avatar/7.jpg"
           sx={{ width: 36, height: 36 }}
         >
-          {user?.avatarLetter}
+          AA
         </Avatar>
         <Box sx={{ mr: 'auto' }}>
           <Typography variant="body2" sx={{ fontWeight: 500, lineHeight: '16px' }}>
-            {user?.fullName}
+            {auth?.user?.full_name}
           </Typography>
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-            {user?.email}
+            {auth?.user?.email}
           </Typography>
         </Box>
         <OptionsMenu />
