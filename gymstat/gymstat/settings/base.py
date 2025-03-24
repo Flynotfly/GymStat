@@ -172,7 +172,6 @@ SITE_ID = 1
 # allauth settings
 # https://docs.allauth.org/en/latest/account/configuration.html
 
-ACCOUNT_ADAPTER = 'user.adapters.CustomAccountAdapter'
 ACCOUNT_LOGIN_METHODS = {"email"}
 ACCOUNT_CHANGE_EMAIL = True
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 1
