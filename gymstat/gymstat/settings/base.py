@@ -172,6 +172,7 @@ SITE_ID = 1
 # allauth settings
 # https://docs.allauth.org/en/latest/account/configuration.html
 
+ACCOUNT_ADAPTER = 'user.adapters.CustomAccountAdapter'
 ACCOUNT_LOGIN_METHODS = {"email"}
 ACCOUNT_CHANGE_EMAIL = True
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 1
@@ -186,6 +187,9 @@ ACCOUNT_PRESERVE_USERNAME_CASING = False
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 HEADLESS_ONLY = True
+HEADLESS_CLIENTS = ("browser",)
+
+
 ACCOUNT_SIGNUP_FIELDS = [
     "email*",
     "password*",
