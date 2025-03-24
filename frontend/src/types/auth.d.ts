@@ -1,3 +1,8 @@
+export interface AuthContextValue {
+  auth: AuthData | false | undefined;
+  config: any;
+}
+
 export interface AuthData {
   user: User;
   methods: AuthMethod[];
