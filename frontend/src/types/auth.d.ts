@@ -4,10 +4,14 @@ export interface AuthContextValue {
 }
 
 export interface AuthData {
-  user: User;
-  methods: AuthMethod[];
+  data: AuthDataDetails;
   meta: AuthMeta;
   status: number;
+}
+
+export interface AuthDataDetails {
+  user: User;
+  methods: AuthMethod[];
 }
 
 export interface User {
