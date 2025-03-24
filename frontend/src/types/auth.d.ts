@@ -9,8 +9,7 @@ export interface User {
   has_usable_password: boolean;
   email: string;
   username: string;
-  first_name: string;
-  last_name: string;
+  full_name: string;
 }
 
 export interface AuthMethod {
