@@ -1,9 +1,7 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
 import CssBaseline from '@mui/material/CssBaseline';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import Divider from '@mui/material/Divider';
 import FormLabel from '@mui/material/FormLabel';
 import FormControl from '@mui/material/FormControl';
@@ -21,7 +19,6 @@ import {useConfig} from "../auth";
 import {login} from "../lib/allauth";
 import Card from "../components/SignInCard.ts";
 import SignInContainer from "../components/SignInContainer.ts";
-import GoogleIcon from "../icons/GoogleIcon.tsx"
 import SitemarkIcon from "../icons/SitemarkIcon.tsx";
 
 export default function SignIn(props: { disableCustomTheme?: boolean }) {
@@ -175,10 +172,10 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
                 color={passwordError ? 'error' : 'primary'}
               />
             </FormControl>
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
+            {/*<FormControlLabel*/}
+            {/*  control={<Checkbox value="remember" color="primary" />}*/}
+            {/*  label="Remember me"*/}
+            {/*/>*/}
             <ForgotPassword open={open} handleClose={handleClose} />
             <Button
               type="submit"
@@ -198,16 +195,16 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
               Forgot your password?
             </Link>
           </Box>
-          <Divider>or</Divider>
+          <Divider/>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <Button
-              fullWidth
-              variant="outlined"
-              onClick={() => alert('Sign in with Google')}
-              startIcon={<GoogleIcon />}
-            >
-              Sign in with Google
-            </Button>
+            {/*<Button*/}
+            {/*  fullWidth*/}
+            {/*  variant="outlined"*/}
+            {/*  onClick={() => alert('Sign in with Google')}*/}
+            {/*  startIcon={<GoogleIcon />}*/}
+            {/*>*/}
+            {/*  Sign in with Google*/}
+            {/*</Button>*/}
             <Typography sx={{ textAlign: 'center' }}>
               Don&apos;t have an account?{' '}
               <Link
