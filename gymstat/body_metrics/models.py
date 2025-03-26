@@ -40,3 +40,13 @@ class Record(models.Model):
     value = models.FloatField()
     datetime = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        indexes = [models.Index(fields=["datetime"])]
+        ordering = ["datetime"]
+
+    def __str__(self):
+        return f"{self.value} {self.metric.unit}"
+
+    def __repr__(self):
+        return f"Record of user {self.owner} for {self.datetime} created at {self.created_at}, {self.value}, metric {self.metric}"
