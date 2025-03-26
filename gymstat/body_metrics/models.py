@@ -34,7 +34,7 @@ class Record(models.Model):
     )
     metric = models.ForeignKey(
         Metric,
-        related_name='records',
+        related_name="records",
         on_delete=models.CASCADE,
     )
     value = models.FloatField()
