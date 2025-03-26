@@ -11,6 +11,8 @@ class Metric(models.Model):
     name = models.CharField(max_length=50)
     description = models.TextField(blank=True, null=True)
     admin = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    edited_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         indexes = [models.Index(fields=["name", "admin"])]
