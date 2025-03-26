@@ -65,4 +65,5 @@ class ExerciseType(models.Model):
         return reverse("training:exercise_detail", args=[self.id])
 
     class Meta:
+        indexes = [models.Index(fields=["name", "base"])]
         ordering = ["name"]
