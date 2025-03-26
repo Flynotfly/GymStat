@@ -5,7 +5,7 @@ from django.db import models
 class Metric(models.Model):
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        related_name="owned_exercises",
+        related_name="owned_metrics",
         on_delete=models.CASCADE,
     )
     name = models.CharField(max_length=50)
@@ -29,7 +29,7 @@ class Metric(models.Model):
 class Record(models.Model):
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        related_name="owned_exercises",
+        related_name="owned_records",
         on_delete=models.CASCADE,
     )
     metric = models.ForeignKey(
