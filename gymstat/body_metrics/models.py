@@ -9,6 +9,7 @@ class Metric(models.Model):
         on_delete=models.CASCADE,
     )
     name = models.CharField(max_length=50)
+    unit = models.CharField(max_length=10)
     description = models.TextField(blank=True, null=True)
     admin = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -23,3 +24,19 @@ class Metric(models.Model):
 
     def __repr__(self):
         return f"Metric {self.pk} - {self.name} created by {self.owner} (is admin - {self.admin})"
+
+
+class Record(models.Model):
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="owned_exercises",
+        on_delete=models.CASCADE,
+    )
+    metric = models.ForeignKey(
+        Metric,
+        related_name='records',
+        on_delete=models.CASCADE,
+    )
+    value = models.FloatField()
+    datetime = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
