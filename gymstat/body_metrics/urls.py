@@ -9,5 +9,5 @@ urlpatterns = [
     path("metrics/<int:pk>/", views.MetricRetrieveUpdateDestroyAPIView.as_view(), name="get-edit-metric"),
 
     path("records/", views.RecordListCreateAPIView.as_view(), name="get-create-records"),
-    path("records/<int:pk>/", views.MetricRetrieveUpdateDestroyAPIView.as_view(), name="get-edit-record"),
+    path("records/<int:pk>/", views.RecordRetrieveUpdateDestroyAPIView.as_view(), name="get-edit-record"),
 ]
