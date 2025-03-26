@@ -24,6 +24,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("user/", include("user.urls", namespace="user")),
     path("training/", include("training.urls", namespace="training")),
+    path("metrics/", include("body_metrics.urls", namespace="metrics")),
     path("accounts/", include("allauth.urls")),
     path("_allauth/", include("allauth.headless.urls")),
     path("__debug__", include("debug_toolbar.urls")),
