@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "redisboard",
     "training",
     "user",
+    "body_metrics",
     "debug_toolbar",
     "rest_framework",
     "allauth",
