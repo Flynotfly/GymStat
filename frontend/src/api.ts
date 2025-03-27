@@ -6,6 +6,7 @@ type HTTPMethod = 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE' | 'OPTIONS' | 'PATC
 const baseURL = import.meta.env.VITE_BASE_URL;
 const userAPIURL = `${baseURL}user/api/`;
 const trainingAPIURL = `${baseURL}training/api/`;
+const metricsURL = `${baseURL}metrics/`;
 
 const safeMethods: HTTPMethod[] = ['GET', 'HEAD', 'OPTIONS', 'TRACE'];
 
@@ -72,4 +73,12 @@ export function createTraining(data: Partial<TrainingInterface>): Promise<any> {
 export function updateTraining(data: Partial<TrainingInterface>): Promise<any> {
   const id = data.id;
   return request('PUT', `${trainingAPIURL}trainings/update/${id}/`, data);
+}
+
+export function getMetrics(data: object): Promise<any> {
+  return request('GET', `${metricsURL}metrics/`, data);
+}
+
+export function createMetrics(data: object): Promise<any> {
+  return request('POST', `${metricsURL}metrics/`, data);
 }
