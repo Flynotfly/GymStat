@@ -13,7 +13,9 @@ import {
   ListItem,
   ListItemText,
 } from '@mui/material';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
+import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Metric, MetricRecord } from "../types/metric";
 import { fetchCsrf, getMetrics, getRecords, createRecord } from "../api.ts";
 
@@ -22,7 +24,8 @@ export default function Body() {
   const [records, setRecords] = useState<MetricRecord[]>([]);
   const [selectedMetric, setSelectedMetric] = useState<Metric | null>(null);
   const [value, setValue] = useState<number | ''>('');
-  const [datetime, setDatetime] = useState<string>(''); // new datetime state
+  // Set the initial datetime value to now
+  const [datetime, setDatetime] = useState<Dayjs | null>(dayjs());
   const [loadingMetrics, setLoadingMetrics] = useState(true);
 
   useEffect(() => {
@@ -47,22 +50,26 @@ export default function Body() {
   }, [selectedMetric]);
 
   const handleAddRecord = async () => {
-    if (selectedMetric && value !== '' && datetime !== '') {
+    if (selectedMetric && value !== '' && datetime) {
       const newRecord: Partial<MetricRecord> = {
         metric: selectedMetric.id,
         value: Number(value),
-        datetime: datetime, // should be in ISO format from the datetime-local input
+        // Convert dayjs object to ISO string
+        datetime: datetime.toISOString(),
       };
 
-      createRecord(newRecord).then(() => {
-        setValue('');
-        setDatetime('');
-        if (selectedMetric) {
-          getRecords({metric: selectedMetric.id})
-            .then(data => setRecords(data))
-            .catch(err => console.error("Error fetching records:", err));
-        }
-      }).catch(err => console.error("Error saving record:", err));
+      createRecord(newRecord)
+        .then(() => {
+          // Reset value field and set datetime to now
+          setValue('');
+          setDatetime(dayjs());
+          if (selectedMetric) {
+            getRecords({ metric: selectedMetric.id })
+              .then(data => setRecords(data))
+              .catch(err => console.error("Error fetching records:", err));
+          }
+        })
+        .catch(err => console.error("Error saving record:", err));
     }
   };
 
@@ -120,14 +127,14 @@ export default function Body() {
               />
             </Grid>
             <Grid item xs={12} md={4}>
-              <TextField
-                fullWidth
-                type="datetime-local"
-                label="Datetime"
-                InputLabelProps={{ shrink: true }}
-                value={datetime}
-                onChange={(e) => setDatetime(e.target.value)}
-              />
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DateTimePicker
+                  label="Datetime"
+                  value={datetime}
+                  onChange={(newValue) => setDatetime(newValue)}
+                  renderInput={(params) => <TextField fullWidth {...params} />}
+                />
+              </LocalizationProvider>
             </Grid>
             <Grid item xs={12} md={4}>
               <Button
@@ -151,12 +158,12 @@ export default function Body() {
         <Typography variant="h6">Your Metric Records</Typography>
         <List>
           {records.map((record, idx) => {
-            // Assuming that record.metric is used as index into the metrics array.
-            const metric = metrics[record.metric];
+            // Find the corresponding metric for display purposes
+            const metric = metrics.find(m => m.id === record.metric);
             return (
               <ListItem key={idx}>
                 <ListItemText
-                  primary={`${metric.name}: ${record.value} ${metric.unit}`}
+                  primary={`${metric ? metric.name : 'Metric'}: ${record.value} ${metric ? metric.unit : ''}`}
                   secondary={dayjs(record.datetime).format('MMMM D, YYYY h:mm A')}
                 />
               </ListItem>
