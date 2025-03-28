@@ -5,7 +5,7 @@ import {MetricRecord} from "./types/metric";
 type HTTPMethod = 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE' | 'OPTIONS' | 'PATCH' | 'TRACE';
 
 const baseURL = import.meta.env.VITE_BASE_URL;
-const userAPIURL = `${baseURL}user/api/`;
+const userAPIURL = `${baseURL}user/`;
 const trainingAPIURL = `${baseURL}training/api/`;
 const metricsURL = `${baseURL}metrics/`;
 
