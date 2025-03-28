@@ -1,5 +1,6 @@
 import {getCSRFToken} from "./utils.ts";
 import {TrainingInterface} from "./pages/Training.tsx";
+import {MetricRecord} from "./types/metric";
 
 type HTTPMethod = 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE' | 'OPTIONS' | 'PATCH' | 'TRACE';
 
@@ -91,4 +92,8 @@ export function createMetrics(data: object): Promise<any> {
 
 export function getRecords(data: {metric: number}): Promise<any> {
   return request('GET', `${metricsURL}records/`, data);
+}
+
+export function createRecord(data: Partial<MetricRecord>): Promise<any> {
+  return request('POST', `${metricsURL}records/`, data);
 }
