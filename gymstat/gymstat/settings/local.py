@@ -4,6 +4,7 @@ DEBUG = True
 
 INSTALLED_APPS += [
     "django_extensions",
+    "drf_spectacular",
 ]
 
 DATABASES = {
@@ -34,3 +35,5 @@ HEADLESS_FRONTEND_URLS = {
     "account_reset_password_from_key": "https://localhost:5173/account/password/reset/key/{key}",
     "account_signup": "https://localhost:5173/account/signup",
 }
+
+REST_FRAMEWORK["DEFAULT_SCHEMA_CLASS"] = "drf_spectacular.openapi.AutoSchema"
