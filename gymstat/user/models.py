@@ -42,6 +42,7 @@ class UserSettings(models.Model):
         related_name='settings',
         on_delete=models.CASCADE
     )
+    web_ui_customisation = models.JSONField(default=dict)
 
     def __repr__(self):
         return f"{self.user.primary_key}'s settings"
