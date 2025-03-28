@@ -23,7 +23,13 @@ function request(method: HTTPMethod, url: string, data?: object): Promise<any> {
     credentials: 'include',
   };
   if (data !== undefined) {
-    options.body = JSON.stringify(data);
+    // For GET or HEAD requests, convert data into query parameters
+    if (method === 'GET' || method === 'HEAD') {
+      const queryString = new URLSearchParams(data as Record<string, string>).toString();
+      url += (url.includes('?') ? '&' : '?') + queryString;
+    } else {
+      options.body = JSON.stringify(data);
+    }
   }
 
   return fetch(url, options).then((response) => {
