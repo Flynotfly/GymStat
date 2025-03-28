@@ -89,6 +89,6 @@ export function createMetrics(data: object): Promise<any> {
   return request('POST', `${metricsURL}metrics/`, data);
 }
 
-export function getRecords(data: {metric: string}): Promise<any> {
+export function getRecords(data: {metric: number}): Promise<any> {
   return request('GET', `${metricsURL}records/`, data);
 }
