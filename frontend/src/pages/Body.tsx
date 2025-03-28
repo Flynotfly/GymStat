@@ -14,44 +14,73 @@ import {
   ListItemText,
 } from '@mui/material';
 import dayjs from 'dayjs';
-import {Metric, MetricRecord} from "../types/metric";
-import {fetchCsrf, getMetrics} from "../api.ts";
-
+import { Metric, MetricRecord } from "../types/metric";
+import { fetchCsrf, getMetrics, getRecords, createRecord } from "../api.ts";
 
 export default function Body() {
   const [metrics, setMetrics] = useState<Metric[]>([]);
-  const [records] = useState<MetricRecord[]>([]);
+  const [records, setRecords] = useState<MetricRecord[]>([]);
   const [selectedMetric, setSelectedMetric] = useState<Metric | null>(null);
   const [value, setValue] = useState<number | ''>('');
-  const [loading, setLoading] = useState(true);
+  const [datetime, setDatetime] = useState<string>(''); // new datetime state
+  const [loadingMetrics, setLoadingMetrics] = useState(true);
 
   useEffect(() => {
     fetchCsrf().catch(console.error);
   }, []);
 
   useEffect(() => {
-    setLoading(true);
-    getMetrics({"type": "all"})
+    setLoadingMetrics(true);
+    getMetrics({ type: "all" })
       .then(data => setMetrics(data))
       .catch(err => console.error("Error fetching metrics:", err))
-      .finally(() => setLoading(false));
+      .finally(() => setLoadingMetrics(false));
   }, []);
+
+  // Whenever the user selects a metric, fetch the corresponding records.
+  useEffect(() => {
+    if (selectedMetric) {
+      getRecords({ metric: selectedMetric.id })
+        .then(data => setRecords(data))
+        .catch(err => console.error("Error fetching records:", err));
+    }
+  }, [selectedMetric]);
+
+  const handleAddRecord = async () => {
+    if (selectedMetric && value !== '' && datetime !== '') {
+      const newRecord: Partial<MetricRecord> = {
+        metric: selectedMetric.id,
+        value: Number(value),
+        datetime: datetime, // should be in ISO format from the datetime-local input
+      };
+
+      createRecord(newRecord).then(() => {
+        setValue('');
+        setDatetime('');
+        if (selectedMetric) {
+          getRecords({metric: selectedMetric.id})
+            .then(data => setRecords(data))
+            .catch(err => console.error("Error fetching records:", err));
+        }
+      }).catch(err => console.error("Error saving record:", err));
+    }
+  };
 
   const renderMetricList = (isAdminMetric: boolean) =>
     metrics
-      .filter((metric) => metric.admin === isAdminMetric)
+      .filter(metric => metric.admin === isAdminMetric)
       .map((metric, index) => (
         <Chip
           key={index}
           label={`${metric.name} (${metric.unit})`}
-          variant={selectedMetric === metric ? 'filled' : 'outlined'}
+          variant={selectedMetric && selectedMetric.id === metric.id ? 'filled' : 'outlined'}
           onClick={() => setSelectedMetric(metric)}
           sx={{ margin: 0.5 }}
-          color={selectedMetric === metric ? 'primary' : 'default'}
+          color={selectedMetric && selectedMetric.id === metric.id ? 'primary' : 'default'}
         />
       ));
 
-  if (loading) {
+  if (loadingMetrics) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
         <CircularProgress />
@@ -60,8 +89,8 @@ export default function Body() {
   }
 
   return (
-    <Box p={3}>
-      <Typography variant="h4" gutterBottom>
+    <Box p={2}>
+      <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
         Body Metric Tracker
       </Typography>
 
@@ -79,7 +108,7 @@ export default function Body() {
         <Typography variant="h6">Add Metric Record</Typography>
         {selectedMetric ? (
           <Grid container spacing={2} alignItems="center" sx={{ mt: 1 }}>
-            <Grid item xs={12} md={8}>
+            <Grid item xs={12} md={4}>
               <TextField
                 fullWidth
                 label={`Value (${selectedMetric.unit})`}
@@ -91,11 +120,21 @@ export default function Body() {
               />
             </Grid>
             <Grid item xs={12} md={4}>
+              <TextField
+                fullWidth
+                type="datetime-local"
+                label="Datetime"
+                InputLabelProps={{ shrink: true }}
+                value={datetime}
+                onChange={(e) => setDatetime(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} md={4}>
               <Button
                 variant="contained"
                 color="primary"
                 fullWidth
-                // onClick={handleAddRecord}
+                onClick={handleAddRecord}
               >
                 Save Record
               </Button>
@@ -112,14 +151,13 @@ export default function Body() {
         <Typography variant="h6">Your Metric Records</Typography>
         <List>
           {records.map((record, idx) => {
+            // Assuming that record.metric is used as index into the metrics array.
             const metric = metrics[record.metric];
             return (
               <ListItem key={idx}>
                 <ListItemText
                   primary={`${metric.name}: ${record.value} ${metric.unit}`}
-                  secondary={dayjs(record.datetime).format(
-                    'MMMM D, YYYY h:mm A'
-                  )}
+                  secondary={dayjs(record.datetime).format('MMMM D, YYYY h:mm A')}
                 />
               </ListItem>
             );
@@ -128,4 +166,4 @@ export default function Body() {
       </Paper>
     </Box>
   );
-};
+}
