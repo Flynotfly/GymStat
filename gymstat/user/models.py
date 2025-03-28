@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.core.mail import send_mail
 from django.db import models
+from django.conf import settings
 from django.utils import timezone
 
 from .managers import CustomUserManager
@@ -33,3 +34,14 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.get_full_name()
+
+
+class UserSettings(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        related_name='settings',
+        on_delete=models.CASCADE
+    )
+
+    def __repr__(self):
+        return f"{self.user.primary_key}'s settings"
