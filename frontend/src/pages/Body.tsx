@@ -24,7 +24,7 @@ export default function Body() {
   const [records, setRecords] = useState<MetricRecord[]>([]);
   const [selectedMetric, setSelectedMetric] = useState<Metric | null>(null);
   const [value, setValue] = useState<number | ''>('');
-  // Set the initial datetime value to now
+  // Initialize with the current time.
   const [datetime, setDatetime] = useState<Dayjs | null>(dayjs());
   const [loadingMetrics, setLoadingMetrics] = useState(true);
 
@@ -40,7 +40,7 @@ export default function Body() {
       .finally(() => setLoadingMetrics(false));
   }, []);
 
-  // Whenever the user selects a metric, fetch the corresponding records.
+  // Whenever a metric is selected, fetch its records.
   useEffect(() => {
     if (selectedMetric) {
       getRecords({ metric: selectedMetric.id })
@@ -54,13 +54,13 @@ export default function Body() {
       const newRecord: Partial<MetricRecord> = {
         metric: selectedMetric.id,
         value: Number(value),
-        // Convert dayjs object to ISO string
+        // Convert Dayjs object to ISO string.
         datetime: datetime.toISOString(),
       };
 
       createRecord(newRecord)
         .then(() => {
-          // Reset value field and set datetime to now
+          // Reset fields and set datetime to now.
           setValue('');
           setDatetime(dayjs());
           if (selectedMetric) {
@@ -131,8 +131,9 @@ export default function Body() {
                 <DateTimePicker
                   label="Datetime"
                   value={datetime}
-                  onChange={(newValue) => setDatetime(newValue)}
-                  renderInput={(params) => <TextField fullWidth {...params} />}
+                  onChange={(newValue: Dayjs | null) => setDatetime(newValue)}
+                  // Use slotProps to pass props to the underlying TextField.
+                  slotProps={{ textField: { fullWidth: true } }}
                 />
               </LocalizationProvider>
             </Grid>
@@ -158,7 +159,6 @@ export default function Body() {
         <Typography variant="h6">Your Metric Records</Typography>
         <List>
           {records.map((record, idx) => {
-            // Find the corresponding metric for display purposes
             const metric = metrics.find(m => m.id === record.metric);
             return (
               <ListItem key={idx}>
