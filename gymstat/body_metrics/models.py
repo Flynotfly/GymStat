@@ -42,8 +42,8 @@ class Record(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        indexes = [models.Index(fields=["datetime"])]
-        ordering = ["datetime"]
+        indexes = [models.Index(fields=["-datetime"])]
+        ordering = ["-datetime"]
 
     def __str__(self):
         return f"{self.value} {self.metric.unit}"
