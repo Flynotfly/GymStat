@@ -35,7 +35,15 @@ if settings.DEBUG:
         settings.STATIC_URL, document_root=settings.STATIC_ROOT
     )
 
-    from drf_spectacular.views import SpectacularRedocView, SpectacularAPIView
+    from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView
 
-    urlpatterns.append(path('api/schema/', SpectacularAPIView.as_view(), name='schema'))
-    urlpatterns.append(path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'))
+    urlpatterns.append(
+        path("api/schema/", SpectacularAPIView.as_view(), name="schema")
+    )
+    urlpatterns.append(
+        path(
+            "api/schema/redoc/",
+            SpectacularRedocView.as_view(url_name="schema"),
+            name="redoc",
+        )
+    )
