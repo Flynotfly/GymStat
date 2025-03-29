@@ -97,4 +97,4 @@ class ExerciseTemplate(models.Model):
         return self.name
 
     def __repr__(self):
-        return f"Exercise {'admin' if self.admin else 'user'} template {self.pk} {self.name}"
+        return f"Exercise {'admin' if self.is_admin else 'user'} template {self.pk} {self.name}"
