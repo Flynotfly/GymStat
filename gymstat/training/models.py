@@ -23,12 +23,42 @@ class Training(models.Model):
         return reverse("training:details", args=[self.id])
 
 
+class ExerciseTemplate(models.Model):
+    name = models.CharField(max_length=50)
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="owned_exercises",
+        on_delete=models.CASCADE,
+    )
+    fields = models.JSONField()
+    description = models.TextField(blank=True, null=True)
+    is_admin = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+    icon = models.ImageField(upload_to='exercise_icons/', null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    edited_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["is_active", "name"]),
+            models.Index(fields=["is_active", "is_admin", "name"]),
+            GinIndex(fields=["fields"], opclasses=['jsonb_path_ops']),
+        ]
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return f"Exercise {'admin' if self.is_admin else 'user'} template {self.pk} {self.name}"
+
+
 class Exercise(models.Model):
     training = models.ForeignKey(
         Training, related_name="exercises", on_delete=models.CASCADE
     )
     template = models.ForeignKey(
-        "ExerciseTemplate",
+        ExerciseTemplate,
         related_name="exercises",
         on_delete=models.CASCADE,
     )
@@ -73,33 +103,3 @@ class ExerciseType(models.Model):
     class Meta:
         indexes = [models.Index(fields=["name", "base"])]
         ordering = ["name"]
-
-
-class ExerciseTemplate(models.Model):
-    name = models.CharField(max_length=50)
-    owner = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        related_name="owned_exercises",
-        on_delete=models.CASCADE,
-    )
-    fields = models.JSONField()
-    description = models.TextField(blank=True, null=True)
-    is_admin = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
-    icon = models.ImageField(upload_to='exercise_icons/', null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    edited_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        indexes = [
-            models.Index(fields=["is_active", "name"]),
-            models.Index(fields=["is_active", "is_admin", "name"]),
-            GinIndex(fields=["fields"], opclasses=['jsonb_path_ops']),
-        ]
-        ordering = ["name"]
-
-    def __str__(self):
-        return self.name
-
-    def __repr__(self):
-        return f"Exercise {'admin' if self.is_admin else 'user'} template {self.pk} {self.name}"
