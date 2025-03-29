@@ -27,7 +27,7 @@ class ExerciseTemplate(models.Model):
     name = models.CharField(max_length=50)
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        related_name="owned_exercises",
+        related_name="exercise_templates",
         on_delete=models.CASCADE,
     )
     fields = models.JSONField()
