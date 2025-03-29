@@ -42,7 +42,7 @@ class ExerciseTemplate(models.Model):
         indexes = [
             models.Index(fields=["is_active", "name"]),
             models.Index(fields=["is_active", "is_admin", "name"]),
-            GinIndex(fields=["fields"], opclasses=['jsonb_path_ops']),
+            GinIndex(name="exercise_templates_fields", fields=["fields"], opclasses=['jsonb_path_ops']),
         ]
         ordering = ["name"]
 
@@ -68,7 +68,7 @@ class Exercise(models.Model):
     class Meta:
         indexes = [
             models.Index(fields=["training", "order"]),
-            GinIndex(fields=["data"], opclasses=['jsonb_path_ops']),
+            GinIndex(name="exercise_data", fields=["data"], opclasses=['jsonb_path_ops']),
         ]
         ordering = ["order"]
 
@@ -94,7 +94,7 @@ class TrainingTemplate(models.Model):
     class Meta:
         indexes = [
             models.Index(fields=["name"]),
-            GinIndex(fields=["data"], opclasses=['jsonb_path_ops'])
+            GinIndex(name="training_template_data", fields=["data"], opclasses=['jsonb_path_ops'])
         ]
         ordering = ["name"]
 
