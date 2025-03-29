@@ -43,10 +43,10 @@ class Exercise(models.Model):
         ordering = ["order"]
 
     def __repr__(self):
-        return f"Exercise of training '{self.training}' and template '{self.template}'"
+        return f"<Exercise ({self.template.name}) for Training {self.training.id}>"
 
     def __str__(self):
-        return f"{self.template} exercise"
+        return f"{self.template.name} (Order {self.order})"
 
 
 class ExerciseType(models.Model):
