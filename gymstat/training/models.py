@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.postgres.indexes import GinIndex
 from django.db import models
 from django.urls import reverse
 
@@ -67,3 +68,32 @@ class ExerciseType(models.Model):
     class Meta:
         indexes = [models.Index(fields=["name", "base"])]
         ordering = ["name"]
+
+
+class ExerciseTemplate(models.Model):
+    name = models.CharField(max_length=50)
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="owned_exercises",
+        on_delete=models.CASCADE,
+    )
+    fields = models.JSONField()
+    description = models.TextField(blank=True, null=True)
+    admin = models.BooleanField(default=False)
+    icon = models.ImageField(upload_to='exercise_icons/', null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    edited_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["name"]),
+            models.Index(fields=["admin", "name"]),
+            GinIndex(fields=["fields"], opclasses=['jsonb_path_ops']),
+        ]
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return f"Exercise {'admin' if self.admin else 'user'} template {self.pk} {self.name}"
