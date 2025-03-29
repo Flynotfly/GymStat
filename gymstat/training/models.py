@@ -79,6 +79,32 @@ class Exercise(models.Model):
         return f"{self.template.name} (Order {self.order})"
 
 
+class TrainingTemplate(models.Model):
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name='training_templates',
+        on_delete=models.CASCADE
+    )
+    name = models.CharField(max_length=70)
+    description = models.TextField(blank=True, null=True)
+    data = models.JSONField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    edited_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["name"]),
+            GinIndex(fields=["data"], opclasses=['jsonb_path_ops'])
+        ]
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return f"Training template {self.pk} {self.name} of user {self.owner}"
+
+
 class ExerciseType(models.Model):
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
