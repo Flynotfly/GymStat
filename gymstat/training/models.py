@@ -132,27 +132,27 @@ class TrainingTemplate(models.Model):
 #                 f"{'active' if self.is_active else 'deactivated'}>")
 
 
-class ExerciseType(models.Model):
-    owner = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        related_name="owned_exercises",
-        on_delete=models.CASCADE,
-    )
-    name = models.CharField(max_length=50)
-    description = models.TextField(blank=True, null=True)
-    iconId = models.IntegerField(default=1)
-    iconColor = models.CharField(max_length=8, default="blue")
-    base = models.BooleanField(default=False)
-
-    def __str__(self):
-        return self.name
-
-    def __repr__(self):
-        return f"Exercise {self.pk} - {self.name}"
-
-    def get_absolute_url(self):
-        return reverse("training:exercise_detail", args=[self.id])
-
-    class Meta:
-        indexes = [models.Index(fields=["name", "base"])]
-        ordering = ["name"]
+# class ExerciseType(models.Model):
+#     owner = models.ForeignKey(
+#         settings.AUTH_USER_MODEL,
+#         related_name="owned_exercises",
+#         on_delete=models.CASCADE,
+#     )
+#     name = models.CharField(max_length=50)
+#     description = models.TextField(blank=True, null=True)
+#     iconId = models.IntegerField(default=1)
+#     iconColor = models.CharField(max_length=8, default="blue")
+#     base = models.BooleanField(default=False)
+#
+#     def __str__(self):
+#         return self.name
+#
+#     def __repr__(self):
+#         return f"Exercise {self.pk} - {self.name}"
+#
+#     def get_absolute_url(self):
+#         return reverse("training:exercise_detail", args=[self.id])
+#
+#     class Meta:
+#         indexes = [models.Index(fields=["name", "base"])]
+#         ordering = ["name"]
