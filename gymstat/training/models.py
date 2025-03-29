@@ -27,21 +27,26 @@ class Exercise(models.Model):
     training = models.ForeignKey(
         Training, related_name="exercises", on_delete=models.CASCADE
     )
-    exercise_type = models.ForeignKey(
-        "ExerciseType",
+    template = models.ForeignKey(
+        "ExerciseTemplate",
         related_name="exercises",
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
+        on_delete=models.CASCADE,
     )
     order = models.PositiveIntegerField()
-    suborder = models.PositiveIntegerField()
-    weight = models.DecimalField(max_digits=6, decimal_places=2)
-    repetitions = models.PositiveIntegerField()
+    data = models.JSONField()
 
     class Meta:
-        indexes = [models.Index(fields=["order", "suborder"])]
-        ordering = ["order", "suborder"]
+        indexes = [
+            models.Index(fields=["training", "order"]),
+            GinIndex(fields=["data"], opclasses=['jsonb_path_ops']),
+        ]
+        ordering = ["order"]
+
+    def __repr__(self):
+        return f"Exercise of training '{self.training}' and template '{self.template}'"
+
+    def __str__(self):
+        return f"{self.template} exercise"
 
 
 class ExerciseType(models.Model):
