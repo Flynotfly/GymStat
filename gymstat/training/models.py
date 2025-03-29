@@ -79,15 +79,16 @@ class ExerciseTemplate(models.Model):
     )
     fields = models.JSONField()
     description = models.TextField(blank=True, null=True)
-    admin = models.BooleanField(default=False)
+    is_admin = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
     icon = models.ImageField(upload_to='exercise_icons/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     edited_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         indexes = [
-            models.Index(fields=["name"]),
-            models.Index(fields=["admin", "name"]),
+            models.Index(fields=["is_active", "name"]),
+            models.Index(fields=["is_active", "is_admin", "name"]),
             GinIndex(fields=["fields"], opclasses=['jsonb_path_ops']),
         ]
         ordering = ["name"]
