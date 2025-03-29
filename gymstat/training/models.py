@@ -105,6 +105,33 @@ class TrainingTemplate(models.Model):
         return f"Training template {self.pk} {self.name} of user {self.owner}"
 
 
+# class ExerciseFields(models.Model):
+#     owner = models.ForeignKey(
+#         settings.AUTH_USER_MODEL,
+#         related_name="owned_exercises",
+#         on_delete=models.CASCADE,
+#     )
+#     name = models.CharField(max_length=50)
+#     input = models.CharField()  # TODO: add chooses
+#     unit = models.CharField(max_length=15, blank=True, null=True)
+#     is_admin = models.BooleanField(default=False)
+#     is_active = models.BooleanField(default=True)
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     edited_at = models.DateTimeField(auto_now=True)
+#
+#     class Meta:
+#         indexes = [models.Index(fields=["is_active", "is_admin", "name"])]
+#         ordering = ["name"]
+#
+#     def __str__(self):
+#         return self.name
+#
+#     def __repr__(self):
+#         return (f"<Exercise field {self.name}, input - {self.input}, unit - {self.unit}, "
+#                 f"{'admin' if self.is_admin else 'created by user'}, "
+#                 f"{'active' if self.is_active else 'deactivated'}>")
+
+
 class ExerciseType(models.Model):
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
