@@ -59,7 +59,7 @@ class Training(models.Model):
     )
     conducted = models.DateTimeField()
     title = models.CharField(max_length=70, blank=True, null=True)
-    notes = models.JSONField(validate_notes, blank=True, null=True)
+    notes = models.JSONField(validators=[validate_notes], blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     edited_at = models.DateTimeField(auto_now=True)
 
