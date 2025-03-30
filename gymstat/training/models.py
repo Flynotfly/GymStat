@@ -27,7 +27,7 @@ ALLOWED_EXERCISE_FIELDS = {
     "Weight": "Number + unit (kg/lbs)",
     "Time": "Time (sec/min)",
     "Distance": "Number + unit (m/km/mi)",
-    "Speed/Pace": "Auto-calc or input",
+    "Speed": "Auto-calc or input",
     "Rounds": "Number",
     "Rest": "Time",
     "RPE": "Number (1–10)",
