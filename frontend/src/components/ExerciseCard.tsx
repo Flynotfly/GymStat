@@ -28,7 +28,7 @@ export default function ExerciseCard({ name, description, iconId, iconColor }: E
           </Typography>
         </Box>
         <Typography variant="body2" color="text.secondary">
-          {description}
+          {description} {iconId}
         </Typography>
       </CardContent>
     </Card>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, SyntheticEvent } from "react";
+import { useState, useEffect, SyntheticEvent } from "react";
 import {
   Box,
   Button,
