@@ -2,8 +2,8 @@ from django.db.models import Q
 from rest_framework import generics, permissions
 
 from .models import ExerciseTemplate
-from .serializers import ExerciseTemplateSerializer
 from .permissions import IsOwnerAllIsAdminSafe
+from .serializers import ExerciseTemplateSerializer
 
 
 class ExerciseTemplateListCreateAPIView(generics.ListCreateAPIView):
@@ -17,9 +17,13 @@ class ExerciseTemplateListCreateAPIView(generics.ListCreateAPIView):
         if exercise_type == "user":
             return ExerciseTemplate.objects.filter(owner=user, is_active=True)
         elif exercise_type == "admin":
-            return ExerciseTemplate.objects.filter(is_admin=True, is_active=True)
+            return ExerciseTemplate.objects.filter(
+                is_admin=True, is_active=True
+            )
         elif exercise_type == "all":
-            return ExerciseTemplate.objects.filter(Q(owner=user) | Q(is_admin=True), is_active=True)
+            return ExerciseTemplate.objects.filter(
+                Q(owner=user) | Q(is_admin=True), is_active=True
+            )
         else:
             return ExerciseTemplate.objects.none()
 

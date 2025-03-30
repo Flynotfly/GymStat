@@ -1,6 +1,6 @@
 from django.conf import settings
-from django.core.exceptions import ValidationError
 from django.contrib.postgres.indexes import GinIndex
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 
@@ -42,11 +42,14 @@ ALLOWED_EXERCISE_FIELDS = {
 def validate_fields(value):
     if not isinstance(value, list):
         raise ValidationError("Fields must be a list.")
-    invalid_fields = [field for field in value if field not in ALLOWED_EXERCISE_FIELDS]
+    invalid_fields = [
+        field for field in value if field not in ALLOWED_EXERCISE_FIELDS
+    ]
     if invalid_fields:
         raise ValidationError(
             f"Invalid fields provided: {', '.join(invalid_fields)}. "
-            f"Allowed fields are: {', '.join(ALLOWED_EXERCISE_FIELDS.keys())}.")
+            f"Allowed fields are: {', '.join(ALLOWED_EXERCISE_FIELDS.keys())}."
+        )
 
 
 class ExerciseTemplate(models.Model):
@@ -67,7 +70,11 @@ class ExerciseTemplate(models.Model):
         indexes = [
             models.Index(fields=["is_active", "name"]),
             models.Index(fields=["is_active", "is_admin", "name"]),
-            GinIndex(name="exercise_templates_fields", fields=["fields"], opclasses=['jsonb_path_ops']),
+            GinIndex(
+                name="exercise_templates_fields",
+                fields=["fields"],
+                opclasses=["jsonb_path_ops"],
+            ),
         ]
         ordering = ["name"]
 
@@ -93,7 +100,11 @@ class Exercise(models.Model):
     class Meta:
         indexes = [
             models.Index(fields=["training", "order"]),
-            GinIndex(name="exercise_data", fields=["data"], opclasses=['jsonb_path_ops']),
+            GinIndex(
+                name="exercise_data",
+                fields=["data"],
+                opclasses=["jsonb_path_ops"],
+            ),
         ]
         ordering = ["order"]
 
@@ -107,8 +118,8 @@ class Exercise(models.Model):
 class TrainingTemplate(models.Model):
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        related_name='training_templates',
-        on_delete=models.CASCADE
+        related_name="training_templates",
+        on_delete=models.CASCADE,
     )
     name = models.CharField(max_length=70)
     description = models.TextField(blank=True, null=True)
@@ -119,7 +130,11 @@ class TrainingTemplate(models.Model):
     class Meta:
         indexes = [
             models.Index(fields=["name"]),
-            GinIndex(name="training_template_data", fields=["data"], opclasses=['jsonb_path_ops'])
+            GinIndex(
+                name="training_template_data",
+                fields=["data"],
+                opclasses=["jsonb_path_ops"],
+            ),
         ]
         ordering = ["name"]
 
