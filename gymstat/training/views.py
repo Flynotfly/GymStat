@@ -3,6 +3,7 @@ from rest_framework import generics, permissions
 
 from .models import ExerciseTemplate
 from .serializers import ExerciseTemplateSerializer
+from .permissions import IsOwnerAllIsAdminSafe
 
 
 class ExerciseTemplateListCreateAPIView(generics.ListCreateAPIView):
@@ -24,3 +25,14 @@ class ExerciseTemplateListCreateAPIView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
+
+class ExerciseTemplateRetrieveUpdateDestroyAPIView(
+    generics.RetrieveUpdateDestroyAPIView
+):
+    serializer_class = ExerciseTemplateSerializer
+    permission_classes = [permissions.IsAuthenticated, IsOwnerAllIsAdminSafe]
+
+    def get_queryset(self):
+        user = self.request.user
+        return ExerciseTemplate.objects.filter(Q(owner=user) | Q(is_admin=True), is_active=True)
