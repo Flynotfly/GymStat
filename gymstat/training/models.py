@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.contrib.postgres.indexes import GinIndex
 from django.db import models
 from django.urls import reverse
@@ -20,6 +21,34 @@ class Training(models.Model):
         ordering = ["-conducted"]
 
 
+ALLOWED_EXERCISE_FIELDS = {
+    "Sets": "Number",
+    "Reps": "Number",
+    "Weight": "Number + unit (kg/lbs)",
+    "Time / Duration": "Time (sec/min)",
+    "Distance": "Number + unit (m/km/mi)",
+    "Speed/Pace": "Auto-calc or input",
+    "Rounds": "Number",
+    "Rest": "Time",
+    "RPE / Intensity": "Number (1–10)",
+    "Assistance": "Number + unit",
+    "Attempts": "Number",
+    "Successes": "Number",
+    "Notes": "Text",
+    "Tempo": "Text (e.g. 3-1-1)",
+}
+
+
+def validate_fields(value):
+    if not isinstance(value, list):
+        raise ValidationError("Fields must be a list.")
+    invalid_fields = [field for field in value if field not in ALLOWED_EXERCISE_FIELDS]
+    if invalid_fields:
+        raise ValidationError(
+            f"Invalid fields provided: {', '.join(invalid_fields)}. "
+            f"Allowed fields are: {', '.join(ALLOWED_EXERCISE_FIELDS.keys())}.")
+
+
 class ExerciseTemplate(models.Model):
     name = models.CharField(max_length=50)
     owner = models.ForeignKey(
@@ -27,7 +56,7 @@ class ExerciseTemplate(models.Model):
         related_name="exercise_templates",
         on_delete=models.CASCADE,
     )
-    fields = models.JSONField()
+    fields = models.JSONField(validators=[validate_fields])
     description = models.TextField(blank=True, null=True)
     is_admin = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
