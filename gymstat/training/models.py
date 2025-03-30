@@ -5,20 +5,84 @@ from django.db import models
 from django.urls import reverse
 
 
+class TrainingTemplate(models.Model):
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="training_templates",
+        on_delete=models.CASCADE,
+    )
+    name = models.CharField(max_length=70)
+    description = models.TextField(blank=True, null=True)
+    data = models.JSONField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    edited_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["name"]),
+            models.Index(fields=["owner", "name"]),
+            GinIndex(
+                name="training_template_data",
+                fields=["data"],
+                opclasses=["jsonb_path_ops"],
+            ),
+        ]
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return f"Training template {self.pk} {self.name} of user {self.owner}"
+
+
+def validate_notes(value):
+    if not isinstance(value, dict):
+        raise ValidationError("Notes must be a dictionary.")
+    for key, val in value.items():
+        if not isinstance(key, str) or not isinstance(val, str):
+            raise ValidationError("Notes dictionary keys and values must be strings.")
+
+
 class Training(models.Model):
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name="trainings",
         on_delete=models.CASCADE,
     )
+    template = models.ForeignKey(
+        TrainingTemplate,
+        related_name="trainings",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
     conducted = models.DateTimeField()
     title = models.CharField(max_length=70, blank=True, null=True)
-    description = models.TextField(blank=True, null=True)
-    score = models.PositiveIntegerField(default=10)
+    notes = models.JSONField(validate_notes, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    edited_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        indexes = [models.Index(fields=["-conducted"])]
+        indexes = [
+            models.Index(fields=["-conducted"]),
+            models.Index(fields=["owner", "-conducted"]),
+            GinIndex(
+                name="training_notes",
+                fields=["notes"],
+                opclasses=["jsonb_path_ops"],
+            ),
+        ]
         ordering = ["-conducted"]
+
+    def __str__(self):
+        return f"{self.title or 'Untitled Training'} by {self.owner} on {self.conducted.strftime('%Y-%m-%d')}"
+
+    def __repr__(self):
+        return (
+            f"<Training(id={self.id}, title={self.title!r}, owner={self.owner!r}, "
+            f"conducted={self.conducted.isoformat()})>"
+        )
 
 
 ALLOWED_EXERCISE_FIELDS = {
@@ -68,6 +132,7 @@ class ExerciseTemplate(models.Model):
 
     class Meta:
         indexes = [
+            models.Index(fields=["name"]),
             models.Index(fields=["is_active", "name"]),
             models.Index(fields=["is_active", "is_admin", "name"]),
             GinIndex(
@@ -99,6 +164,7 @@ class Exercise(models.Model):
 
     class Meta:
         indexes = [
+            models.Index(fields=["order"]),
             models.Index(fields=["training", "order"]),
             GinIndex(
                 name="exercise_data",
@@ -113,36 +179,6 @@ class Exercise(models.Model):
 
     def __str__(self):
         return f"{self.template.name} (Order {self.order})"
-
-
-class TrainingTemplate(models.Model):
-    owner = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        related_name="training_templates",
-        on_delete=models.CASCADE,
-    )
-    name = models.CharField(max_length=70)
-    description = models.TextField(blank=True, null=True)
-    data = models.JSONField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    edited_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        indexes = [
-            models.Index(fields=["name"]),
-            GinIndex(
-                name="training_template_data",
-                fields=["data"],
-                opclasses=["jsonb_path_ops"],
-            ),
-        ]
-        ordering = ["name"]
-
-    def __str__(self):
-        return self.name
-
-    def __repr__(self):
-        return f"Training template {self.pk} {self.name} of user {self.owner}"
 
 
 # class ExerciseFields(models.Model):
