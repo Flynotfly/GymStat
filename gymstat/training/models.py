@@ -19,9 +19,6 @@ class Training(models.Model):
         indexes = [models.Index(fields=["-conducted"])]
         ordering = ["-conducted"]
 
-    def get_absolute_url(self):
-        return reverse("training:details", args=[self.id])
-
 
 class ExerciseTemplate(models.Model):
     name = models.CharField(max_length=50)
