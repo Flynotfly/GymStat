@@ -8,7 +8,7 @@ urlpatterns = [
     path(
         "exercises/",
         views.ExerciseTemplateListCreateAPIView.as_view(),
-        name="exercises-template-list-create",
+        name="exercise-template-list-create",
     ),
     path(
         "exercises/<int:pk>/",
