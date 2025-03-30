@@ -6,5 +6,5 @@ app_name = "training"
 
 urlpatterns = [
     path('exercises/', views.ExerciseTemplateListCreateAPIView.as_view(), name="exercises"),
-#     path('exercises/<int:pk>/', ..., name="exercise"),
+    path('exercises/<int:pk>/', views.ExerciseTemplateRetrieveUpdateDestroyAPIView.as_view(), name="exercise"),
 ]
