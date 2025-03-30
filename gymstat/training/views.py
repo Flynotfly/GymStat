@@ -32,7 +32,4 @@ class ExerciseTemplateRetrieveUpdateDestroyAPIView(
 ):
     serializer_class = ExerciseTemplateSerializer
     permission_classes = [permissions.IsAuthenticated, IsOwnerAllIsAdminSafe]
-
-    def get_queryset(self):
-        user = self.request.user
-        return ExerciseTemplate.objects.filter(Q(owner=user) | Q(is_admin=True), is_active=True)
+    queryset = ExerciseTemplate.objects.filter(is_active=True)
