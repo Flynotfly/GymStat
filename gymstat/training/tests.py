@@ -1,12 +1,13 @@
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.test import TestCase
+from django.utils import timezone
 
 from rest_framework.test import APITestCase
 from rest_framework import status
 from django.urls import reverse
 
-from .models import ExerciseTemplate
+from .models import ExerciseTemplate, Training, TrainingTemplate
 
 User = get_user_model()
 
@@ -225,3 +226,109 @@ class ExerciseTemplateAPITests(APITestCase):
         response = self.client.get(self.detail_url(self.user_template.pk))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+
+class TrainingModelTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            email="test@example.com",
+            password="securepass123",
+            first_name="John",
+            last_name="Doe"
+        )
+
+        self.template = TrainingTemplate.objects.create(
+            owner=self.user,
+            name="Strength Training",
+            description="A basic strength routine",
+            data={"duration": "60 minutes", "difficulty": "Intermediate"}
+        )
+
+        self.valid_notes = {
+            "description": "Good progress today.",
+            "score": "8"
+        }
+
+    def test_training_creation_with_valid_data(self):
+        training = Training.objects.create(
+            owner=self.user,
+            template=self.template,
+            conducted=timezone.now(),
+            title="Morning Workout",
+            notes=self.valid_notes
+        )
+
+        self.assertEqual(training.owner, self.user)
+        self.assertEqual(training.template, self.template)
+        self.assertEqual(training.notes, self.valid_notes)
+        self.assertEqual(str(training), f"Morning Workout by {self.user} on {training.conducted.strftime('%Y-%m-%d')}")
+
+    def test_training_creation_with_no_template(self):
+        training = Training.objects.create(
+            owner=self.user,
+            conducted=timezone.now(),
+            title=None,
+            notes=None
+        )
+
+        self.assertIsNone(training.template)
+        self.assertEqual(training.title, None)
+        self.assertEqual(training.notes, None)
+        self.assertEqual(str(training), f"Untitled Training by {self.user} on {training.conducted.strftime('%Y-%m-%d')}")
+
+    def test_training_notes_invalid_type(self):
+        invalid_notes = ["not", "a", "dictionary"]
+
+        training = Training(
+            owner=self.user,
+            conducted=timezone.now(),
+            notes=invalid_notes
+        )
+
+        with self.assertRaises(ValidationError) as context:
+            training.full_clean()
+
+        self.assertIn("Notes must be a dictionary.", str(context.exception))
+
+    def test_training_notes_invalid_dict_contents(self):
+        invalid_notes = {
+            "description": "Great session",
+            "score": 10  # integer instead of string
+        }
+
+        training = Training(
+            owner=self.user,
+            conducted=timezone.now(),
+            notes=invalid_notes
+        )
+
+        with self.assertRaises(ValidationError) as context:
+            training.full_clean()
+
+        self.assertIn("Notes dictionary keys and values must be strings.", str(context.exception))
+
+    def test_repr_method(self):
+        training = Training.objects.create(
+            owner=self.user,
+            template=self.template,
+            conducted=timezone.now(),
+            title="Evening Workout",
+            notes=self.valid_notes
+        )
+
+        expected_repr = (
+            f"<Training(id={training.id}, title='Evening Workout', owner={self.user!r}, "
+            f"conducted={training.conducted.isoformat()})>"
+        )
+        self.assertEqual(repr(training), expected_repr)
+
+    def test_training_indexes(self):
+        indexes = Training._meta.indexes
+        index_fields = [tuple(index.fields) for index in indexes]
+
+        expected_indexes = [
+            ("-conducted",),
+            ("owner", "-conducted"),
+        ]
+
+        for fields in expected_indexes:
+            self.assertIn(fields, index_fields)
