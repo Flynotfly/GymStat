@@ -7,7 +7,16 @@ class MetricSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Metric
-        fields = ["id", "owner", "name", "unit", "description", "admin", "created_at", "edited_at"]
+        fields = [
+            "id",
+            "owner",
+            "name",
+            "unit",
+            "description",
+            "admin",
+            "created_at",
+            "edited_at",
+        ]
         read_only_fields = ["id", "owner", "admin", "created_at", "edited_at"]
 
 

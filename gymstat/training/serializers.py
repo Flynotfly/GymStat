@@ -32,5 +32,13 @@ class TrainingTemplateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TrainingTemplate
-        fields = ["id", "owner", "name", "description", "data", "created_at", "edited_at"]
+        fields = [
+            "id",
+            "owner",
+            "name",
+            "description",
+            "data",
+            "created_at",
+            "edited_at",
+        ]
         read_only_fields = ["id", "owner", "created_at", "edited_at"]

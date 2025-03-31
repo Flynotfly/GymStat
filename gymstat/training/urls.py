@@ -24,5 +24,5 @@ urlpatterns = [
         "trainings/templates/<int:pk>/",
         views.TrainingTemplateRetrieveUpdateDestroyAPIView.as_view(),
         name="training-detail",
-    )
+    ),
 ]

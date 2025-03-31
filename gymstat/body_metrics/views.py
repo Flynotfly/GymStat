@@ -1,10 +1,9 @@
 from django.db.models import Q
-from rest_framework import generics, permissions, status
+from rest_framework import generics, permissions
 from rest_framework.exceptions import PermissionDenied, ValidationError
-from rest_framework.response import Response
 
 from .models import Metric, Record
-from .permissions import IsOwner, IsOwnerAllIsAdminSafe, IsAdminReadOnly
+from .permissions import IsAdminReadOnly, IsOwner
 from .serializers import MetricSerializer, RecordSerializer
 
 
@@ -33,7 +32,10 @@ class MetricRetrieveUpdateDestroyAPIView(
     generics.RetrieveUpdateDestroyAPIView
 ):
     serializer_class = MetricSerializer
-    permission_classes = [permissions.IsAuthenticated, IsOwner|IsAdminReadOnly]
+    permission_classes = [
+        permissions.IsAuthenticated,
+        IsOwner | IsAdminReadOnly,
+    ]
     queryset = Metric.objects.all()
 
 
