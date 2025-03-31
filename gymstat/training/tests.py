@@ -332,3 +332,120 @@ class TrainingModelTest(TestCase):
 
         for fields in expected_indexes:
             self.assertIn(fields, index_fields)
+
+
+class TrainingTemplateModelTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            email="testuser@example.com",
+            password="testpass123",
+            first_name="Test",
+            last_name="User"
+        )
+
+        self.valid_data = {
+            "Notes": [
+                {
+                    "Name": "Description",
+                    "field": "Text",
+                    "Required": "False",
+                    "Default": "",
+                },
+            ],
+            "Exercises": [
+                {
+                    "Template": 235,
+                    "Unit": {"Weight": "kg"},
+                    "Sets": [
+                        {"Reps": "7", "Weight": "42"},
+                        {"Reps": "9", "Weight": "52"},
+                    ],
+                },
+            ]
+        }
+
+        self.invalid_data_missing_unit = {
+            "Exercises": [
+                {
+                    "Template": 235,
+                    "Sets": [
+                        {"Reps": "7", "Weight": "42"},  # Missing Unit for Weight
+                    ],
+                },
+            ]
+        }
+
+        self.invalid_data_wrong_field = {
+            "Notes": [
+                {
+                    "Name": "InvalidNote",
+                    "field": "InvalidField",
+                    "Required": "False",
+                    "Default": "",
+                },
+            ],
+        }
+
+    def test_training_template_creation_valid(self):
+        template = TrainingTemplate.objects.create(
+            owner=self.user,
+            name="Valid Template",
+            description="A valid template description.",
+            data=self.valid_data
+        )
+
+        self.assertEqual(template.name, "Valid Template")
+        self.assertEqual(template.owner, self.user)
+        self.assertEqual(template.data, self.valid_data)
+        self.assertIsNotNone(template.created_at)
+
+    def test_training_template_invalid_missing_unit(self):
+        template = TrainingTemplate(
+            owner=self.user,
+            name="Invalid Missing Unit",
+            data=self.invalid_data_missing_unit
+        )
+
+        with self.assertRaises(ValidationError) as context:
+            template.full_clean()
+
+        self.assertIn("must have unit", str(context.exception))
+
+    def test_training_template_invalid_note_field(self):
+        template = TrainingTemplate(
+            owner=self.user,
+            name="Invalid Note Field",
+            data=self.invalid_data_wrong_field
+        )
+
+        with self.assertRaises(ValidationError) as context:
+            template.full_clean()
+
+        self.assertIn("Invalid field", str(context.exception))
+
+    def test_training_template_optional_fields(self):
+        minimal_data = {
+            "Exercises": [{"Template": 100}]
+        }
+
+        template = TrainingTemplate(
+            owner=self.user,
+            name="Minimal Template",
+            data=minimal_data
+        )
+
+        try:
+            template.full_clean()  # Should not raise an error
+        except ValidationError:
+            self.fail("ValidationError raised unexpectedly for minimal valid data.")
+
+    def test_str_and_repr(self):
+        template = TrainingTemplate.objects.create(
+            owner=self.user,
+            name="Template String Test",
+            data=self.valid_data
+        )
+
+        self.assertEqual(str(template), "Template String Test")
+        expected_repr = f"Training template {template.pk} Template String Test of user {self.user}"
+        self.assertEqual(repr(template), expected_repr)
