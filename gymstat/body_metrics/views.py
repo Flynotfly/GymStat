@@ -1,6 +1,7 @@
 from django.db.models import Q
-from rest_framework import generics, permissions
+from rest_framework import generics
 from rest_framework.exceptions import PermissionDenied, ValidationError
+from rest_framework.permissions import IsAuthenticated
 
 from .models import Metric, Record
 from .permissions import IsAdminObjectReadOnly, IsOwner
@@ -9,7 +10,7 @@ from .serializers import MetricSerializer, RecordSerializer
 
 class MetricListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = MetricSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         user = self.request.user
@@ -33,7 +34,7 @@ class MetricRetrieveUpdateDestroyAPIView(
 ):
     serializer_class = MetricSerializer
     permission_classes = [
-        permissions.IsAuthenticated,
+        IsAuthenticated,
         IsOwner | IsAdminObjectReadOnly,
     ]
     queryset = Metric.objects.all()
@@ -41,7 +42,7 @@ class MetricRetrieveUpdateDestroyAPIView(
 
 class RecordListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = RecordSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         user = self.request.user
@@ -79,5 +80,5 @@ class RecordRetrieveUpdateDestroyAPIView(
     generics.RetrieveUpdateDestroyAPIView
 ):
     serializer_class = RecordSerializer
-    permission_classes = [permissions.IsAuthenticated, IsOwner]
+    permission_classes = [IsAuthenticated, IsOwner]
     queryset = Record.objects.all()
