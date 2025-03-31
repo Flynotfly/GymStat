@@ -2,7 +2,7 @@ from django.db.models import Q
 from rest_framework import generics, permissions
 
 from .models import ExerciseTemplate, TrainingTemplate
-from .permissions import IsOwnerAllIsAdminSafe
+from .permissions import IsOwner, IsAdminReadOnly
 from .serializers import ExerciseTemplateSerializer, TrainingTemplateSerializer
 
 
@@ -35,7 +35,7 @@ class ExerciseTemplateRetrieveUpdateDestroyAPIView(
     generics.RetrieveUpdateDestroyAPIView
 ):
     serializer_class = ExerciseTemplateSerializer
-    permission_classes = [permissions.IsAuthenticated, IsOwnerAllIsAdminSafe]
+    permission_classes = [permissions.IsAuthenticated, IsOwner|IsAdminReadOnly]
     queryset = ExerciseTemplate.objects.filter(is_active=True)
 
 
