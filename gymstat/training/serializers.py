@@ -1,10 +1,9 @@
 from rest_framework import serializers
 
-from .models import ExerciseTemplate, validate_fields
+from .models import ExerciseTemplate, TrainingTemplate
 
 
 class ExerciseTemplateSerializer(serializers.ModelSerializer):
-    owner = serializers.ReadOnlyField(source="owner.pk")
 
     class Meta:
         model = ExerciseTemplate
