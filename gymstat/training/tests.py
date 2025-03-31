@@ -1,11 +1,10 @@
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.test import TestCase
-from django.utils import timezone
-
-from rest_framework.test import APITestCase
-from rest_framework import status
 from django.urls import reverse
+from django.utils import timezone
+from rest_framework import status
+from rest_framework.test import APITestCase
 
 from .models import ExerciseTemplate, Training, TrainingTemplate
 
@@ -102,117 +101,127 @@ class ExerciseTemplateAPITests(APITestCase):
     def setUp(self):
         # Create users
         self.user = User.objects.create_user(
-            email='user@example.com',
-            password='password123',
-            first_name='Test',
-            last_name='User'
+            email="user@example.com",
+            password="password123",
+            first_name="Test",
+            last_name="User",
         )
         self.other_user = User.objects.create_user(
-            email='other@example.com',
-            password='password123',
-            first_name='Other',
-            last_name='User'
+            email="other@example.com",
+            password="password123",
+            first_name="Other",
+            last_name="User",
         )
 
         # Create admin template
         self.admin_template = ExerciseTemplate.objects.create(
-            name='Bench Press',
+            name="Bench Press",
             owner=self.other_user,
-            fields=['reps', 'weight'],
-            description='Admin bench press template',
-            is_admin=True
+            fields=["reps", "weight"],
+            description="Admin bench press template",
+            is_admin=True,
         )
 
         # Create user template
         self.user_template = ExerciseTemplate.objects.create(
-            name='User Squat',
+            name="User Squat",
             owner=self.user,
-            fields=['reps', 'weight'],
-            description='User squat template'
+            fields=["reps", "weight"],
+            description="User squat template",
         )
 
         # URLs
-        self.list_create_url = reverse('training:exercise-template-list-create')
-        self.detail_url = lambda pk: reverse('training:exercise-template-detail', args=[pk])
+        self.list_create_url = reverse(
+            "training:exercise-template-list-create"
+        )
+        self.detail_url = lambda pk: reverse(
+            "training:exercise-template-detail", args=[pk]
+        )
 
     def test_get_admin_templates(self):
-        self.client.login(email='user@example.com', password='password123')
-        response = self.client.get(self.list_create_url, {'type': 'admin'})
+        self.client.login(email="user@example.com", password="password123")
+        response = self.client.get(self.list_create_url, {"type": "admin"})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]['name'], 'Bench Press')
+        self.assertEqual(response.data[0]["name"], "Bench Press")
 
     def test_get_user_templates(self):
-        self.client.login(email='user@example.com', password='password123')
-        response = self.client.get(self.list_create_url, {'type': 'user'})
+        self.client.login(email="user@example.com", password="password123")
+        response = self.client.get(self.list_create_url, {"type": "user"})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]['name'], 'User Squat')
+        self.assertEqual(response.data[0]["name"], "User Squat")
 
     def test_get_all_templates(self):
-        self.client.login(email='user@example.com', password='password123')
-        response = self.client.get(self.list_create_url, {'type': 'all'})
+        self.client.login(email="user@example.com", password="password123")
+        response = self.client.get(self.list_create_url, {"type": "all"})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 2)
 
     def test_create_template(self):
-        self.client.login(email='user@example.com', password='password123')
+        self.client.login(email="user@example.com", password="password123")
         data = {
-            'name': 'New Exercise',
-            'fields': ['Time', 'Distance'],
-            'description': 'Test description'
+            "name": "New Exercise",
+            "fields": ["Time", "Distance"],
+            "description": "Test description",
         }
-        response = self.client.post(self.list_create_url, data, format='json')
+        response = self.client.post(self.list_create_url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(ExerciseTemplate.objects.count(), 3)
-        new_template = ExerciseTemplate.objects.get(name='New Exercise')
+        new_template = ExerciseTemplate.objects.get(name="New Exercise")
         self.assertEqual(new_template.owner, self.user)
 
     def test_create_invalid_template(self):
-        self.client.login(email='user@example.com', password='password123')
+        self.client.login(email="user@example.com", password="password123")
         data = {
-            'name': 'Invalid Exercise',
-            'fields': ['invalid_field'],
-            'description': 'Invalid fields'
+            "name": "Invalid Exercise",
+            "fields": ["invalid_field"],
+            "description": "Invalid fields",
         }
-        response = self.client.post(self.list_create_url, data, format='json')
+        response = self.client.post(self.list_create_url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn('Invalid fields provided', str(response.data))
+        self.assertIn("Invalid fields provided", str(response.data))
 
     def test_retrieve_own_template(self):
-        self.client.login(email='user@example.com', password='password123')
+        self.client.login(email="user@example.com", password="password123")
         response = self.client.get(self.detail_url(self.user_template.pk))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['name'], 'User Squat')
+        self.assertEqual(response.data["name"], "User Squat")
 
     def test_retrieve_admin_template(self):
-        self.client.login(email='user@example.com', password='password123')
+        self.client.login(email="user@example.com", password="password123")
         response = self.client.get(self.detail_url(self.admin_template.pk))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['name'], 'Bench Press')
+        self.assertEqual(response.data["name"], "Bench Press")
 
     def test_update_own_template(self):
-        self.client.login(email='user@example.com', password='password123')
-        data = {'description': 'Updated description'}
-        response = self.client.patch(self.detail_url(self.user_template.pk), data)
+        self.client.login(email="user@example.com", password="password123")
+        data = {"description": "Updated description"}
+        response = self.client.patch(
+            self.detail_url(self.user_template.pk), data
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.user_template.refresh_from_db()
-        self.assertEqual(self.user_template.description, 'Updated description')
+        self.assertEqual(self.user_template.description, "Updated description")
 
     def test_update_admin_template_forbidden(self):
-        self.client.login(email='user@example.com', password='password123')
-        data = {'description': 'Hacked description'}
-        response = self.client.patch(self.detail_url(self.admin_template.pk), data)
+        self.client.login(email="user@example.com", password="password123")
+        data = {"description": "Hacked description"}
+        response = self.client.patch(
+            self.detail_url(self.admin_template.pk), data
+        )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_delete_own_template(self):
-        self.client.login(email='user@example.com', password='password123')
+        self.client.login(email="user@example.com", password="password123")
         response = self.client.delete(self.detail_url(self.user_template.pk))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertFalse(ExerciseTemplate.objects.filter(pk=self.user_template.pk).exists())
+        self.assertFalse(
+            ExerciseTemplate.objects.filter(pk=self.user_template.pk).exists()
+        )
 
     def test_delete_admin_template_forbidden(self):
-        self.client.login(email='user@example.com', password='password123')
+        self.client.login(email="user@example.com", password="password123")
         response = self.client.delete(self.detail_url(self.admin_template.pk))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -220,7 +229,9 @@ class ExerciseTemplateAPITests(APITestCase):
         response = self.client.get(self.list_create_url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-        response = self.client.post(self.list_create_url, {'name': 'Unauthorized'})
+        response = self.client.post(
+            self.list_create_url, {"name": "Unauthorized"}
+        )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
         response = self.client.get(self.detail_url(self.user_template.pk))
@@ -233,19 +244,19 @@ class TrainingModelTest(TestCase):
             email="test@example.com",
             password="securepass123",
             first_name="John",
-            last_name="Doe"
+            last_name="Doe",
         )
 
         self.template = TrainingTemplate.objects.create(
             owner=self.user,
             name="Strength Training",
             description="A basic strength routine",
-            data={"duration": "60 minutes", "difficulty": "Intermediate"}
+            data={"duration": "60 minutes", "difficulty": "Intermediate"},
         )
 
         self.valid_notes = {
             "description": "Good progress today.",
-            "score": "8"
+            "score": "8",
         }
 
     def test_training_creation_with_valid_data(self):
@@ -254,34 +265,35 @@ class TrainingModelTest(TestCase):
             template=self.template,
             conducted=timezone.now(),
             title="Morning Workout",
-            notes=self.valid_notes
+            notes=self.valid_notes,
         )
 
         self.assertEqual(training.owner, self.user)
         self.assertEqual(training.template, self.template)
         self.assertEqual(training.notes, self.valid_notes)
-        self.assertEqual(str(training), f"Morning Workout by {self.user} on {training.conducted.strftime('%Y-%m-%d')}")
+        self.assertEqual(
+            str(training),
+            f"Morning Workout by {self.user} on {training.conducted.strftime('%Y-%m-%d')}",
+        )
 
     def test_training_creation_with_no_template(self):
         training = Training.objects.create(
-            owner=self.user,
-            conducted=timezone.now(),
-            title=None,
-            notes=None
+            owner=self.user, conducted=timezone.now(), title=None, notes=None
         )
 
         self.assertIsNone(training.template)
         self.assertEqual(training.title, None)
         self.assertEqual(training.notes, None)
-        self.assertEqual(str(training), f"Untitled Training by {self.user} on {training.conducted.strftime('%Y-%m-%d')}")
+        self.assertEqual(
+            str(training),
+            f"Untitled Training by {self.user} on {training.conducted.strftime('%Y-%m-%d')}",
+        )
 
     def test_training_notes_invalid_type(self):
         invalid_notes = ["not", "a", "dictionary"]
 
         training = Training(
-            owner=self.user,
-            conducted=timezone.now(),
-            notes=invalid_notes
+            owner=self.user, conducted=timezone.now(), notes=invalid_notes
         )
 
         with self.assertRaises(ValidationError) as context:
@@ -292,19 +304,20 @@ class TrainingModelTest(TestCase):
     def test_training_notes_invalid_dict_contents(self):
         invalid_notes = {
             "description": "Great session",
-            "score": 10  # integer instead of string
+            "score": 10,  # integer instead of string
         }
 
         training = Training(
-            owner=self.user,
-            conducted=timezone.now(),
-            notes=invalid_notes
+            owner=self.user, conducted=timezone.now(), notes=invalid_notes
         )
 
         with self.assertRaises(ValidationError) as context:
             training.full_clean()
 
-        self.assertIn("Notes dictionary keys and values must be strings.", str(context.exception))
+        self.assertIn(
+            "Notes dictionary keys and values must be strings.",
+            str(context.exception),
+        )
 
     def test_repr_method(self):
         training = Training.objects.create(
@@ -312,7 +325,7 @@ class TrainingModelTest(TestCase):
             template=self.template,
             conducted=timezone.now(),
             title="Evening Workout",
-            notes=self.valid_notes
+            notes=self.valid_notes,
         )
 
         expected_repr = (
@@ -340,7 +353,7 @@ class TrainingTemplateModelTest(TestCase):
             email="testuser@example.com",
             password="testpass123",
             first_name="Test",
-            last_name="User"
+            last_name="User",
         )
 
         self.valid_data = {
@@ -361,7 +374,7 @@ class TrainingTemplateModelTest(TestCase):
                         {"Reps": "9", "Weight": "52"},
                     ],
                 },
-            ]
+            ],
         }
 
         self.invalid_data_missing_unit = {
@@ -369,7 +382,10 @@ class TrainingTemplateModelTest(TestCase):
                 {
                     "Template": 235,
                     "Sets": [
-                        {"Reps": "7", "Weight": "42"},  # Missing Unit for Weight
+                        {
+                            "Reps": "7",
+                            "Weight": "42",
+                        },  # Missing Unit for Weight
                     ],
                 },
             ]
@@ -391,7 +407,7 @@ class TrainingTemplateModelTest(TestCase):
             owner=self.user,
             name="Valid Template",
             description="A valid template description.",
-            data=self.valid_data
+            data=self.valid_data,
         )
 
         self.assertEqual(template.name, "Valid Template")
@@ -403,7 +419,7 @@ class TrainingTemplateModelTest(TestCase):
         template = TrainingTemplate(
             owner=self.user,
             name="Invalid Missing Unit",
-            data=self.invalid_data_missing_unit
+            data=self.invalid_data_missing_unit,
         )
 
         with self.assertRaises(ValidationError) as context:
@@ -415,7 +431,7 @@ class TrainingTemplateModelTest(TestCase):
         template = TrainingTemplate(
             owner=self.user,
             name="Invalid Note Field",
-            data=self.invalid_data_wrong_field
+            data=self.invalid_data_wrong_field,
         )
 
         with self.assertRaises(ValidationError) as context:
@@ -424,26 +440,22 @@ class TrainingTemplateModelTest(TestCase):
         self.assertIn("Invalid field", str(context.exception))
 
     def test_training_template_optional_fields(self):
-        minimal_data = {
-            "Exercises": [{"Template": 100}]
-        }
+        minimal_data = {"Exercises": [{"Template": 100}]}
 
         template = TrainingTemplate(
-            owner=self.user,
-            name="Minimal Template",
-            data=minimal_data
+            owner=self.user, name="Minimal Template", data=minimal_data
         )
 
         try:
             template.full_clean()  # Should not raise an error
         except ValidationError:
-            self.fail("ValidationError raised unexpectedly for minimal valid data.")
+            self.fail(
+                "ValidationError raised unexpectedly for minimal valid data."
+            )
 
     def test_str_and_repr(self):
         template = TrainingTemplate.objects.create(
-            owner=self.user,
-            name="Template String Test",
-            data=self.valid_data
+            owner=self.user, name="Template String Test", data=self.valid_data
         )
 
         self.assertEqual(str(template), "Template String Test")

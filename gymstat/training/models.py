@@ -2,8 +2,6 @@ from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.urls import reverse
-
 
 NOTES_FIELDS = ["Text", "Datetime", "Duration", "Number", "5stars", "10stars"]
 
@@ -47,7 +45,9 @@ def validate_training_template_data(data):
             if field not in NOTES_FIELDS:
                 raise ValidationError(f"Invalid field '{field}' in note.")
             if required not in ["True", "False"]:
-                raise ValidationError("Note 'Required' must be 'True' or 'False'.")
+                raise ValidationError(
+                    "Note 'Required' must be 'True' or 'False'."
+                )
             if not isinstance(default, str):
                 raise ValidationError("Note 'Default' must be a string.")
 
@@ -63,7 +63,9 @@ def validate_training_template_data(data):
             # Check required 'Template'
             template = exercise.get("Template")
             if template is None or not isinstance(template, int):
-                raise ValidationError("'Template' must be an integer in each exercise.")
+                raise ValidationError(
+                    "'Template' must be an integer in each exercise."
+                )
 
             unit_dict = exercise.get("Unit", {})
             sets = exercise.get("Sets", [])
@@ -74,43 +76,63 @@ def validate_training_template_data(data):
                     if not isinstance(s, dict):
                         raise ValidationError("Each set must be a dictionary.")
                     if not s:
-                        raise ValidationError("Set dictionaries must not be empty.")
+                        raise ValidationError(
+                            "Set dictionaries must not be empty."
+                        )
                     for field, value in s.items():
                         allowed = ALLOWED_EXERCISE_FIELDS.get(field)
                         if allowed is None:
-                            raise ValidationError(f"Field '{field}' is not allowed.")
+                            raise ValidationError(
+                                f"Field '{field}' is not allowed."
+                            )
 
                         if value == "":
                             continue  # Empty string allowed
 
                         # Validate field types and units
-                        expected_type = allowed if isinstance(allowed, str) else allowed[0]
-                        allowed_units = allowed[1] if isinstance(allowed, list) else None
+                        expected_type = (
+                            allowed if isinstance(allowed, str) else allowed[0]
+                        )
+                        allowed_units = (
+                            allowed[1] if isinstance(allowed, list) else None
+                        )
 
                         if expected_type == "Int":
                             try:
                                 int(value)
                             except ValueError:
-                                raise ValidationError(f"'{field}' must be an integer.")
+                                raise ValidationError(
+                                    f"'{field}' must be an integer."
+                                )
                         elif expected_type == "Float":
                             try:
                                 float(value)
                             except ValueError:
-                                raise ValidationError(f"'{field}' must be a float.")
+                                raise ValidationError(
+                                    f"'{field}' must be a float."
+                                )
                         elif expected_type == "Duration":
                             if not isinstance(value, str):
-                                raise ValidationError(f"'{field}' must be a duration string.")
+                                raise ValidationError(
+                                    f"'{field}' must be a duration string."
+                                )
                         elif expected_type == "Text":
                             if not isinstance(value, str):
-                                raise ValidationError(f"'{field}' must be a string.")
+                                raise ValidationError(
+                                    f"'{field}' must be a string."
+                                )
                         else:
-                            raise ValidationError(f"Unknown type '{expected_type}' for '{field}'.")
+                            raise ValidationError(
+                                f"Unknown type '{expected_type}' for '{field}'."
+                            )
 
                         # Validate units if applicable
                         if allowed_units:
                             unit_value = unit_dict.get(field)
                             if unit_value not in allowed_units:
-                                raise ValidationError(f"Field '{field}' must have unit from {allowed_units}.")
+                                raise ValidationError(
+                                    f"Field '{field}' must have unit from {allowed_units}."
+                                )
 
 
 class TrainingTemplate(models.Model):
@@ -149,7 +171,9 @@ def validate_notes(value):
         raise ValidationError("Notes must be a dictionary.")
     for key, val in value.items():
         if not isinstance(key, str) or not isinstance(val, str):
-            raise ValidationError("Notes dictionary keys and values must be strings.")
+            raise ValidationError(
+                "Notes dictionary keys and values must be strings."
+            )
 
 
 class Training(models.Model):
@@ -167,7 +191,9 @@ class Training(models.Model):
     )
     conducted = models.DateTimeField()
     title = models.CharField(max_length=70, blank=True, null=True)
-    notes = models.JSONField(validators=[validate_notes], blank=True, null=True)
+    notes = models.JSONField(
+        validators=[validate_notes], blank=True, null=True
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     edited_at = models.DateTimeField(auto_now=True)
 
