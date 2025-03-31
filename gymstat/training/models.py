@@ -86,20 +86,19 @@ class Training(models.Model):
 
 
 ALLOWED_EXERCISE_FIELDS = {
-    "Sets": "Number",
-    "Reps": "Number",
-    "Weight": "Number + unit (kg/lbs)",
-    "Time": "Time (sec/min)",
-    "Distance": "Number + unit (m/km/mi)",
-    "Speed": "Auto-calc or input",
-    "Rounds": "Number",
-    "Rest": "Time",
-    "RPE": "Number (1–10)",
-    "Assistance": "Number + unit",
-    "Attempts": "Number",
-    "Successes": "Number",
-    "Notes": "Text",
-    "Tempo": "Text (e.g. 3-1-1)",
+    "Sets": ["Int"],
+    "Reps": ["Int"],
+    "Weight": ["Float", "kg/lbs"],
+    "Time": ["Duration"],
+    "Distance": ["Float", "m/km/mi"],
+    "Speed": ["Float", "km per hour/mi per hour/m per second"],
+    "Rounds": ["Int"],
+    "Rest": ["Duration"],
+    "RPE": ["Number (1–10)"],
+    "Attempts": ["Int"],
+    "Successes": ["Int"],
+    "Notes": ["Text"],
+    "Tempo": ["Text"],
 }
 
 
