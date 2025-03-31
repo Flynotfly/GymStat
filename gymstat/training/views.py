@@ -54,7 +54,5 @@ class TrainingTemplateRetrieveUpdateDestroyAPIView(
     generics.RetrieveUpdateDestroyAPIView
 ):
     serializer_class = TrainingTemplateSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_queryset(self):
-        return TrainingTemplate.objects.filter(owner=self.request.user)
+    permission_classes = [permissions.IsAuthenticated, IsOwner]
+    queryset = TrainingTemplate.objects.all()
