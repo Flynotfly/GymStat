@@ -48,3 +48,13 @@ class TrainingTemplateListCreateAPIView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
+
+class TrainingTemplateRetrieveUpdateDestroyAPIView(
+    generics.RetrieveUpdateDestroyAPIView
+):
+    serializer_class = TrainingTemplateSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return TrainingTemplate.objects.filter(owner=self.request.user)
