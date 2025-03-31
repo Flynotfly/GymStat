@@ -5,6 +5,26 @@ from django.db import models
 from django.urls import reverse
 
 
+NOTES_FIELDS = ["Text", "Datetime", "Duration", "Number", "5stars", "10stars"]
+
+
+ALLOWED_EXERCISE_FIELDS = {
+    "Sets": "Int",
+    "Reps": "Int",
+    "Weight": ["Float", ["kg", "lbs"]],
+    "Time": "Duration",
+    "Distance": ["Float", ["m", "km", "mi"]],
+    "Speed": ["Float", ["kph", "mph", "mps"]],
+    "Rounds": "Int",
+    "Rest": "Duration",
+    "RPE": "Int",
+    "Attempts": "Int",
+    "Successes": "Int",
+    "Notes": "Text",
+    "Tempo": "Text",
+}
+
+
 class TrainingTemplate(models.Model):
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -83,23 +103,6 @@ class Training(models.Model):
             f"<Training(id={self.id}, title={self.title!r}, owner={self.owner!r}, "
             f"conducted={self.conducted.isoformat()})>"
         )
-
-
-ALLOWED_EXERCISE_FIELDS = {
-    "Sets": ["Int"],
-    "Reps": ["Int"],
-    "Weight": ["Float", "kg/lbs"],
-    "Time": ["Duration"],
-    "Distance": ["Float", "m/km/mi"],
-    "Speed": ["Float", "km per hour/mi per hour/m per second"],
-    "Rounds": ["Int"],
-    "Rest": ["Duration"],
-    "RPE": ["Number (1–10)"],
-    "Attempts": ["Int"],
-    "Successes": ["Int"],
-    "Notes": ["Text"],
-    "Tempo": ["Text"],
-}
 
 
 def validate_fields(value):
