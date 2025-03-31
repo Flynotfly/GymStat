@@ -3,7 +3,7 @@ from rest_framework import generics, permissions
 from rest_framework.exceptions import PermissionDenied, ValidationError
 
 from .models import Metric, Record
-from .permissions import IsAdminReadOnly, IsOwner
+from .permissions import IsAdminObjectReadOnly, IsOwner
 from .serializers import MetricSerializer, RecordSerializer
 
 
@@ -34,7 +34,7 @@ class MetricRetrieveUpdateDestroyAPIView(
     serializer_class = MetricSerializer
     permission_classes = [
         permissions.IsAuthenticated,
-        IsOwner | IsAdminReadOnly,
+        IsOwner | IsAdminObjectReadOnly,
     ]
     queryset = Metric.objects.all()
 
