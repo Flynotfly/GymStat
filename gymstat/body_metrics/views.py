@@ -4,7 +4,7 @@ from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.response import Response
 
 from .models import Metric, Record
-from .permissions import IsOwner, IsOwnerAllIsAdminSafe
+from .permissions import IsOwner, IsOwnerAllIsAdminSafe, IsAdminReadOnly
 from .serializers import MetricSerializer, RecordSerializer
 
 
@@ -33,11 +33,8 @@ class MetricRetrieveUpdateDestroyAPIView(
     generics.RetrieveUpdateDestroyAPIView
 ):
     serializer_class = MetricSerializer
-    permission_classes = [permissions.IsAuthenticated, IsOwnerAllIsAdminSafe]
-
-    def get_queryset(self):
-        user = self.request.user
-        return Metric.objects.filter(Q(owner=user) | Q(admin=True))
+    permission_classes = [permissions.IsAuthenticated, IsOwner|IsAdminReadOnly]
+    queryset = Metric.objects.all()
 
 
 class RecordListCreateAPIView(generics.ListCreateAPIView):
@@ -81,6 +78,4 @@ class RecordRetrieveUpdateDestroyAPIView(
 ):
     serializer_class = RecordSerializer
     permission_classes = [permissions.IsAuthenticated, IsOwner]
-
-    def get_queryset(self):
-        return Record.objects.filter(owner=self.request.user)
+    queryset = Record.objects.all()
