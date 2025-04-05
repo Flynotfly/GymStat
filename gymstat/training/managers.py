@@ -3,8 +3,6 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 
-from .models import Training, Exercise, TrainingTemplate, ExerciseTemplate
-
 
 User = get_user_model()
 
