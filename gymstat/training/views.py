@@ -22,9 +22,7 @@ class ExerciseTemplateListCreateAPIView(generics.ListCreateAPIView):
                 is_admin=True, is_active=True
             )
         elif exercise_type == "all":
-            return ExerciseTemplate.objects.filter(
-                Q(owner=user) | Q(is_admin=True), is_active=True
-            )
+            return ExerciseTemplate.objects.allowed_for_user(user)
         else:
             return ExerciseTemplate.objects.none()
 
