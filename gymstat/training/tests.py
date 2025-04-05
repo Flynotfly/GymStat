@@ -461,3 +461,100 @@ class TrainingTemplateModelTest(TestCase):
         self.assertEqual(str(template), "Template String Test")
         expected_repr = f"Training template {template.pk} Template String Test of user {self.user}"
         self.assertEqual(repr(template), expected_repr)
+
+
+class TrainingTemplateAPITests(APITestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            email="testuser@example.com",
+            password="password123",
+            first_name="Test",
+            last_name="User"
+        )
+        self.client.force_authenticate(user=self.user)
+
+        self.template_data = {
+            "name": "Morning Training",
+            "description": "Morning training description.",
+            "data": {"duration": "60", "exercises": ["running", "pushups"]}
+        }
+
+        self.template = TrainingTemplate.objects.create(
+            owner=self.user,
+            name="Initial Template",
+            description="Initial description.",
+            data={"duration": "45", "exercises": ["squats", "pull-ups"]}
+        )
+
+    def test_training_template_list(self):
+        url = reverse("training:training-list-create")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]["name"], "Initial Template")
+
+    def test_training_template_create(self):
+        url = reverse("training:training-list-create")
+        response = self.client.post(url, self.template_data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data["name"], self.template_data["name"])
+        self.assertEqual(response.data["owner"], self.user.id)
+
+    def test_training_template_detail_retrieve(self):
+        url = reverse("training:training-detail", kwargs={"pk": self.template.pk})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["name"], "Initial Template")
+        self.assertEqual(response.data["description"], "Initial description.")
+
+    def test_training_template_update(self):
+        url = reverse("training:training-detail", kwargs={"pk": self.template.pk})
+        updated_data = {
+            "name": "Updated Template Name",
+            "description": "Updated description.",
+            "data": {"duration": "30", "exercises": ["yoga", "stretching"]}
+        }
+        response = self.client.put(url, updated_data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.template.refresh_from_db()
+        self.assertEqual(self.template.name, updated_data["name"])
+        self.assertEqual(self.template.description, updated_data["description"])
+
+    def test_training_template_partial_update(self):
+        url = reverse("training:training-detail", kwargs={"pk": self.template.pk})
+        partial_data = {"description": "Partially updated description."}
+        response = self.client.patch(url, partial_data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.template.refresh_from_db()
+        self.assertEqual(self.template.description, partial_data["description"])
+
+    def test_training_template_delete(self):
+        url = reverse("training:training-detail", kwargs={"pk": self.template.pk})
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(TrainingTemplate.objects.filter(pk=self.template.pk).exists())
+
+    def test_training_template_unauthenticated(self):
+        self.client.logout()
+        url = reverse("training:training-list-create")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_training_template_not_owner_access(self):
+        other_user = User.objects.create_user(
+            email="otheruser@example.com",
+            password="password321",
+            first_name="Other",
+            last_name="User"
+        )
+        other_template = TrainingTemplate.objects.create(
+            owner=other_user,
+            name="Other Template",
+            description="Other user's template",
+            data={"duration": "15", "exercises": ["planks"]}
+        )
+
+        url = reverse("training:training-detail", kwargs={"pk": other_template.pk})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
