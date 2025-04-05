@@ -3,6 +3,8 @@ from django.contrib.postgres.indexes import GinIndex
 from django.core.exceptions import ValidationError
 from django.db import models
 
+from .managers import TrainingManager
+
 NOTES_FIELDS = ["Text", "Datetime", "Duration", "Number", "5stars", "10stars"]
 
 
@@ -196,6 +198,8 @@ class Training(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     edited_at = models.DateTimeField(auto_now=True)
+
+    objects = TrainingManager()
 
     class Meta:
         indexes = [
