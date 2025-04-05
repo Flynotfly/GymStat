@@ -2,19 +2,12 @@ from django.db import models, transaction
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 from django.db.models import Q
+from django.apps import apps
 
 
 User = get_user_model()
 
-
-class ExerciseTemplateManager(models.Manager):
-    def allowed_for_user(self, user):
-        return self.get_queryset().filter(
-            Q(is_active=True),
-            Q(owner=user) | Q(is_admin=True)
-        )
-
-
+#
 # class TrainingManager(models.Manager):
 #
 #     @transaction.atomic
@@ -27,6 +20,8 @@ class ExerciseTemplateManager(models.Manager):
 #             notes=None,
 #             exercises_data=None,
 #     ):
+#         TrainingTemplate = apps.get_model("training", "TrainingTemplate")
+#         ExerciseTemplate = apps.get_model("training", "ExerciseTemplate")
 #
 #         owner = get_object_or_404(User, pk=owner_id)
 #         template = None
@@ -48,4 +43,5 @@ class ExerciseTemplateManager(models.Manager):
 #         )
 #
 #         if exercises_data:
+#             ...
 #

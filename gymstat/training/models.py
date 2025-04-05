@@ -3,8 +3,6 @@ from django.contrib.postgres.indexes import GinIndex
 from django.core.exceptions import ValidationError
 from django.db import models
 
-from .managers import ExerciseTemplateManager
-
 NOTES_FIELDS = ["Text", "Datetime", "Duration", "Number", "5stars", "10stars"]
 
 
@@ -247,8 +245,6 @@ class ExerciseTemplate(models.Model):
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     edited_at = models.DateTimeField(auto_now=True)
-
-    objects = ExerciseTemplateManager()
 
     class Meta:
         indexes = [
