@@ -68,3 +68,9 @@ class TrainingListCreateAPIView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
+
+class TrainingRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = TrainingSerializer
+    permission_classes = [IsAuthenticated, IsOwner]
+    queryset = Training.objects.prefetch_related('exercises').all()
