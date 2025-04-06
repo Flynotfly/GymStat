@@ -13,7 +13,7 @@ class TrainingManager(models.Manager):
     @transaction.atomic
     def create_training(
         self,
-        owner_id,
+        owner,
         conducted,
         template_id=None,
         title=None,
@@ -24,7 +24,6 @@ class TrainingManager(models.Manager):
         ExerciseTemplate = apps.get_model("training", "ExerciseTemplate")
         Exercise = apps.get_model("training", "Exercise")
 
-        owner = get_object_or_404(User, pk=owner_id)
         template = None
         if template_id:
             template = get_object_or_404(TrainingTemplate, pk=template_id)

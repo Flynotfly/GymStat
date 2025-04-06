@@ -70,7 +70,7 @@ class TrainingSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return Training.objects.create_training(
-            owner_id=validated_data.get("owner"),
+            owner=validated_data.get("owner"),
             conducted=validated_data.get("conducted"),
             template_id=validated_data.get("template"),
             title=validated_data.get("title"),
