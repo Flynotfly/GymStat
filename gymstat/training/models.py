@@ -3,7 +3,11 @@ from django.contrib.postgres.indexes import GinIndex
 from django.db import models
 
 from .managers import TrainingManager
-from .validators import validate_training_template_data, validate_training_notes, validate_exercise_template_fields
+from .validators import (
+    validate_exercise_template_fields,
+    validate_training_notes,
+    validate_training_template_data,
+)
 
 
 class TrainingTemplate(models.Model):
