@@ -153,3 +153,63 @@ def validate_exercise_template_fields(value):
             f"Invalid fields provided: {', '.join(invalid_fields)}. "
             f"Allowed fields are: {', '.join(ALLOWED_EXERCISE_FIELDS.keys())}."
         )
+
+
+def validate_exercise_data(data, exercise_template):
+    if not isinstance(data, dict):
+        raise ValidationError("Exercise data must be a dictionary.")
+
+    allowed_template_fields = exercise_template.fields  # Fields defined in template
+
+    unit_dict = data.get("Unit", {})
+    if unit_dict and not isinstance(unit_dict, dict):
+        raise ValidationError("'Unit' must be a dictionary if provided.")
+
+    sets = data.get("sets")
+    if sets is None or not isinstance(sets, list) or not sets:
+        raise ValidationError("'sets' must be a non-empty list.")
+
+    for set_index, set_item in enumerate(sets, start=1):
+        if not isinstance(set_item, dict) or not set_item:
+            raise ValidationError(
+                f"Each set must be a non-empty dictionary (error in set #{set_index})."
+            )
+
+        for field, value in set_item.items():
+            if field not in allowed_template_fields:
+                raise ValidationError(
+                    f"Field '{field}' is not defined in ExerciseTemplate '{exercise_template.name}'."
+                )
+
+            allowed_field = ALLOWED_EXERCISE_FIELDS.get(field)
+            if not allowed_field:
+                raise ValidationError(f"Field '{field}' is not allowed.")
+
+            if value == "":
+                continue
+
+            expected_type = allowed_field if isinstance(allowed_field, str) else allowed_field[0]
+            allowed_units = allowed_field[1] if isinstance(allowed_field, list) else None
+
+            try:
+                if expected_type == "Int":
+                    int(value)
+                elif expected_type == "Float":
+                    float(value)
+                elif expected_type == "Duration":
+                    if not isinstance(value, str):
+                        raise ValidationError(f"'{field}' must be a duration string.")
+                elif expected_type == "Text":
+                    if not isinstance(value, str):
+                        raise ValidationError(f"'{field}' must be a string.")
+                else:
+                    raise ValidationError(f"Unsupported type '{expected_type}' for '{field}'.")
+            except ValueError:
+                raise ValidationError(f"'{field}' must be of type '{expected_type}'.")
+
+            if allowed_units:
+                unit_value = unit_dict.get(field)
+                if unit_value not in allowed_units:
+                    raise ValidationError(
+                        f"Unit for '{field}' must be one of {allowed_units}."
+                    )
