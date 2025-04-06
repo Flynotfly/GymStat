@@ -25,4 +25,14 @@ urlpatterns = [
         views.TrainingTemplateRetrieveUpdateDestroyAPIView.as_view(),
         name="training-template-detail",
     ),
+    path(
+        "trainings/",
+        views.TrainingListCreateAPIView.as_view(),
+        name="training-list-create",
+    ),
+    path(
+        "trainings/<int:pk>/",
+        views.TrainingRetrieveUpdateDestroyAPIView.as_view(),
+        name="training-detail",
+    )
 ]
