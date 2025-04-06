@@ -48,6 +48,7 @@ class ExerciseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Exercise
         fields = ["id", "training", "template", "order", "data"]
+        read_only_fields = ["id", "training"]
 
 
 class TrainingSerializer(serializers.ModelSerializer):
@@ -72,7 +73,7 @@ class TrainingSerializer(serializers.ModelSerializer):
         return Training.objects.create_training(
             owner=validated_data.get("owner"),
             conducted=validated_data.get("conducted"),
-            template_id=validated_data.get("template"),
+            template=validated_data.get("template"),
             title=validated_data.get("title"),
             notes=validated_data.get("notes"),
             exercises_data=validated_data.get("exercises"),
