@@ -18,11 +18,11 @@ urlpatterns = [
     path(
         "trainings/templates/",
         views.TrainingTemplateListCreateAPIView.as_view(),
-        name="training-list-create",
+        name="training-template-list-create",
     ),
     path(
         "trainings/templates/<int:pk>/",
         views.TrainingTemplateRetrieveUpdateDestroyAPIView.as_view(),
-        name="training-detail",
+        name="training-template-detail",
     ),
 ]
