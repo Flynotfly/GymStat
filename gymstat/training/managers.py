@@ -1,9 +1,12 @@
 from django.apps import apps
 from django.contrib.auth import get_user_model
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import models, transaction
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
+
+from .validators import validate_exercise_data
+
 
 User = get_user_model()
 
@@ -55,11 +58,18 @@ class TrainingManager(models.Manager):
                 )
 
             exercises_to_create = []
-            for exercise_data in exercises_data:
+            for idx, exercise_data in enumerate(exercises_data, start=1):
                 template_id = exercise_data.get("template_id")
                 exercise_template = allowed_templates.get(template_id)
                 order = exercise_data.get("order")
                 data = exercise_data.get("data")
+
+                try:
+                    validate_exercise_data(data, exercise_template)
+                except ValidationError as ve:
+                    raise ValidationError(
+                        f"Validation error in exercise #{idx} with template '{exercise_template.name}': {ve}"
+                    )
 
                 exercises_to_create.append(
                     Exercise(
