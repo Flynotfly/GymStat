@@ -159,7 +159,9 @@ def validate_exercise_data(data, exercise_template):
     if not isinstance(data, dict):
         raise ValidationError("Exercise data must be a dictionary.")
 
-    allowed_template_fields = exercise_template.fields  # Fields defined in template
+    allowed_template_fields = (
+        exercise_template.fields
+    )  # Fields defined in template
 
     unit_dict = data.get("Unit", {})
     if unit_dict and not isinstance(unit_dict, dict):
@@ -188,8 +190,14 @@ def validate_exercise_data(data, exercise_template):
             if value == "":
                 continue
 
-            expected_type = allowed_field if isinstance(allowed_field, str) else allowed_field[0]
-            allowed_units = allowed_field[1] if isinstance(allowed_field, list) else None
+            expected_type = (
+                allowed_field
+                if isinstance(allowed_field, str)
+                else allowed_field[0]
+            )
+            allowed_units = (
+                allowed_field[1] if isinstance(allowed_field, list) else None
+            )
 
             try:
                 if expected_type == "Int":
@@ -198,14 +206,20 @@ def validate_exercise_data(data, exercise_template):
                     float(value)
                 elif expected_type == "Duration":
                     if not isinstance(value, str):
-                        raise ValidationError(f"'{field}' must be a duration string.")
+                        raise ValidationError(
+                            f"'{field}' must be a duration string."
+                        )
                 elif expected_type == "Text":
                     if not isinstance(value, str):
                         raise ValidationError(f"'{field}' must be a string.")
                 else:
-                    raise ValidationError(f"Unsupported type '{expected_type}' for '{field}'.")
+                    raise ValidationError(
+                        f"Unsupported type '{expected_type}' for '{field}'."
+                    )
             except ValueError:
-                raise ValidationError(f"'{field}' must be of type '{expected_type}'.")
+                raise ValidationError(
+                    f"'{field}' must be of type '{expected_type}'."
+                )
 
             if allowed_units:
                 unit_value = unit_dict.get(field)

@@ -7,7 +7,6 @@ from django.shortcuts import get_object_or_404
 
 from .validators import validate_exercise_data
 
-
 User = get_user_model()
 
 
@@ -41,11 +40,18 @@ class TrainingManager(models.Manager):
                 # Expect the template to be an instance
                 exercise_template = exercise_data.get("template")
                 if not exercise_template:
-                    raise ValidationError(f"Exercise #{idx} is missing a template.")
+                    raise ValidationError(
+                        f"Exercise #{idx} is missing a template."
+                    )
 
                 # Check allowed condition: template must be active and either owned by the user or an admin template.
-                if not (exercise_template.is_active and (
-                        exercise_template.owner == owner or exercise_template.is_admin)):
+                if not (
+                    exercise_template.is_active
+                    and (
+                        exercise_template.owner == owner
+                        or exercise_template.is_admin
+                    )
+                ):
                     unauthorized_templates.append(exercise_template)
 
             if unauthorized_templates:
