@@ -2,9 +2,9 @@ from django.db.models import Q
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 
-from .models import ExerciseTemplate, TrainingTemplate
+from .models import ExerciseTemplate, TrainingTemplate, Training
 from .permissions import IsAdminObjectReadOnly, IsOwner
-from .serializers import ExerciseTemplateSerializer, TrainingTemplateSerializer
+from .serializers import ExerciseTemplateSerializer, TrainingTemplateSerializer, TrainingSerializer
 
 
 class ExerciseTemplateListCreateAPIView(generics.ListCreateAPIView):
@@ -57,3 +57,14 @@ class TrainingTemplateRetrieveUpdateDestroyAPIView(
     serializer_class = TrainingTemplateSerializer
     permission_classes = [IsAuthenticated, IsOwner]
     queryset = TrainingTemplate.objects.all()
+
+
+class TrainingListCreateAPIView(generics.ListCreateAPIView):
+    serializer_class = TrainingSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Training.objects.prefetch_related('exercises').filter(owner=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
