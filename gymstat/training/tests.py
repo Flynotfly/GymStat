@@ -503,7 +503,8 @@ class TrainingTemplateAPITests(APITestCase):
 
     def test_training_template_detail_retrieve(self):
         url = reverse(
-            "training:training-template-detail", kwargs={"pk": self.template.pk}
+            "training:training-template-detail",
+            kwargs={"pk": self.template.pk},
         )
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -512,7 +513,8 @@ class TrainingTemplateAPITests(APITestCase):
 
     def test_training_template_update(self):
         url = reverse(
-            "training:training-template-detail", kwargs={"pk": self.template.pk}
+            "training:training-template-detail",
+            kwargs={"pk": self.template.pk},
         )
         updated_data = {
             "name": "Updated Template Name",
@@ -529,7 +531,8 @@ class TrainingTemplateAPITests(APITestCase):
 
     def test_training_template_partial_update(self):
         url = reverse(
-            "training:training-template-detail", kwargs={"pk": self.template.pk}
+            "training:training-template-detail",
+            kwargs={"pk": self.template.pk},
         )
         partial_data = {"description": "Partially updated description."}
         response = self.client.patch(url, partial_data, format="json")
@@ -541,7 +544,8 @@ class TrainingTemplateAPITests(APITestCase):
 
     def test_training_template_delete(self):
         url = reverse(
-            "training:training-template-detail", kwargs={"pk": self.template.pk}
+            "training:training-template-detail",
+            kwargs={"pk": self.template.pk},
         )
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
@@ -570,7 +574,163 @@ class TrainingTemplateAPITests(APITestCase):
         )
 
         url = reverse(
-            "training:training-template-detail", kwargs={"pk": other_template.pk}
+            "training:training-template-detail",
+            kwargs={"pk": other_template.pk},
         )
         response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class TrainingViewsTests(APITestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            email="user@example.com",
+            password="password123",
+            first_name="Test",
+            last_name="User",
+        )
+        self.other_user = User.objects.create_user(
+            email="other@example.com",
+            password="password123",
+            first_name="Other",
+            last_name="User",
+        )
+
+        self.client.login(email="user@example.com", password="password123")
+
+        # TrainingTemplate for the user
+        self.training_template = TrainingTemplate.objects.create(
+            owner=self.user,
+            name="My Training Template",
+            data={"Notes": [], "Exercises": []},
+        )
+
+        # ExerciseTemplate
+        self.exercise_template = ExerciseTemplate.objects.create(
+            name="Squat", owner=self.user, fields=["Sets", "Reps", "Weight"]
+        )
+
+        # URLs
+        self.list_create_url = reverse("training:training-list-create")
+        self.detail_url = lambda pk: reverse(
+            "training:training-detail", args=[pk]
+        )
+
+        # Sample training data
+        self.training_data = {
+            "conducted": "2024-04-05T10:00:00Z",
+            "title": "Morning Workout",
+            "notes": {"Mood": "Good"},
+            "template": self.training_template.id,
+            "exercises": [
+                {
+                    "template": self.exercise_template.id,
+                    "order": 1,
+                    "data": {
+                        "sets": [{"Sets": "3", "Reps": "10", "Weight": "50"}],
+                        "Unit": {"Weight": "kg"},
+                    },
+                }
+            ],
+        }
+
+    def test_list_trainings(self):
+        # Create training
+        Training.objects.create(
+            owner=self.user, conducted="2024-04-01T10:00:00Z"
+        )
+        Training.objects.create(
+            owner=self.user, conducted="2024-04-02T10:00:00Z"
+        )
+
+        response = self.client.get(self.list_create_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 2)
+
+    def test_create_training_successful(self):
+        response = self.client.post(
+            self.list_create_url, self.training_data, format="json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Training.objects.count(), 1)
+        training = Training.objects.first()
+        self.assertEqual(training.owner, self.user)
+        self.assertEqual(training.title, "Morning Workout")
+        self.assertEqual(training.exercises.count(), 1)
+
+    def test_create_training_invalid_exercise_template(self):
+        self.training_data["exercises"][0][
+            "template"
+        ] = 999  # Non-existent template ID
+        response = self.client.post(
+            self.list_create_url, self.training_data, format="json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("object does not exist", str(response.data))
+
+    def test_create_training_missing_required_fields(self):
+        data = {"title": "Incomplete Data"}
+        response = self.client.post(self.list_create_url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("conducted", response.data)
+
+    def test_retrieve_training(self):
+        training = Training.objects.create(
+            owner=self.user, conducted="2024-04-03T10:00:00Z"
+        )
+        response = self.client.get(self.detail_url(training.pk))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["id"], training.id)
+
+    def test_update_training_successful(self):
+        training = Training.objects.create(
+            owner=self.user, conducted="2024-04-03T10:00:00Z"
+        )
+        data = {"title": "Updated Title"}
+        response = self.client.patch(
+            self.detail_url(training.pk), data, format="json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        training.refresh_from_db()
+        self.assertEqual(training.title, "Updated Title")
+
+    def test_update_training_not_owner_forbidden(self):
+        training = Training.objects.create(
+            owner=self.other_user, conducted="2024-04-03T10:00:00Z"
+        )
+        response = self.client.patch(
+            self.detail_url(training.pk), {"title": "Hacked"}, format="json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_delete_training_successful(self):
+        training = Training.objects.create(
+            owner=self.user, conducted="2024-04-03T10:00:00Z"
+        )
+        response = self.client.delete(self.detail_url(training.pk))
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(Training.objects.filter(pk=training.pk).exists())
+
+    def test_delete_training_not_owner_forbidden(self):
+        training = Training.objects.create(
+            owner=self.other_user, conducted="2024-04-03T10:00:00Z"
+        )
+        response = self.client.delete(self.detail_url(training.pk))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_unauthenticated_access_forbidden(self):
+        self.client.logout()
+        response = self.client.get(self.list_create_url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        response = self.client.post(
+            self.list_create_url, self.training_data, format="json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        training = Training.objects.create(
+            owner=self.user, conducted="2024-04-03T10:00:00Z"
+        )
+        response = self.client.get(self.detail_url(training.pk))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
