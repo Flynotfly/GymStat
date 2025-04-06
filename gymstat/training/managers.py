@@ -18,7 +18,7 @@ class TrainingManager(models.Manager):
         self,
         owner,
         conducted,
-        template_id=None,
+        template=None,
         title=None,
         notes=None,
         exercises_data=None,
@@ -26,10 +26,6 @@ class TrainingManager(models.Manager):
         TrainingTemplate = apps.get_model("training", "TrainingTemplate")
         ExerciseTemplate = apps.get_model("training", "ExerciseTemplate")
         Exercise = apps.get_model("training", "Exercise")
-
-        template = None
-        if template_id:
-            template = get_object_or_404(TrainingTemplate, pk=template_id)
 
         training = self.create(
             owner=owner,
@@ -40,32 +36,31 @@ class TrainingManager(models.Manager):
         )
 
         if exercises_data:
-            exercise_template_ids = {
-                e["template_id"] for e in exercises_data if "template_id" in e
-            }
-            allowed_templates = ExerciseTemplate.objects.filter(
-                Q(is_active=True),
-                Q(owner=owner) | Q(is_admin=True),
-                pk__in=exercise_template_ids,
-            ).in_bulk()
+            unauthorized_templates = []
+            for idx, exercise_data in enumerate(exercises_data, start=1):
+                # Expect the template to be an instance
+                exercise_template = exercise_data.get("template")
+                if not exercise_template:
+                    raise ValidationError(f"Exercise #{idx} is missing a template.")
 
-            unauthorized_templates = (
-                exercise_template_ids - allowed_templates.keys()
-            )
+                # Check allowed condition: template must be active and either owned by the user or an admin template.
+                if not (exercise_template.is_active and (
+                        exercise_template.owner == owner or exercise_template.is_admin)):
+                    unauthorized_templates.append(exercise_template)
+
             if unauthorized_templates:
                 raise PermissionDenied(
-                    f"Unauthorized ExerciseTemplate IDs: {unauthorized_templates}"
+                    f"Unauthorized templates: {unauthorized_templates}"
                 )
 
             exercises_to_create = []
             for idx, exercise_data in enumerate(exercises_data, start=1):
-                template_id = exercise_data.get("template_id")
-                exercise_template = allowed_templates.get(template_id)
+                template = exercise_data.get("template")
                 order = exercise_data.get("order")
                 data = exercise_data.get("data")
 
                 try:
-                    validate_exercise_data(data, exercise_template)
+                    validate_exercise_data(data, template)
                 except ValidationError as ve:
                     raise ValidationError(
                         f"Validation error in exercise #{idx} with template '{exercise_template.name}': {ve}"
@@ -80,3 +75,5 @@ class TrainingManager(models.Manager):
                     )
                 )
             Exercise.objects.bulk_create(exercises_to_create)
+
+        return training
