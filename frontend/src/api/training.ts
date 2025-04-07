@@ -24,23 +24,23 @@ export function getExerciseTemplates(
 }
 
 export function createExerciseTemplate(
-  exercise: NewExerciseTemplate,
+  exerciseTemplate: NewExerciseTemplate,
 ): Promise<any> {
   return request(
     'GET',
     URLs['EXERCISE_TEMPLATES'],
-    exercise
+    exerciseTemplate
   )
 }
 
 export function editExerciseTemplate(
-  exercise: ExerciseTemplate,
+  exerciseTemplate: ExerciseTemplate,
 ): Promise<any> {
-  const { id } = exercise;
+  const { id } = exerciseTemplate;
   return request(
     'PUT',
     URLs['EXERCISE_TEMPLATES'] + id + '/',
-    exercise,
+    exerciseTemplate,
   )
 }
 
