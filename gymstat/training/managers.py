@@ -2,8 +2,6 @@ from django.apps import apps
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import models, transaction
-from django.db.models import Q
-from django.shortcuts import get_object_or_404
 
 from .validators import validate_exercise_data
 
@@ -22,8 +20,6 @@ class TrainingManager(models.Manager):
         notes=None,
         exercises_data=None,
     ):
-        TrainingTemplate = apps.get_model("training", "TrainingTemplate")
-        ExerciseTemplate = apps.get_model("training", "ExerciseTemplate")
         Exercise = apps.get_model("training", "Exercise")
 
         training = self.create(
