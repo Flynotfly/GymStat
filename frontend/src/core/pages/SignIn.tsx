@@ -9,16 +9,16 @@ import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import ForgotPassword from '../components/ForgotPassword.tsx';
-import AppTheme from '../shared-theme/AppTheme.tsx';
-import ColorModeSelect from '../shared-theme/ColorModeSelect.tsx';
+import AppTheme from '../../shared-theme/AppTheme.tsx';
+import ColorModeSelect from '../../shared-theme/ColorModeSelect.tsx';
 import {useNavigate} from "react-router-dom";
 import {useEffect} from "react";
-import {getCookie} from "../utils.ts";
-import {useConfig} from "../auth";
-import {login} from "../lib/allauth";
+import {getCookie} from "../../utils.ts";
+import {useConfig} from "../../auth";
+import {login} from "../../auth/lib/allauth";
 import Card from "../components/SignInCard.ts";
 import SignInContainer from "../components/SignInContainer.ts";
-import SitemarkIcon from "../icons/SitemarkIcon.tsx";
+import SitemarkIcon from "../../icons/SitemarkIcon.tsx";
 import {fetchCsrf} from "../api/lib.ts";
 
 export default function SignIn(props: { disableCustomTheme?: boolean }) {

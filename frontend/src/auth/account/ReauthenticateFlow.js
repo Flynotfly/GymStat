@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
-import { pathForFlow } from '../auth'
-import { Flows, AuthenticatorType } from '../lib/allauth'
+import { pathForFlow } from '../index.js'
+import { Flows, AuthenticatorType } from '../lib/allauth.js'
 
 const flowLabels = {}
 flowLabels[Flows.REAUTHENTICATE] = 'Use your password'
@@ -13,9 +13,10 @@ function flowsToMethods (flows) {
   flows.forEach(flow => {
     if (flow.id === Flows.MFA_REAUTHENTICATE) {
       flow.types.forEach(typ => {
+        const id = `${flow.id}:${typ}`
         methods.push({
-          label: flowLabels[`${flow.id}:${typ}`] || flow.id,
-          id: flow.id,
+          label: flowLabels[id],
+          id,
           path: pathForFlow(flow, typ)
         })
       })

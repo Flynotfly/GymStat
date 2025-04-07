@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Navigate } from 'react-router-dom'
-import { logout } from '../lib/allauth'
-import Button from '../components/Button'
+import { logout } from '../lib/allauth.js'
+import Button from '../core/components/Button'
 
 export default function Logout () {
   const [response, setResponse] = useState({ fetching: false, content: null })

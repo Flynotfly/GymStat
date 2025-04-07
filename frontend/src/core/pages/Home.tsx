@@ -1,6 +1,6 @@
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid2";
-import StatCard, {StatCardProps} from "../dashboard/components/StatCard.tsx";
+import StatCard, {StatCardProps} from "../../dashboard/components/StatCard.tsx";
 
 const data: StatCardProps[] = [
     {

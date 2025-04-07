@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import { Navigate } from 'react-router-dom'
-import * as allauth from '../lib/allauth'
-import FormErrors from '../components/FormErrors'
-import Button from '../components/Button'
-import { useConfig } from '../auth/hooks'
+import * as allauth from '../lib/allauth.js'
+import FormErrors from '../core/components/FormErrors'
+import Button from '../core/components/Button'
+import { useConfig } from '../hooks.js'
 
 export default function ChangeEmail () {
   const config = useConfig()

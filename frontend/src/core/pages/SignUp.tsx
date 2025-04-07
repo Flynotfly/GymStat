@@ -8,16 +8,16 @@ import FormControl from '@mui/material/FormControl';
 import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import AppTheme from '../shared-theme/AppTheme.tsx';
-import ColorModeSelect from '../shared-theme/ColorModeSelect.tsx';
-import SitemarkIcon from "../icons/SitemarkIcon.tsx";
+import AppTheme from '../../shared-theme/AppTheme.tsx';
+import ColorModeSelect from '../../shared-theme/ColorModeSelect.tsx';
+import SitemarkIcon from "../../icons/SitemarkIcon.tsx";
 import Card from "../components/SignInCard.ts";
 import SignUpContainer from "../components/SignInContainer.ts";
 import {useEffect} from "react";
-import {useConfig} from "../auth";
+import {useConfig} from "../../auth";
 import {useNavigate} from "react-router-dom";
-import {getCookie} from "../utils.ts";
-import {signUp} from "../lib/allauth";
+import {getCookie} from "../../utils.ts";
+import {signUp} from "../../auth/lib/allauth";
 import {fetchCsrf} from "../api/lib.ts";
 
 export default function SignUp(props: { disableCustomTheme?: boolean }) {

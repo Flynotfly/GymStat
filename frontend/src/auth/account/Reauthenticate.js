@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import FormErrors from '../components/FormErrors'
-import { reauthenticate, Flows } from '../lib/allauth'
-import ReauthenticateFlow from './ReauthenticateFlow'
-import Button from '../components/Button'
+import FormErrors from '../core/components/FormErrors'
+import { reauthenticate, Flows } from '../lib/allauth.js'
+import ReauthenticateFlow from './ReauthenticateFlow.js'
+import Button from '../core/components/Button'
 
 export default function Reauthenticate () {
   const [password, setPassword] = useState('')

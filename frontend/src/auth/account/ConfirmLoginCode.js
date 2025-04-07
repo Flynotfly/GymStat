@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import FormErrors from '../components/FormErrors'
-import { confirmLoginCode, Flows } from '../lib/allauth'
+import FormErrors from '../core/components/FormErrors'
+import { confirmLoginCode, Flows } from '../lib/allauth.js'
 import { Navigate } from 'react-router-dom'
-import Button from '../components/Button'
-import { useAuthStatus } from '../auth'
+import Button from '../core/components/Button'
+import { useAuthStatus } from '../index.js'
 
 export default function ConfirmLoginCode () {
   const [, authInfo] = useAuthStatus()

@@ -1,20 +1,27 @@
-import { useState } from 'react'
-import {
-  useLoaderData,
-  Navigate
-} from 'react-router-dom'
-import { getEmailVerification, verifyEmail } from '../lib/allauth'
-import Button from '../components/Button'
+import {getEmailVerification, verifyEmail} from "../../auth/lib/allauth";
+import {LoaderFunctionArgs, Navigate, useLoaderData} from "react-router-dom";
+import {useState} from "react";
+import Button from "@mui/material/Button";
 
-export async function loader ({ params }) {
-  const key = params.key
+interface ResponseContent {
+  status: number;
+  data: any;
+}
+
+interface ResponseState {
+  fetching: boolean;
+  content: ResponseContent | null;
+}
+
+export async function loader ({ params }: LoaderFunctionArgs) {
+  const key = params.key;
   const resp = await getEmailVerification(key)
   return { key, verification: resp }
 }
 
-export default function VerifyEmail () {
-  const { key, verification } = useLoaderData()
-  const [response, setResponse] = useState({ fetching: false, content: null })
+export default function VerifyEmail() {
+  const {key, verification} = useLoaderData();
+  const [response, setResponse] = useState<ResponseState>({ fetching: false, content: null});
 
   function submit () {
     setResponse({ ...response, fetching: true })
@@ -28,8 +35,8 @@ export default function VerifyEmail () {
     })
   }
 
-  if ([200, 401].includes(response.content?.status)) {
-    return <Navigate to='/account/email' />
+  if (response.content && [200, 401].includes(response.content.status)) {
+    return <Navigate to='/app' />;
   }
 
   let body = null

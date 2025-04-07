@@ -1,6 +1,6 @@
 import React, { useEffect, createContext, useState } from 'react'
-import { getAuth, getConfig } from '../lib/allauth'
-import Loading from "../pages/Loading.tsx";
+import { getAuth, getConfig } from './lib/allauth'
+import Loading from "../core/pages/Loading.tsx";
 import {AuthContextValue, AuthData} from "../types/auth";
 
 export const AuthContext = createContext<AuthContextValue>({

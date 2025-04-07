@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import FormErrors from '../components/FormErrors'
-import { login } from '../lib/allauth'
+import FormErrors from '../core/components/FormErrors'
+import { login } from '../lib/allauth.js'
 import { Link } from 'react-router-dom'
-import { useConfig } from '../auth'
+import { useConfig } from '../index.js'
 import ProviderList from '../socialaccount/ProviderList'
-import Button from '../components/Button'
+import Button from '../core/components/Button'
 import WebAuthnLoginButton from '../mfa/WebAuthnLoginButton'
 
 export default function Login () {

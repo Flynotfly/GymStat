@@ -1,7 +1,7 @@
 import { useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 
-import MarketingPage from "../marketing-page/MarketingPage.tsx";
+import MarketingPage from "../../marketing-page/MarketingPage.tsx";
 
 
 export default function Promo() {

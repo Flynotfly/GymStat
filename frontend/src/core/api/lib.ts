@@ -1,4 +1,4 @@
-import {getCSRFToken} from "../utils.ts";
+import {getCSRFToken} from "../../utils.ts";
 
 type HTTPMethod = 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE' | 'OPTIONS' | 'PATCH' | 'TRACE';
 const safeMethods: HTTPMethod[] = ['GET', 'HEAD', 'OPTIONS', 'TRACE'];

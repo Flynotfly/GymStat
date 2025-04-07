@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import FormErrors from '../components/FormErrors'
-import { changePassword } from '../lib/allauth'
+import FormErrors from '../core/components/FormErrors'
+import { changePassword } from '../lib/allauth.js'
 import { Navigate } from 'react-router-dom'
-import { useUser } from '../auth'
-import Button from '../components/Button'
+import { useUser } from '../index.js'
+import Button from '../core/components/Button'
 
 export default function ChangePassword () {
   const hasCurrentPassword = useUser().has_usable_password

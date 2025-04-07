@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import FormErrors from '../components/FormErrors'
-import { getPasswordReset, resetPassword } from '../lib/allauth'
+import FormErrors from '../core/components/FormErrors'
+import { getPasswordReset, resetPassword } from '../lib/allauth.js'
 import { Navigate, Link, useLocation, useLoaderData } from 'react-router-dom'
-import Button from '../components/Button'
+import Button from '../core/components/Button'
 
 export async function resetPasswordByLinkLoader ({ params }) {
   const key = params.key
