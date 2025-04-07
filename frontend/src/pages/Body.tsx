@@ -17,7 +17,8 @@ import dayjs, { Dayjs } from 'dayjs';
 import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Metric, MetricRecord } from "../types/metric";
-import { fetchCsrf, getMetrics, getRecords, createRecord } from "../api.ts";
+import { getMetrics, getRecords, createRecord } from "../api.ts";
+import {fetchCsrf} from "../api/lib.ts";
 
 export default function Body() {
   const [metrics, setMetrics] = useState<Metric[]>([]);

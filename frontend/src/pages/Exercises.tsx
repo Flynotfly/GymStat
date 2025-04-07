@@ -14,8 +14,9 @@ import {
   Alert,
   Grid,
 } from "@mui/material";
-import { createExercise, fetchCsrf, getBaseExercises, getUserExercises } from "../api";
 import ExerciseCard from "../components/ExerciseCard";
+import {fetchCsrf} from "../api/lib.ts";
+import {createExercise, getBaseExercises, getUserExercises} from "../api/training.ts";
 
 export interface Exercise {
   id: number;

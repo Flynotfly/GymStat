@@ -17,7 +17,6 @@ import TextField from '@mui/material/TextField';
 import Rating from '@mui/material/Rating';
 
 // Import your API and types as needed
-import { createTraining, getAllExercises, getAllTrainings, getTraining, updateTraining } from "../api";
 import CustomDatePicker from "../components/CustomDatePicker.tsx";
 import { TimePicker } from "@mui/x-date-pickers";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -25,6 +24,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { Exercise } from "./Exercises.tsx";
 import { Autocomplete } from "@mui/material";
+import {createTraining, getAllExercises, getAllTrainings, getTraining, updateTraining} from "../api/training.ts";
 
 // ===== Interfaces =====
 export interface TrainingShortInterface {

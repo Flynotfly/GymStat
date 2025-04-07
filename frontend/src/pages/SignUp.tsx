@@ -14,11 +14,11 @@ import SitemarkIcon from "../icons/SitemarkIcon.tsx";
 import Card from "../components/SignInCard.ts";
 import SignUpContainer from "../components/SignInContainer.ts";
 import {useEffect} from "react";
-import {fetchCsrf} from "../api.ts";
 import {useConfig} from "../auth";
 import {useNavigate} from "react-router-dom";
 import {getCookie} from "../utils.ts";
 import {signUp} from "../lib/allauth";
+import {fetchCsrf} from "../api/lib.ts";
 
 export default function SignUp(props: { disableCustomTheme?: boolean }) {
   const [emailError, setEmailError] = React.useState(false);
