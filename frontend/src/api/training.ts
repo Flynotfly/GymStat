@@ -1,6 +1,5 @@
 import {baseURL, request} from "./lib.ts";
-import {TrainingInterface} from "../pages/Training.tsx";
-import {ExerciseTemplate, NewExerciseTemplate} from "../types/training";
+import {ExerciseTemplate, NewExerciseTemplate, NewTrainingTemplate, TrainingTemplate} from "../training/types/training";
 
 const TRAINING_BASE_URL = {baseURL} + 'training/';
 
@@ -57,7 +56,44 @@ export function deleteExerciseTemplate(
 // Training templates //
 ////////////////////////
 
+export function getTrainingTemplates(
+  page: number = 1
+): Promise<any> {
+  return request(
+    'GET',
+    URLs['TRAINING_TEMPLATES'] + '?page' + page,
+  )
+}
 
+export function createTrainingTemplate(
+  trainingTemplate: NewTrainingTemplate
+): Promise<any> {
+  return request(
+    'POST',
+    URLs['TRAINING_TEMPLATES'],
+    trainingTemplate,
+  )
+}
+
+export function editTrainingTemplate(
+  trainingTemplate: TrainingTemplate
+): Promise<any> {
+  const { id } = trainingTemplate;
+  return request(
+    'PUT',
+    URLs['TRAINING_TEMPLATES'] + id + '/',
+    trainingTemplate,
+  )
+}
+
+export function deleteTrainingTemplate(
+  id: number
+): Promise<any> {
+  return request(
+    'DELETE',
+    URLs['TRAINING_TEMPLATES'] + id + '/',
+  )
+}
 
 // export function getAllTrainings(): Promise<any> {
 //   return request('GET', URL + 'trainings/');
