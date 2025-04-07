@@ -31,7 +31,7 @@ export function request(method: HTTPMethod, url: string, data?: object): Promise
   });
 }
 
-export function fetchCsrf(): Promise<any> {
+export function fetchCsrf(): Promise<Response> {
   return fetch(baseURL + 'user/' + 'csrf/', {
     credentials: "include"
   });
