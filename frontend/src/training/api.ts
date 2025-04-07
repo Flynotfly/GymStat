@@ -1,4 +1,4 @@
-import {baseURL, request} from "../core/api/lib.ts";
+import {baseURL, request} from "../core/api.ts";
 import {
   ExerciseTemplate,
   NewExerciseTemplate,

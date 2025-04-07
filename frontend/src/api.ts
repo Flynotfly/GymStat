@@ -1,5 +1,5 @@
 import {MetricRecord} from "./types/metric";
-import {request} from "./core/api/lib.ts";
+import {request} from "./core/api.ts";
 
 const baseURL = import.meta.env.VITE_BASE_URL;
 const metricsURL = `${baseURL}metrics/`;

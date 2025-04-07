@@ -13,13 +13,13 @@ import AppTheme from '../../shared-theme/AppTheme.tsx';
 import ColorModeSelect from '../../shared-theme/ColorModeSelect.tsx';
 import {useNavigate} from "react-router-dom";
 import {useEffect} from "react";
-import {getCookie} from "../../utils.ts";
+import {getCookie} from "../utils.ts";
 import {useConfig} from "../../auth";
 import {login} from "../../auth/lib/allauth";
 import Card from "../components/SignInCard.ts";
 import SignInContainer from "../components/SignInContainer.ts";
 import SitemarkIcon from "../../icons/SitemarkIcon.tsx";
-import {fetchCsrf} from "../api/lib.ts";
+import {fetchCsrf} from "../api.ts";
 
 export default function SignIn(props: { disableCustomTheme?: boolean }) {
   const [emailError, setEmailError] = React.useState(false);

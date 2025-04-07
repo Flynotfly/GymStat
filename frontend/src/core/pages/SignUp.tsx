@@ -16,9 +16,9 @@ import SignUpContainer from "../components/SignInContainer.ts";
 import {useEffect} from "react";
 import {useConfig} from "../../auth";
 import {useNavigate} from "react-router-dom";
-import {getCookie} from "../../utils.ts";
+import {getCookie} from "../utils.ts";
 import {signUp} from "../../auth/lib/allauth";
-import {fetchCsrf} from "../api/lib.ts";
+import {fetchCsrf} from "../api.ts";
 
 export default function SignUp(props: { disableCustomTheme?: boolean }) {
   const [emailError, setEmailError] = React.useState(false);

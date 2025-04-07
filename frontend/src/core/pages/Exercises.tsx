@@ -15,7 +15,7 @@ import {
   Grid,
 } from "@mui/material";
 import ExerciseCard from "../components/ExerciseCard.tsx";
-import {fetchCsrf} from "../api/lib.ts";
+import {fetchCsrf} from "../api.ts";
 import {createExercise, getBaseExercises, getUserExercises} from "../../training/api.ts";
 
 export interface Exercise {
