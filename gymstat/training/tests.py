@@ -142,21 +142,24 @@ class ExerciseTemplateAPITests(APITestCase):
         self.client.login(email="user@example.com", password="password123")
         response = self.client.get(self.list_create_url, {"type": "admin"})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]["name"], "Bench Press")
+        self.assertEqual(response.data["count"], 1)
+        self.assertEqual(len(response.data["results"]), 1)
+        self.assertEqual(response.data["results"][0]["name"], "Bench Press")
 
     def test_get_user_templates(self):
         self.client.login(email="user@example.com", password="password123")
         response = self.client.get(self.list_create_url, {"type": "user"})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]["name"], "User Squat")
+        self.assertEqual(response.data["count"], 1)
+        self.assertEqual(len(response.data["results"]), 1)
+        self.assertEqual(response.data["results"][0]["name"], "User Squat")
 
     def test_get_all_templates(self):
         self.client.login(email="user@example.com", password="password123")
         response = self.client.get(self.list_create_url, {"type": "all"})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data["count"], 2)
+        self.assertEqual(len(response.data["results"]), 2)
 
     def test_create_template(self):
         self.client.login(email="user@example.com", password="password123")
@@ -491,8 +494,9 @@ class TrainingTemplateAPITests(APITestCase):
         url = reverse("training:training-template-list-create")
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]["name"], "Initial Template")
+        self.assertEqual(response.data["count"], 1)
+        self.assertEqual(len(response.data["results"]), 1)
+        self.assertEqual(response.data["results"][0]["name"], "Initial Template")
 
     def test_training_template_create(self):
         url = reverse("training:training-template-list-create")
@@ -646,7 +650,8 @@ class TrainingViewsTests(APITestCase):
 
         response = self.client.get(self.list_create_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data["count"], 2)
+        self.assertEqual(len(response.data["results"]), 2)
 
     def test_create_training_successful(self):
         response = self.client.post(
