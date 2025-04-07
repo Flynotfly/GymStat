@@ -14,13 +14,11 @@ class ExerciseTemplateSerializer(serializers.ModelSerializer):
             "fields",
             "description",
             "is_admin",
-            "is_active",
         ]
         read_only_fields = [
             "id",
             "owner",
             "is_admin",
-            "is_active",
         ]
 
 
