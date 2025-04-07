@@ -32,7 +32,7 @@ export function request(method: HTTPMethod, url: string, data?: object): Promise
 }
 
 export function fetchCsrf(): Promise<any> {
-  return fetch(`${userAPIURL}csrf/`, {
+  return fetch(baseURL + 'user/' + 'csrf/', {
     credentials: "include"
   });
 }
