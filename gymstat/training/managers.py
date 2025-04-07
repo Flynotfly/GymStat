@@ -33,14 +33,14 @@ class TrainingManager(models.Manager):
 
     @transaction.atomic
     def update_training(
-            self,
-            training,
-            owner,
-            conducted,
-            template=None,
-            title=None,
-            notes=None,
-            exercises_data=None,
+        self,
+        training,
+        owner,
+        conducted,
+        template=None,
+        title=None,
+        notes=None,
+        exercises_data=None,
     ):
         if training.owner != owner:
             raise PermissionDenied("You are not the owner of this training.")
@@ -70,11 +70,11 @@ class TrainingManager(models.Manager):
 
             # Check allowed condition: template must be active and either owned by the user or an admin template.
             if not (
-                    exercise_template.is_active
-                    and (
-                            exercise_template.owner == owner
-                            or exercise_template.is_admin
-                    )
+                exercise_template.is_active
+                and (
+                    exercise_template.owner == owner
+                    or exercise_template.is_admin
+                )
             ):
                 unauthorized_templates.append(exercise_template)
 
