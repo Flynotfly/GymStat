@@ -1,5 +1,6 @@
 import {baseURL, request} from "./lib.ts";
 import {ExerciseTemplate, NewExerciseTemplate, NewTrainingTemplate, TrainingTemplate} from "../training/types/training";
+import {PaginatedResponse} from "../types/api";
 
 const TRAINING_BASE_URL = {baseURL} + 'training/';
 
@@ -16,7 +17,7 @@ const URLs = Object.freeze({
 export function getExerciseTemplates(
   page: number = 1,
   template_type: string = 'all',
-): Promise<any> {
+): Promise<PaginatedResponse<ExerciseTemplate>> {
   return request('GET',
     URLs['EXERCISE_TEMPLATES'] + '?page=' + page + '&type=' + template_type,
   )
@@ -24,7 +25,7 @@ export function getExerciseTemplates(
 
 export function createExerciseTemplate(
   exerciseTemplate: NewExerciseTemplate,
-): Promise<any> {
+): Promise<ExerciseTemplate> {
   return request(
     'POST',
     URLs['EXERCISE_TEMPLATES'],
@@ -45,7 +46,7 @@ export function editExerciseTemplate(
 
 export function deleteExerciseTemplate(
   id: number,
-): Promise<any> {
+): Promise<void> {
   return request(
     'DELETE',
     URLs['EXERCISE_TEMPLATES'] + id + '/',
@@ -58,7 +59,7 @@ export function deleteExerciseTemplate(
 
 export function getTrainingTemplates(
   page: number = 1
-): Promise<any> {
+): Promise<PaginatedResponse<TrainingTemplate>> {
   return request(
     'GET',
     URLs['TRAINING_TEMPLATES'] + '?page' + page,
@@ -67,7 +68,7 @@ export function getTrainingTemplates(
 
 export function createTrainingTemplate(
   trainingTemplate: NewTrainingTemplate
-): Promise<any> {
+): Promise<TrainingTemplate> {
   return request(
     'POST',
     URLs['TRAINING_TEMPLATES'],
@@ -77,7 +78,7 @@ export function createTrainingTemplate(
 
 export function editTrainingTemplate(
   trainingTemplate: TrainingTemplate
-): Promise<any> {
+): Promise<TrainingTemplate> {
   const { id } = trainingTemplate;
   return request(
     'PUT',
@@ -88,7 +89,7 @@ export function editTrainingTemplate(
 
 export function deleteTrainingTemplate(
   id: number
-): Promise<any> {
+): Promise<void> {
   return request(
     'DELETE',
     URLs['TRAINING_TEMPLATES'] + id + '/',
