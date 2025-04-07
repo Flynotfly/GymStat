@@ -26,7 +26,7 @@ export function createExerciseTemplate(
   exerciseTemplate: NewExerciseTemplate,
 ): Promise<any> {
   return request(
-    'GET',
+    'POST',
     URLs['EXERCISE_TEMPLATES'],
     exerciseTemplate
   )
@@ -34,7 +34,7 @@ export function createExerciseTemplate(
 
 export function editExerciseTemplate(
   exerciseTemplate: ExerciseTemplate,
-): Promise<any> {
+): Promise<ExerciseTemplate> {
   const { id } = exerciseTemplate;
   return request(
     'PUT',
