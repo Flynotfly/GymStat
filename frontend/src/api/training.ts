@@ -95,6 +95,11 @@ export function deleteTrainingTemplate(
   )
 }
 
+///////////////
+// Trainings //
+///////////////
+
+
 // export function getAllTrainings(): Promise<any> {
 //   return request('GET', URL + 'trainings/');
 // }
