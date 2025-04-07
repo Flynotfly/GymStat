@@ -55,23 +55,21 @@ class MetricAPITests(APITestCase):
         url = reverse("metrics:get-create-metrics")
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(
-            len(response.data), 2
-        )  # Should return own and admin metrics
+        self.assertEqual(response.data["count"], 2)
 
     def test_get_user_metrics(self):
         url = reverse("metrics:get-create-metrics") + "?type=user"
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]["name"], "Weight")
+        self.assertEqual(response.data["count"], 1)
+        self.assertEqual(response.data["results"][0]["name"], "Weight")
 
     def test_get_admin_metrics(self):
         url = reverse("metrics:get-create-metrics") + "?type=admin"
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]["name"], "Height")
+        self.assertEqual(response.data["count"], 1)
+        self.assertEqual(response.data["results"][0]["name"], "Height")
 
     def test_create_metric(self):
         url = reverse("metrics:get-create-metrics")
@@ -102,7 +100,7 @@ class MetricAPITests(APITestCase):
             "metrics:get-edit-metric", kwargs={"pk": self.metric_other_user.pk}
         )
         response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_edit_owned_metric(self):
         url = reverse(
@@ -219,8 +217,8 @@ class RecordAPITests(APITestCase):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]["value"], 75.0)
+        self.assertEqual(response.data["count"], 1)
+        self.assertEqual(response.data["results"][0]["value"], 75.0)
 
     def test_get_records_for_admin_metric(self):
         url = (
@@ -230,8 +228,8 @@ class RecordAPITests(APITestCase):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]["value"], 180)
+        self.assertEqual(response.data["count"], 1)
+        self.assertEqual(response.data["results"][0]["value"], 180)
 
     def test_get_records_metric_not_accessible(self):
         url = (
@@ -297,7 +295,7 @@ class RecordAPITests(APITestCase):
         )
         response = self.client.get(url)
 
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_edit_owned_record(self):
         url = reverse(
@@ -325,7 +323,7 @@ class RecordAPITests(APITestCase):
         }
         response = self.client.put(url, data)
 
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_delete_owned_record(self):
         url = reverse(
@@ -344,7 +342,7 @@ class RecordAPITests(APITestCase):
         )
         response = self.client.delete(url)
 
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertTrue(
             Record.objects.filter(pk=self.other_user_record.pk).exists()
         )

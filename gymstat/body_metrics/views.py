@@ -1,16 +1,16 @@
 from django.db.models import Q
-from rest_framework import generics, permissions, status
+from rest_framework import generics
 from rest_framework.exceptions import PermissionDenied, ValidationError
-from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 from .models import Metric, Record
-from .permissions import IsOwner, IsOwnerAllIsAdminSafe
+from .permissions import IsAdminObjectReadOnly, IsOwner
 from .serializers import MetricSerializer, RecordSerializer
 
 
 class MetricListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = MetricSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         user = self.request.user
@@ -33,16 +33,16 @@ class MetricRetrieveUpdateDestroyAPIView(
     generics.RetrieveUpdateDestroyAPIView
 ):
     serializer_class = MetricSerializer
-    permission_classes = [permissions.IsAuthenticated, IsOwnerAllIsAdminSafe]
-
-    def get_queryset(self):
-        user = self.request.user
-        return Metric.objects.filter(Q(owner=user) | Q(admin=True))
+    permission_classes = [
+        IsAuthenticated,
+        IsOwner | IsAdminObjectReadOnly,
+    ]
+    queryset = Metric.objects.all()
 
 
 class RecordListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = RecordSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         user = self.request.user
@@ -80,7 +80,5 @@ class RecordRetrieveUpdateDestroyAPIView(
     generics.RetrieveUpdateDestroyAPIView
 ):
     serializer_class = RecordSerializer
-    permission_classes = [permissions.IsAuthenticated, IsOwner]
-
-    def get_queryset(self):
-        return Record.objects.filter(owner=self.request.user)
+    permission_classes = [IsAuthenticated, IsOwner]
+    queryset = Record.objects.all()

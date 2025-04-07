@@ -5,17 +5,17 @@ import {
   Tabs,
   Tab,
   Typography,
-  Tooltip,
   Dialog,
-  Paper,
   DialogTitle,
   DialogContent,
   TextField,
   DialogActions,
   Snackbar,
   Alert,
+  Grid,
 } from "@mui/material";
-import { createExercise, fetchCsrf, getBaseExercises, getUserExercises } from "../api.ts";
+import { createExercise, fetchCsrf, getBaseExercises, getUserExercises } from "../api";
+import ExerciseCard from "../components/ExerciseCard";
 
 export interface Exercise {
   id: number;
@@ -43,6 +43,7 @@ export default function Exercises() {
     iconColor: "#000000",
   });
 
+  // Fetch CSRF token (if needed) on mount
   useEffect(() => {
     fetchCsrf().catch(console.error);
   }, []);
@@ -102,6 +103,8 @@ export default function Exercises() {
     }
   };
 
+  const exercisesToShow = tab === 0 ? userExercises : baseExercises;
+
   return (
     <Box sx={{ p: 2 }}>
       <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
@@ -114,25 +117,22 @@ export default function Exercises() {
         <Tab label="User's Exercises" />
         <Tab label="Base Exercises" />
       </Tabs>
-
-      <Box>
-        {tab === 0 && loadingUser ? (
-          <Box>Loading...</Box>
-        ) : tab === 1 && loadingBase ? (
-          <Box>Loading...</Box>
-        ) : (
-          (tab === 0 ? userExercises : baseExercises).map((exercise) => (
-            <Paper key={exercise.id} elevation={2} sx={{ display: "flex", alignItems: "center", p: 1, mb: 1 }}>
-              <Tooltip title={exercise.description} arrow>
-                <Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
-                  <Box sx={{ width: 40, height: 40, backgroundColor: exercise.iconColor, borderRadius: "4px", mr: 2 }} />
-                  <Typography variant="subtitle1">{exercise.name}</Typography>
-                </Box>
-              </Tooltip>
-            </Paper>
-          ))
-        )}
-      </Box>
+      { (tab === 0 && loadingUser) || (tab === 1 && loadingBase) ? (
+        <Box>Loading...</Box>
+      ) : (
+        <Grid container spacing={2}>
+          {exercisesToShow.map((exercise) => (
+            <Grid item xs={12} sm={6} md={4} key={exercise.id}>
+              <ExerciseCard
+                name={exercise.name}
+                description={exercise.description}
+                iconId={exercise.iconId}
+                iconColor={exercise.iconColor}
+              />
+            </Grid>
+          ))}
+        </Grid>
+      )}
 
       {/* Create New Exercise Dialog */}
       <Dialog open={open} onClose={handleCloseDialog} fullWidth maxWidth="sm">
