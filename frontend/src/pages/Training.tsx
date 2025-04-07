@@ -24,7 +24,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { Exercise } from "./Exercises.tsx";
 import { Autocomplete } from "@mui/material";
-import {createTraining, getAllExercises, getAllTrainings, getTraining, updateTraining} from "../api/training.ts";
+import {createTraining, getAllExercises, getAllTrainings, getTraining, updateTraining} from "../training/api.ts";
 
 // ===== Interfaces =====
 export interface TrainingShortInterface {

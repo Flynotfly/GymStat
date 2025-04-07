@@ -1,5 +1,5 @@
-import {baseURL, request} from "./lib.ts";
-import {ExerciseTemplate, NewExerciseTemplate, NewTrainingTemplate, TrainingTemplate} from "../training/types/training";
+import {baseURL, request} from "../api/lib.ts";
+import {ExerciseTemplate, NewExerciseTemplate, NewTrainingTemplate, TrainingTemplate} from "./types/training";
 import {PaginatedResponse} from "../types/api";
 
 const TRAINING_BASE_URL = {baseURL} + 'training/';
