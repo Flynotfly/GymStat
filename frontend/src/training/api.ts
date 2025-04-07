@@ -1,5 +1,12 @@
 import {baseURL, request} from "../api/lib.ts";
-import {ExerciseTemplate, NewExerciseTemplate, NewTrainingTemplate, TrainingTemplate} from "./types/training";
+import {
+  ExerciseTemplate,
+  NewExerciseTemplate,
+  NewTraining,
+  NewTrainingTemplate,
+  Training,
+  TrainingTemplate
+} from "./types/training";
 import {PaginatedResponse} from "../types/api";
 
 const TRAINING_BASE_URL = {baseURL} + 'training/';
@@ -99,6 +106,45 @@ export function deleteTrainingTemplate(
 ///////////////
 // Trainings //
 ///////////////
+
+export function getTrainings(
+  page: number = 1
+): Promise<PaginatedResponse<Training>> {
+  return request(
+    'GET',
+    URLs['TRAININGS'] + '?page' + page,
+  )
+}
+
+export function createTraining(
+  training: NewTraining
+): Promise<Training> {
+  return request(
+    'POST',
+    URLs['TRAININGS'],
+    training,
+  )
+}
+
+export function editTraining(
+  training: Training
+): Promise<Training> {
+  const { id } = training;
+  return request(
+    'PUT',
+    URLs['TRAININGS'] + id + '/',
+    training
+  )
+}
+
+export function deleteTraining(
+  id: number
+): Promise<void> {
+  return request(
+    'DELETE',
+    URLs['TRAININGS'] + id + '/',
+  )
+}
 
 
 // export function getAllTrainings(): Promise<any> {
