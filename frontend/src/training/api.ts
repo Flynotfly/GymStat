@@ -145,37 +145,3 @@ export function deleteTraining(
     URLs['TRAININGS'] + id + '/',
   )
 }
-
-
-// export function getAllTrainings(): Promise<any> {
-//   return request('GET', URL + 'trainings/');
-// }
-//
-// export function getTraining(pk: number): Promise<any> {
-//   return request('GET', `${URL}trainings/${pk}/`);
-// }
-//
-// export function getUserExercises(): Promise<any> {
-//   return request('GET', `${URL}exercises/my/`);
-// }
-//
-// export function getBaseExercises(): Promise<any> {
-//   return request('GET', `${URL}exercises/base/`);
-// }
-//
-// export function getAllExercises(): Promise<any> {
-//   return request('GET', `${URL}exercises/`);
-// }
-//
-// export function createExercise(data: object): Promise<any> {
-//   return request('POST', `${URL}exercises/create/`, data);
-// }
-//
-// export function createTraining(data: Partial<TrainingInterface>): Promise<any> {
-//   return request('POST', `${URL}trainings/create/`, data);
-// }
-//
-// export function updateTraining(data: Partial<TrainingInterface>): Promise<any> {
-//   const id = data.id;
-//   return request('PUT', `${URL}trainings/update/${id}/`, data);
-// }
