@@ -4,7 +4,3 @@ export interface PaginatedResponse<T> {
   next?: string;
   previous?: string;
 }
-
-export interface DeleteResponse {
-  message: string;
-}
