@@ -9,7 +9,7 @@ import {
 } from "./types/training";
 import {PaginatedResponse} from "../types/api";
 
-const TRAINING_BASE_URL = {baseURL} + 'training/';
+const TRAINING_BASE_URL = baseURL + 'training/';
 
 const URLs = Object.freeze({
   EXERCISE_TEMPLATES: TRAINING_BASE_URL + 'exercises/',
