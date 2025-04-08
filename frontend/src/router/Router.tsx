@@ -5,9 +5,9 @@ import MainLayout from "./MainLayout.tsx";
 import VerifyEmail, { loader as verifyEmailLoader } from "../core/pages/VerifyEmail.tsx";
 
 const AppRouteLayout = lazy(() => import("./AppRouteLayout.tsx"));
-const Exercises = lazy(() => import("../core/pages/Exercises.tsx"));
+const Exercises = lazy(() => import("../training/components/ExerciseTemplatesPage.tsx"));
 const Home = lazy(() => import("../core/pages/Home.tsx"));
-const Training = lazy(() => import("../core/pages/Training.tsx"));
+const Training = lazy(() => import("../training/components/TrainingPage.tsx"));
 const Body = lazy(() => import("../core/pages/Body.tsx"));
 const Tasks = lazy(() => import("../core/pages/Tasks.tsx"));
 const SignIn = lazy(() => import("../core/pages/SignIn.tsx"));
