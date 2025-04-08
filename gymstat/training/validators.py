@@ -4,6 +4,7 @@ NOTES_FIELDS = ["Text", "Datetime", "Duration", "Number", "5stars", "10stars"]
 
 
 ALLOWED_EXERCISE_FIELDS = {
+    "Sets": "Int",
     "Reps": "Int",
     "Weight": ["Float", ["kg", "lbs"]],
     "Time": "Duration",
