@@ -69,7 +69,7 @@ export function getTrainingTemplates(
 ): Promise<PaginatedResponse<TrainingTemplate>> {
   return request(
     'GET',
-    URLs['TRAINING_TEMPLATES'] + '?page' + page,
+    URLs['TRAINING_TEMPLATES'] + '?page=' + page,
   )
 }
 
@@ -112,7 +112,7 @@ export function getTrainings(
 ): Promise<PaginatedResponse<Training>> {
   return request(
     'GET',
-    URLs['TRAININGS'] + '?page' + page,
+    URLs['TRAININGS'] + '?page=' + page,
   )
 }
 
