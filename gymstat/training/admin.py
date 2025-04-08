@@ -8,11 +8,8 @@ class ExerciseTemplateAdmin(admin.ModelAdmin):
     list_display = ['name', 'owner', 'is_admin', 'is_active']
     list_filter = ['owner', 'is_admin', 'is_active']
     fields = ['name', 'owner', 'description', 'is_admin', 'is_active', 'fields']
-    inlines = []
-    raw_id_fields = ['']
     readonly_fields = ['created_at', 'edited_at']
     search_fields = ['name']
-    ordering = ['']
 
 
 @admin.register(TrainingTemplate)
@@ -20,11 +17,8 @@ class TrainingTemplateAdmin(admin.ModelAdmin):
     list_display = ['name', 'owner']
     list_filter = ['owner']
     fields = ['owner', 'name', 'description', 'data']
-    inlines = []
-    raw_id_fields = ['']
     readonly_fields = ['created_at', 'edited_at']
     search_fields = ['name']
-    ordering = ['']
 
 
 class ExerciseInline(admin.TabularInline):
@@ -39,7 +33,5 @@ class TrainingAdmin(admin.ModelAdmin):
     list_filter = ['owner']
     fields = ['owner', 'template', 'title', 'conducted', 'notes']
     inlines = [ExerciseInline]
-    raw_id_fields = ['']
     readonly_fields = ['created_at', 'edited_at']
     search_fields = ['title']
-    ordering = ['']
