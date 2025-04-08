@@ -1,6 +1,5 @@
 export interface NewExerciseTemplate{
   name: string,
-  owner: number,
   fields: string[],
   description: string,
 }
