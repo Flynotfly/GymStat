@@ -19,7 +19,43 @@ ALLOWED_EXERCISE_FIELDS = {
     "Tempo": "Text",
 }
 
-ALLOWED_EXERCISE_TAGS = {}
+ALLOWED_EXERCISE_TAGS = {
+    "chest",
+    "biceps",
+    "cardio",
+    "cycling",
+    "running",
+    "free weight",
+    "machine",
+    "triceps",
+    "legs",
+    "back",
+    "shoulders",
+    "abs",
+    "core",
+    "HIIT",
+    "yoga",
+    "pilates",
+    "stretching",
+    "balance",
+    "functional training",
+    "sprints",
+    "resistance",
+    "endurance",
+    "circuit training",
+    "plyometrics",
+    "calisthenics",
+    "glutes",
+    "hamstrings",
+    "quads",
+    "obliques",
+    "warmup",
+    "cooldown",
+    "recovery",
+    "flexibility",
+    "isolation",
+    "compound"
+}
 
 
 def _validate_json_list(
