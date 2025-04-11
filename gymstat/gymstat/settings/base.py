@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "body_metrics",
     "debug_toolbar",
     "rest_framework",
+    "django_filters",
     "allauth",
     "allauth.account",
     "allauth.headless",
