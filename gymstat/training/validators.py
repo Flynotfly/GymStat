@@ -20,6 +20,25 @@ ALLOWED_EXERCISE_FIELDS = {
 }
 
 
+def _validate_json_list(
+        value,
+        field_name: str,
+        allowed_values=None,
+):
+    if not isinstance(value, list):
+        raise ValidationError(f"{field_name.capitalize()} must be a list.")
+    if allowed_values:
+        invalid_objs = [
+            obj for obj in value if obj not in allowed_values
+        ]
+        if invalid_objs:
+            allowed_iterable = allowed_values.keys() if isinstance(allowed_values, dict) else allowed_values
+            raise ValidationError(
+                f"Invalid {field_name} provided: {', '.join(invalid_objs)}. "
+                f"Allowed {field_name} are: {', '.join(allowed_iterable)}."
+            )
+
+
 def validate_training_template_data(data):
     if not isinstance(data, dict):
         raise ValidationError("Data must be a dictionary.")
