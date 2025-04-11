@@ -1,19 +1,22 @@
 import {Box, Grid2, Tab, Tabs, Typography} from "@mui/material";
-import {SyntheticEvent, useEffect, useState} from "react";
+import {SyntheticEvent, useEffect, useRef, useState} from "react";
 import {ExerciseTemplate} from "../types/training";
 import {getExerciseTemplates} from "../api.ts";
 import ExerciseTemplateCard from "./ExerciseTemplateCard.tsx";
 
 export default function ExerciseTemplatesPage() {
-  const [
-    userExerciseTemplates,
-    setUserExerciseTemplates
-  ] = useState<ExerciseTemplate[]>([])
-  const [
-    baseExerciseTemplates,
-    setBaseExerciseTemplates
-  ] = useState<ExerciseTemplate[]>([])
-  const [tab, setTab] = useState<'base' | 'my'>('base');
+
+  const [templates, setTemplates] = useState<ExerciseTemplate[]>([]);
+  const [page, setPage] = useState<number>(1);
+  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  // ----- filters ----- //
+  const [selectedType, setSelectedType] = useState<'all' | 'base' | 'my'>('all');
+  const [selectedTag, setSelectedTag] =  useState<string>('');
+  const [searchText, setSearchText] = useState<string>('');
+
+  const loadMoreRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     getExerciseTemplates(1, 'admin')
