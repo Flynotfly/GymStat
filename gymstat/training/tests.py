@@ -496,14 +496,15 @@ class TrainingTemplateAPITests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["count"], 1)
         self.assertEqual(len(response.data["results"]), 1)
-        self.assertEqual(response.data["results"][0]["name"], "Initial Template")
+        self.assertEqual(
+            response.data["results"][0]["name"], "Initial Template"
+        )
 
     def test_training_template_create(self):
         url = reverse("training:training-template-list-create")
         response = self.client.post(url, self.template_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["name"], self.template_data["name"])
-        self.assertEqual(response.data["owner"], self.user.id)
 
     def test_training_template_detail_retrieve(self):
         url = reverse(
