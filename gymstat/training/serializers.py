@@ -11,6 +11,7 @@ class ExerciseTemplateSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "fields",
+            "tags",
             "description",
             "is_admin",
         ]
