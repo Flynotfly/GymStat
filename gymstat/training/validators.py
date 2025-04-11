@@ -19,6 +19,8 @@ ALLOWED_EXERCISE_FIELDS = {
     "Tempo": "Text",
 }
 
+ALLOWED_EXERCISE_TAGS = {}
+
 
 def _validate_json_list(
         value,
@@ -163,6 +165,10 @@ def validate_training_notes(value):
 
 def validate_exercise_template_fields(value):
     return _validate_json_list(value, "fields", ALLOWED_EXERCISE_FIELDS)
+
+
+def validate_exercise_template_tags(value):
+    return _validate_json_list(value, "tags", ALLOWED_EXERCISE_TAGS)
 
 
 def validate_exercise_data(data, exercise_template):
