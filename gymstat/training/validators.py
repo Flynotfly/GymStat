@@ -162,16 +162,7 @@ def validate_training_notes(value):
 
 
 def validate_exercise_template_fields(value):
-    if not isinstance(value, list):
-        raise ValidationError("Fields must be a list.")
-    invalid_fields = [
-        field for field in value if field not in ALLOWED_EXERCISE_FIELDS
-    ]
-    if invalid_fields:
-        raise ValidationError(
-            f"Invalid fields provided: {', '.join(invalid_fields)}. "
-            f"Allowed fields are: {', '.join(ALLOWED_EXERCISE_FIELDS.keys())}."
-        )
+    return _validate_json_list(value, "fields", ALLOWED_EXERCISE_FIELDS)
 
 
 def validate_exercise_data(data, exercise_template):
