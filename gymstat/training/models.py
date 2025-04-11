@@ -7,6 +7,7 @@ from .validators import (
     validate_exercise_template_fields,
     validate_training_notes,
     validate_training_template_data,
+    validate_exercise_template_tags,
 )
 
 
@@ -94,6 +95,11 @@ class ExerciseTemplate(models.Model):
         on_delete=models.CASCADE,
     )
     fields = models.JSONField(validators=[validate_exercise_template_fields])
+    tags = models.JSONField(
+        validators=[validate_exercise_template_tags],
+        blank=True,
+        null=True,
+    )
     description = models.TextField(blank=True, null=True)
     is_admin = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
