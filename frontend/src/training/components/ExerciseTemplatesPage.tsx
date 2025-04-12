@@ -52,6 +52,7 @@ export default function ExerciseTemplatesPage() {
         } else {
           setHasMore(false)
         }
+        console.log('fetch exercise templates: ', data); // TODO: remove
       })
       .catch((err) => console.error("Error fetching exercise templates: ", err))
       .finally(() => setLoading(false));
