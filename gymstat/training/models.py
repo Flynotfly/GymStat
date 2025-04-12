@@ -123,7 +123,7 @@ class ExerciseTemplate(models.Model):
                     "description",
                     config="english"
                 ),
-                name="exercise_template_search_vector",
+                name="et_search_vector",
             ),
         ]
         ordering = ["name"]
