@@ -1,12 +1,16 @@
 import {baseURL, request} from "../core/api.ts";
 import {
   NewTraining,
-  NewTrainingTemplate,
-  Training,
-  TrainingTemplate
+  Training
 } from "./types/training";
+import {TrainingTemplate, NewTrainingTemplate} from "./types/trainingTemplate"
 import {PaginatedResponse} from "../types/api";
-import {ExerciseTemplate, ExerciseTemplateType, NewExerciseTemplate} from "./types/exerciseTemplate";
+import {
+  ExerciseTemplate,
+  ExerciseTemplateTag,
+  ExerciseTemplateType,
+  NewExerciseTemplate
+} from "./types/exerciseTemplate";
 
 const TRAINING_BASE_URL = baseURL + 'training/';
 
@@ -22,11 +26,22 @@ const URLs = Object.freeze({
 
 export function getExerciseTemplates(
   page: number = 1,
-  template_type: string = 'all',
+  search?: string,
+  template_type?: ExerciseTemplateType,
+  tags?: ExerciseTemplateTag[],
 ): Promise<PaginatedResponse<ExerciseTemplate>> {
-  return request('GET',
-    URLs['EXERCISE_TEMPLATES'] + '?page=' + page + '&type=' + template_type,
-  )
+  let url = URLs['EXERCISE_TEMPLATES'] + '?page=' + page;
+  if (search) {
+    url = url + '&search=' + search;
+  }
+  if (template_type) {
+    url = url + '&type=' + template_type;
+  }
+  if (tags && tags.length > 0) {
+    url = url + '&tags=' + tags.join(',');
+  }
+
+  return request('GET', url)
 }
 
 export function createExerciseTemplate(
