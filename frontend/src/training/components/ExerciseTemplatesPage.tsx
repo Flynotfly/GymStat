@@ -1,5 +1,17 @@
-import {Box, Grid2, Tab, Tabs, Typography} from "@mui/material";
-import {SyntheticEvent, useEffect, useRef, useState} from "react";
+import {
+  Box,
+  Grid2,
+  Typography,
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Checkbox,
+  FormGroup,
+  FormControlLabel
+} from "@mui/material";
+import {ChangeEvent, SyntheticEvent, useEffect, useRef, useState} from "react";
 import {getExerciseTemplates} from "../api.ts";
 import ExerciseTemplateCard from "./ExerciseTemplateCard.tsx";
 import {ExerciseTemplate, ExerciseTemplateTag, ExerciseTemplateType} from "../types/exerciseTemplate";
@@ -72,23 +84,84 @@ export default function ExerciseTemplatesPage() {
     };
   }, [page, hasMore, loading, selectedType, selectedTags, searchText]);
 
+  const handleTypeChange = (event: SyntheticEvent, newValue: string) => {
+    setSelectedType(newValue as ExerciseTemplateType);
+  };
+
+  const handleTagChange = (event: ChangeEvent<HTMLInputElement>, tag: ExerciseTemplateTag) => {
+    if (event.target.checked) {
+      setSelectedTags([...selectedTags, tag]);
+    } else {
+      setSelectedTags(selectedTags.filter((t) => t !== tag));
+    }
+  };
+
+  const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setSearchText(event.target.value);
+  };
+
   return (
     <Box sx={{ p: 2 }}>
       <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
         Exercises
       </Typography>
-      <Tabs value={tab} onChange={handleChangeTab} sx={{ mb: 3 }}>
-        <Tab label="Base" value="base" />
-        <Tab label="My" value="my" />
-      </Tabs>
+
+      {/*Search bar*/}
+      <TextField
+        fullWidth
+        label="Search"
+        variant="outlined"
+        value={searchText}
+        onChange={handleSearchChange}
+        sx={{ mb: 2 }}
+        />
+
+      {/*Type filter*/}
+      <FormControl sx={{ mb: 2, width: '200px' }}>
+        <InputLabel>Template Type</InputLabel>
+        <Select
+          value={selectedType}
+          label="Template Type"
+          onChange={handleTypeChange}
+        >
+          <MenuItem value="user">User</MenuItem>
+          <MenuItem value="admin">Admin</MenuItem>
+        </Select>
+      </FormControl>
+
+      {/* Tags Filter */}
+      <FormGroup sx={{ mb: 2 }}>
+        <Typography variant="subtitle1">Tags</Typography>
+        {[
+          'chest', 'biceps', 'cardio', 'cycling', 'running', 'free weight', 'machine',
+          'triceps', 'legs', 'back', 'shoulders', 'abs', 'core', 'HIIT', 'yoga', 'pilates'
+        ].map((tag) => (
+          <FormControlLabel
+            key={tag}
+            control={
+              <Checkbox
+                checked={selectedTags.includes(tag as ExerciseTemplateTag)}
+                onChange={(event) => handleTagChange(event, tag as ExerciseTemplateTag)}
+              />
+            }
+            label={tag}
+          />
+        ))}
+      </FormGroup>
 
       <Grid2 container spacing={2}>
-        {currentTemplates.map(template => (
+        {templates.map(template => (
           <Grid2 size={{xs: 12, sm: 6,md: 4}} key={template.id}>
             <ExerciseTemplateCard template={template} />
           </Grid2>
         ))}
       </Grid2>
+
+      {/* Loading Indicator */}
+      {loading && <Typography variant="body1" sx={{ textAlign: 'center' }}>Loading...</Typography>}
+
+      {/* Infinite Scroll Trigger */}
+      <div ref={loadMoreRef} />
     </Box>
   )
 }
