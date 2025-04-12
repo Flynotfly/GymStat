@@ -9,9 +9,10 @@ import {
   MenuItem,
   Checkbox,
   FormGroup,
-  FormControlLabel
+  FormControlLabel,
+  SelectChangeEvent
 } from "@mui/material";
-import {ChangeEvent, SyntheticEvent, useEffect, useRef, useState} from "react";
+import {ChangeEvent, useEffect, useRef, useState} from "react";
 import {getExerciseTemplates} from "../api.ts";
 import ExerciseTemplateCard from "./ExerciseTemplateCard.tsx";
 import {ExerciseTemplate, ExerciseTemplateTag, ExerciseTemplateType} from "../types/exerciseTemplate";
@@ -84,8 +85,8 @@ export default function ExerciseTemplatesPage() {
     };
   }, [page, hasMore, loading, selectedType, selectedTags, searchText]);
 
-  const handleTypeChange = (event: SyntheticEvent, newValue: string) => {
-    setSelectedType(newValue as ExerciseTemplateType);
+  const handleTypeChange = (event: SelectChangeEvent<ExerciseTemplateType>) => {
+    setSelectedType(event.target.value as ExerciseTemplateType);
   };
 
   const handleTagChange = (event: ChangeEvent<HTMLInputElement>, tag: ExerciseTemplateTag) => {
