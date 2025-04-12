@@ -1,13 +1,12 @@
 import {baseURL, request} from "../core/api.ts";
 import {
-  ExerciseTemplate,
-  NewExerciseTemplate,
   NewTraining,
   NewTrainingTemplate,
   Training,
   TrainingTemplate
 } from "./types/training";
 import {PaginatedResponse} from "../types/api";
+import {ExerciseTemplate, ExerciseTemplateType, NewExerciseTemplate} from "./types/exerciseTemplate";
 
 const TRAINING_BASE_URL = baseURL + 'training/';
 
