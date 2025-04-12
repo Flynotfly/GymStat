@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
+from django.contrib.postgres.search import SearchVector
 from django.db import models
 
 from .managers import TrainingManager
@@ -115,6 +116,14 @@ class ExerciseTemplate(models.Model):
                 name="exercise_templates_fields",
                 fields=["fields"],
                 opclasses=["jsonb_path_ops"],
+            ),
+            GinIndex(
+                SearchVector(
+                    "name",
+                    "description",
+                    config="english"
+                ),
+                name="exercise_template_search_vector",
             ),
         ]
         ordering = ["name"]
