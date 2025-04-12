@@ -18,18 +18,22 @@ export default function ExerciseTemplateCard({ template }: ExerciseTemplateCardP
         </Typography>
 
         {/* Fields Chips */}
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
-          {template.fields.map((field, idx) => (
-            <Chip key={idx} label={field} variant="outlined" size="small" />
-          ))}
-        </Box>
+        {template.fields && template.fields.length > 0 && (
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
+            {template.fields.map((field, idx) => (
+              <Chip key={idx} label={field} variant="outlined" size="small" />
+            ))}
+          </Box>
+        )}
 
         {/* Tags Chips */}
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-          {template.tags.map((tag, idx) => (
-            <Chip key={idx} label={tag} variant="filled" color="primary" size="small" />
-          ))}
-        </Box>
+        {template.tags && template.tags.length > 0 && (
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+            {template.tags.map((tag, idx) => (
+              <Chip key={idx} label={tag} variant="filled" color="primary" size="small" />
+            ))}
+          </Box>
+        )}
       </CardContent>
     </Card>
   );
