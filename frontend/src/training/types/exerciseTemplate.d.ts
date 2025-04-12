@@ -1,6 +1,7 @@
 export interface NewExerciseTemplate {
   name: string,
   fields: string[],
+  tags: ExerciseTemplateTag[],
   description: string,
 }
 
