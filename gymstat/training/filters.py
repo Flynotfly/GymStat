@@ -8,7 +8,6 @@ class ExerciseTemplateFilter(django_filters.FilterSet):
     tags = django_filters.CharFilter(method='filter_by_tags')
     type = django_filters.ChoiceFilter(
         choices=[
-            ('all', 'All'),
             ('user', 'User'),
             ('admin', 'Admin'),
         ],
