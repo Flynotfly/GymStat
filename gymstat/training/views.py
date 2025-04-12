@@ -1,4 +1,5 @@
 from django.db.models import Q
+from django.contrib.postgres.search import SearchVector
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 
@@ -9,28 +10,25 @@ from .serializers import (
     TrainingSerializer,
     TrainingTemplateSerializer,
 )
+from .filters import ExerciseTemplateFilter
 
 
 class ExerciseTemplateListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = ExerciseTemplateSerializer
     permission_classes = [IsAuthenticated]
+    filter_class = ExerciseTemplateFilter
 
     def get_queryset(self):
         user = self.request.user
-        exercise_type = self.request.query_params.get("type", "all")
+        search_query = self.request.query_params.get("search", "get")
+        queryset = ExerciseTemplate.objects.all()
+        if search_query:
+            queryset = queryset.annotate(
+                search=SearchVector("name", weight="A") + SearchVector("description", weight="B")
+            ).filter(search=search_query)
 
-        if exercise_type == "user":
-            return ExerciseTemplate.objects.filter(owner=user, is_active=True)
-        elif exercise_type == "admin":
-            return ExerciseTemplate.objects.filter(
-                is_admin=True, is_active=True
-            )
-        elif exercise_type == "all":
-            return ExerciseTemplate.objects.filter(
-                Q(is_active=True), Q(owner=user) | Q(is_admin=True)
-            )
-        else:
-            return ExerciseTemplate.objects.none()
+        queryset = self.filter_class(self.request.GET, queryset=queryset).qs
+        return queryset
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
