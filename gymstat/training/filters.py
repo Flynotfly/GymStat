@@ -22,7 +22,10 @@ class ExerciseTemplateFilter(django_filters.FilterSet):
 
     def filter_by_tages(self, queryset, name, value):
         tags = value.split(',')
-        return queryset.filter(tags__overlap=tags)
+        query = Q()
+        for tag in tags:
+            query &= Q(tags__contains=[tag])
+        return queryset.filter(query)
 
     def filter_by_type(self, queryset, name, value):
         user = self.request.user
