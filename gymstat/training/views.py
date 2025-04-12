@@ -20,7 +20,7 @@ class ExerciseTemplateListCreateAPIView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        search_query = self.request.query_params.get("search", "get")
+        search_query = self.request.query_params.get("search", "")
         queryset = ExerciseTemplate.objects.all()
         if search_query:
             queryset = queryset.annotate(
