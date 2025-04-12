@@ -1,8 +1,8 @@
 import {Box, Grid2, Tab, Tabs, Typography} from "@mui/material";
 import {SyntheticEvent, useEffect, useRef, useState} from "react";
-import {ExerciseTemplate} from "../types/training";
 import {getExerciseTemplates} from "../api.ts";
 import ExerciseTemplateCard from "./ExerciseTemplateCard.tsx";
+import {ExerciseTemplate, ExerciseTemplateTag, ExerciseTemplateType} from "../types/exerciseTemplate";
 
 export default function ExerciseTemplatesPage() {
 
@@ -12,27 +12,65 @@ export default function ExerciseTemplatesPage() {
   const [loading, setLoading] = useState<boolean>(false);
 
   // ----- filters ----- //
-  const [selectedType, setSelectedType] = useState<'all' | 'base' | 'my'>('all');
-  const [selectedTag, setSelectedTag] =  useState<string>('');
+  const [selectedType, setSelectedType] = useState<ExerciseTemplateType>(null);
+  const [selectedTags, setSelectedTags] =  useState<ExerciseTemplateTag[]>([]);
   const [searchText, setSearchText] = useState<string>('');
 
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    getExerciseTemplates(1, 'admin')
-      .then(data => setBaseExerciseTemplates(data.results))
-      .catch(err => console.error("Error fetch base exercise templates: " + err))
-  }, []);
-  useEffect(() => {
-    getExerciseTemplates(1, 'user')
-      .then(data => setUserExerciseTemplates(data.results))
-      .catch(err => console.error("Error fetch user exercise templates: " + err))
-  }, []);
-
-  const handleChangeTab = (_: SyntheticEvent, newValue: 'base' | 'my') => {
-    setTab(newValue);
+  /**
+   * Fetch templates from the server.
+   *
+   * @param pageToFetch - The page number to fetch.
+   * @param append - Whether to append the new templates or replace the list.
+   */
+  const fetchTemplates = (pageToFetch: number, append = false) => {
+    setLoading(true);
+    getExerciseTemplates(pageToFetch, searchText, selectedType, selectedTags)
+      .then((data) => {
+        if (append) {
+          setTemplates((prev) => [...prev, ...data.results])
+        } else {
+          setTemplates(data.results);
+        }
+        setPage(pageToFetch + 1);
+        if (data.next) {
+          setHasMore(true);
+        } else {
+          setHasMore(false)
+        }
+      })
+      .catch((err) => console.error("Error fetching exercise templates: ", err))
+      .finally(() => setLoading(false));
   };
-  const currentTemplates = tab === 'base' ? baseExerciseTemplates : userExerciseTemplates;
+
+  useEffect(() => {
+    setTemplates([]);
+    setPage(1);
+    setHasMore(true);
+    fetchTemplates(1, false)
+  }, [selectedType, selectedTags, searchText]);
+
+  useEffect(() => {
+    if (loading) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !loading) {
+          fetchTemplates(page, true);
+        }
+      },
+      { threshold: 1}
+    );
+    const currentElement = loadMoreRef.current;
+    if (currentElement) {
+      observer.observe(currentElement);
+    }
+    return () => {
+      if (currentElement) {
+        observer.unobserve(currentElement)
+      }
+    };
+  }, [page, hasMore, loading, selectedType, selectedTags, searchText]);
 
   return (
     <Box sx={{ p: 2 }}>
