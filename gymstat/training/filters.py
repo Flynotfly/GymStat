@@ -27,9 +27,12 @@ class ExerciseTemplateFilter(django_filters.FilterSet):
         return queryset.filter(query)
 
     def filter_by_type(self, queryset, name, value):
-        user = self.request.user
-        if value == "user":
-            return queryset.filter(owner=user, is_active=True)
-        elif value == "admin":
-            return queryset.filter(is_admin=True, is_active=True)
-        return queryset.filter(Q(is_active=True), Q(owner=user) | Q(is_admin=True))
+        if self.request:
+            user = self.request.user
+            if value == "user":
+                return queryset.filter(owner=user, is_active=True)
+            elif value == "admin":
+                return queryset.filter(is_admin=True, is_active=True)
+            return queryset.filter(Q(is_active=True), Q(owner=user) | Q(is_admin=True))
+        return queryset.filter(is_admin=True, is_active=True)
+
