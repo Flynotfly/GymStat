@@ -1,0 +1,33 @@
+from django_filters import rest_framework as django_filters
+from django.db.models import Q
+
+from .models import ExerciseTemplate
+
+
+class ExerciseTemplateFilter(django_filters.FilterSet):
+    tags = django_filters.CharFilter(method='filter_by_tags')
+    type = django_filters.ChoiceFilter(
+        choices=[
+            ('all', 'All'),
+            ('user', 'User'),
+            ('admin', 'Admin'),
+        ],
+        method='filter_by_type',
+        required=False,
+    )
+
+    class Meta:
+        model = ExerciseTemplate
+        fields = ["tags", "type"]
+
+    def filter_by_tages(self, queryset, name, value):
+        tags = value.split(',')
+        return queryset.filter(tags__overlap=tags)
+
+    def filter_by_type(self, queryset, name, value):
+        user = self.request.user
+        if value == "user":
+            return queryset.filter(owner=user, is_active=True)
+        elif value == "admin":
+            return queryset.filter(is_admin=True, is_active=True)
+        return queryset.filter(Q(is_active=True), Q(owner=user) | Q(is_admin=True))
