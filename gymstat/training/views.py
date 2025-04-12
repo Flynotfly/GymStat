@@ -27,7 +27,7 @@ class ExerciseTemplateListCreateAPIView(generics.ListCreateAPIView):
                 search=SearchVector("name", weight="A") + SearchVector("description", weight="B")
             ).filter(search=search_query)
 
-        queryset = self.filter_class(self.request.GET, queryset=queryset).qs
+        queryset = self.filter_class(queryset=queryset, request=self.request).qs
         return queryset
 
     def perform_create(self, serializer):
