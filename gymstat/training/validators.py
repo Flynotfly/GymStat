@@ -36,25 +36,6 @@ ALLOWED_EXERCISE_TAGS = {
     "HIIT",
     "yoga",
     "pilates",
-    "stretching",
-    "balance",
-    "functional training",
-    "sprints",
-    "resistance",
-    "endurance",
-    "circuit training",
-    "plyometrics",
-    "calisthenics",
-    "glutes",
-    "hamstrings",
-    "quads",
-    "obliques",
-    "warmup",
-    "cooldown",
-    "recovery",
-    "flexibility",
-    "isolation",
-    "compound"
 }
 
 
