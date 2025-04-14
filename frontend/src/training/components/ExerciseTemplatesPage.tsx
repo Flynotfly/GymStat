@@ -4,7 +4,7 @@ import {
   Typography,
   TextField,
   Checkbox,
-  FormControlLabel,
+  FormControlLabel, Radio, RadioGroup,
 } from "@mui/material";
 import {ChangeEvent, useEffect, useRef, useState} from "react";
 import {getExerciseTemplates} from "../api.ts";
@@ -15,6 +15,7 @@ import {
   ExerciseTemplateType,
   ExerciseTemplateTypeChoose
 } from "../types/exerciseTemplate";
+import FormControl from "@mui/material/FormControl";
 
 export default function ExerciseTemplatesPage() {
 
@@ -101,8 +102,8 @@ export default function ExerciseTemplatesPage() {
     };
   }, [page, hasMore, loading, selectedType, selectedTags, debouncedSearchText]);
 
-  const handleTypeChange = (templateType: ExerciseTemplateTypeChoose) => {
-    setSelectedType(templateType);
+  const handleTypeChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setSelectedType(event.target.value as ExerciseTemplateTypeChoose);
   };
 
   const handleTagChange = (event: ChangeEvent<HTMLInputElement>, tag: ExerciseTemplateTag) => {
@@ -133,39 +134,21 @@ export default function ExerciseTemplatesPage() {
         sx={{ mb: 2 }}
         />
 
-      {/* Template Type Filter as exclusive checkboxes */}
-      <Typography variant="subtitle1" sx={{ mb: 1 }}>
-        Template Type
-      </Typography>
-      <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={selectedType === "all"}
-              onChange={() => handleTypeChange("all")}
-            />
-          }
-          label="All"
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={selectedType === "onlyMy"}
-              onChange={() => handleTypeChange("onlyMy")}
-            />
-          }
-          label="Only My"
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={selectedType === "exceptMy"}
-              onChange={() => handleTypeChange("exceptMy")}
-            />
-          }
-          label="Except My"
-        />
-      </Box>
+      {/* Template Type Filter as a Radio Group */}
+      <FormControl component="fieldset" sx={{ mb: 2 }}>
+        <Typography variant="subtitle1" sx={{ mb: 1 }}>
+          Template Type
+        </Typography>
+        <RadioGroup
+          row
+          value={selectedType}
+          onChange={handleTypeChange}
+        >
+          <FormControlLabel value="all" control={<Radio />} label="All" />
+          <FormControlLabel value="onlyMy" control={<Radio />} label="Only My" />
+          <FormControlLabel value="exceptMy" control={<Radio />} label="Except My" />
+        </RadioGroup>
+      </FormControl>
 
       {/* Tags Filter */}
       <Typography variant="subtitle1" sx={{ mb: 1 }}>
