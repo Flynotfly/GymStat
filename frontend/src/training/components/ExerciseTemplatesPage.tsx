@@ -1,6 +1,5 @@
 import {
   Box,
-  Grid2,
   Typography,
   TextField,
   Checkbox,
@@ -186,13 +185,13 @@ export default function ExerciseTemplatesPage() {
         ))}
       </Box>
 
-      <Grid2 container spacing={2}>
+      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }} >
         {templates.map(template => (
-          <Grid2 size={{xs: 12, md: 6, lg: 4}} key={template.id}>
+          <Box key={template.id} sx={{ flex: "1 1 300px" }}>
             <ExerciseTemplateCard template={template} />
-          </Grid2>
+          </Box>
         ))}
-      </Grid2>
+      </Box>
 
       {/* Loading Indicator */}
       {loading && <Typography variant="body1" sx={{ textAlign: 'center' }}>Loading...</Typography>}
