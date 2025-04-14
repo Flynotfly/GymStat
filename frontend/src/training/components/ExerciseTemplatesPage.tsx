@@ -3,18 +3,18 @@ import {
   Grid2,
   Typography,
   TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   Checkbox,
   FormControlLabel,
-  SelectChangeEvent
 } from "@mui/material";
 import {ChangeEvent, useEffect, useRef, useState} from "react";
 import {getExerciseTemplates} from "../api.ts";
 import ExerciseTemplateCard from "./ExerciseTemplateCard.tsx";
-import {ExerciseTemplate, ExerciseTemplateTag, ExerciseTemplateType} from "../types/exerciseTemplate";
+import {
+  ExerciseTemplate,
+  ExerciseTemplateTag,
+  ExerciseTemplateType,
+  ExerciseTemplateTypeChoose
+} from "../types/exerciseTemplate";
 
 export default function ExerciseTemplatesPage() {
 
@@ -24,7 +24,7 @@ export default function ExerciseTemplatesPage() {
   const [loading, setLoading] = useState<boolean>(false);
 
   // ----- filters ----- //
-  const [selectedType, setSelectedType] = useState<ExerciseTemplateType>(null);
+  const [selectedType, setSelectedType] = useState<ExerciseTemplateTypeChoose>('all');
   const [selectedTags, setSelectedTags] =  useState<ExerciseTemplateTag[]>([]);
   const [searchText, setSearchText] = useState<string>('');
 
@@ -48,7 +48,13 @@ export default function ExerciseTemplatesPage() {
    */
   const fetchTemplates = (pageToFetch: number, append = false) => {
     setLoading(true);
-    getExerciseTemplates(pageToFetch, debouncedSearchText, selectedType, selectedTags)
+    let templateType: ExerciseTemplateType = null;
+    if (selectedType === 'onlyMy') {
+      templateType = 'user';
+    } else if (selectedType === 'exceptMy') {
+      templateType = 'admin';
+    }
+    getExerciseTemplates(pageToFetch, debouncedSearchText, templateType, selectedTags)
       .then((data) => {
         if (append) {
           setTemplates((prev) => [...prev, ...data.results])
@@ -95,8 +101,8 @@ export default function ExerciseTemplatesPage() {
     };
   }, [page, hasMore, loading, selectedType, selectedTags, debouncedSearchText]);
 
-  const handleTypeChange = (event: SelectChangeEvent<ExerciseTemplateType>) => {
-    setSelectedType(event.target.value as ExerciseTemplateType);
+  const handleTypeChange = (templateType: ExerciseTemplateTypeChoose) => {
+    setSelectedType(templateType);
   };
 
   const handleTagChange = (event: ChangeEvent<HTMLInputElement>, tag: ExerciseTemplateTag) => {
@@ -127,24 +133,45 @@ export default function ExerciseTemplatesPage() {
         sx={{ mb: 2 }}
         />
 
-      {/*Type filter*/}
-      <FormControl sx={{ mb: 2, width: '200px' }}>
-        <InputLabel>Template Type</InputLabel>
-        <Select
-          value={selectedType}
-          label="Template Type"
-          onChange={handleTypeChange}
-        >
-          <MenuItem value="user">User</MenuItem>
-          <MenuItem value="admin">Admin</MenuItem>
-        </Select>
-      </FormControl>
+      {/* Template Type Filter as exclusive checkboxes */}
+      <Typography variant="subtitle1" sx={{ mb: 1 }}>
+        Template Type
+      </Typography>
+      <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={selectedType === "all"}
+              onChange={() => handleTypeChange("all")}
+            />
+          }
+          label="All"
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={selectedType === "onlyMy"}
+              onChange={() => handleTypeChange("onlyMy")}
+            />
+          }
+          label="Only My"
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={selectedType === "exceptMy"}
+              onChange={() => handleTypeChange("exceptMy")}
+            />
+          }
+          label="Except My"
+        />
+      </Box>
 
       {/* Tags Filter */}
       <Typography variant="subtitle1" sx={{ mb: 1 }}>
         Tags
       </Typography>
-      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
+      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mb: 2 }}>
         {[
           "chest",
           "biceps",

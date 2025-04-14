@@ -11,8 +11,9 @@ export interface ExerciseTemplate extends NewExerciseTemplate {
 }
 
 export type ExerciseTemplateType = 'user' | 'admin' | null;
+export type ExerciseTemplateTypeChoose = 'all' | 'onlyMy' | 'exceptMy';
 
-type ExerciseTemplateTag =
+export type ExerciseTemplateTag =
   "chest"
   | "biceps"
   | "cardio"
