@@ -36,7 +36,7 @@ export default function ExerciseTemplatesPage() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchText(searchText);
-    }, 250);
+    }, 150);
     return () => clearTimeout(timer);
   }, [searchText]);
 
