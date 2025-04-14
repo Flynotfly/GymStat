@@ -188,7 +188,7 @@ export default function ExerciseTemplatesPage() {
 
       <Grid2 container spacing={2}>
         {templates.map(template => (
-          <Grid2 size={{xs: 12, sm: 6,md: 4}} key={template.id}>
+          <Grid2 size={{xs: 12, md: 6, lg: 4}} key={template.id}>
             <ExerciseTemplateCard template={template} />
           </Grid2>
         ))}
