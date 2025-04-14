@@ -31,6 +31,16 @@ export default function ExerciseTemplatesPage() {
 
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
+  const [debouncedSearchText, setDebouncedSearchText] = useState<string>(searchText);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchText(searchText);
+    }, 250);
+    return () => clearTimeout(timer);
+  }, [searchText]);
+
+
   /**
    * Fetch templates from the server.
    *
@@ -39,7 +49,7 @@ export default function ExerciseTemplatesPage() {
    */
   const fetchTemplates = (pageToFetch: number, append = false) => {
     setLoading(true);
-    getExerciseTemplates(pageToFetch, searchText, selectedType, selectedTags)
+    getExerciseTemplates(pageToFetch, debouncedSearchText, selectedType, selectedTags)
       .then((data) => {
         if (append) {
           setTemplates((prev) => [...prev, ...data.results])
@@ -63,7 +73,7 @@ export default function ExerciseTemplatesPage() {
     setPage(1);
     setHasMore(true);
     fetchTemplates(1, false)
-  }, [selectedType, selectedTags, searchText]);
+  }, [selectedType, selectedTags, debouncedSearchText]);
 
   useEffect(() => {
     if (loading) return;
@@ -84,7 +94,7 @@ export default function ExerciseTemplatesPage() {
         observer.unobserve(currentElement)
       }
     };
-  }, [page, hasMore, loading, selectedType, selectedTags, searchText]);
+  }, [page, hasMore, loading, selectedType, selectedTags, debouncedSearchText]);
 
   const handleTypeChange = (event: SelectChangeEvent<ExerciseTemplateType>) => {
     setSelectedType(event.target.value as ExerciseTemplateType);
