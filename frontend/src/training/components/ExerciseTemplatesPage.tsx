@@ -142,11 +142,27 @@ export default function ExerciseTemplatesPage() {
       </FormControl>
 
       {/* Tags Filter */}
-      <FormGroup sx={{ mb: 2 }}>
-        <Typography variant="subtitle1">Tags</Typography>
+      <Typography variant="subtitle1" sx={{ mb: 1 }}>
+        Tags
+      </Typography>
+      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
         {[
-          'chest', 'biceps', 'cardio', 'cycling', 'running', 'free weight', 'machine',
-          'triceps', 'legs', 'back', 'shoulders', 'abs', 'core', 'HIIT', 'yoga', 'pilates'
+          "chest",
+          "biceps",
+          "cardio",
+          "cycling",
+          "running",
+          "free weight",
+          "machine",
+          "triceps",
+          "legs",
+          "back",
+          "shoulders",
+          "abs",
+          "core",
+          "HIIT",
+          "yoga",
+          "pilates"
         ].map((tag) => (
           <FormControlLabel
             key={tag}
@@ -159,7 +175,7 @@ export default function ExerciseTemplatesPage() {
             label={tag}
           />
         ))}
-      </FormGroup>
+      </Box>
 
       <Grid2 container spacing={2}>
         {templates.map(template => (
