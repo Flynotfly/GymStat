@@ -3,6 +3,7 @@
 
 # self assigned certs
 ssl/
+local_postgres/
 
 # configuration files
 .flake8
