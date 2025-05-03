@@ -3,43 +3,43 @@ from django.urls import reverse
 from rest_framework.test import APITestCase
 
 from ...models import Metric
-from user.tests import user, other_user, login_data
+from user.tests import user_data, other_user_data, login_data
 
 
 User = get_user_model()
 
 
-metric = {
-    "owner": user,
-    "name": "Weight",
-    "unit": "kg",
-    "description": "User Metric",
-    "admin": False,
-}
+def get_list_url():
+    return reverse("metrics:get-create-metrics")
 
-metric_other_user = {
-    "owner": other_user,
-    "name": "BMI",
-    "unit": "",
-    "description": "Other user's metric",
-    "admin": False,
-}
 
-metric_admin = {
-    "owner": other_user,
-    "name": "Height",
-    "unit": "cm",
-    "description": "Admin Metric",
-    "admin": True,
-}
-
-list_create_url = reverse("metrics:get-create-metrics")
-get_url = reverse("metrics:get-edit-metric")
+def get_details_url(pk: int):
+    return reverse("metrics:get-edit-metric", kwargs={"pk": pk})
 
 
 class MetricAPITests(APITestCase):
     def setUp(self):
-        Metric.objects.create(**metric)
-        Metric.objects.create(**metric_other_user)
-        Metric.objects.create(**metric_admin)
+        self.user = User.objects.create_user(**user_data)
+        self.other_user = User.objects.create_user(**other_user_data)
+        self.metric = Metric.objects.create(
+            owner=self.user,
+            name="Weight",
+            unit="kg",
+            description="User Metric",
+            admin=False,
+        )
+        self.metric_other_user = Metric.objects.create(
+            owner=self.other_user,
+            name="BMI",
+            unit="",
+            description="Other user's metric",
+            admin=False,
+        )
+        self.metric_admin = Metric.objects.create(
+            owner=self.other_user,
+            name="Height",
+            unit="cm",
+            description="Admin Metric",
+            admin=True,
+        )
         self.client.login(**login_data)
