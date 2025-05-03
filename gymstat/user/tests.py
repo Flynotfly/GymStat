@@ -17,3 +17,8 @@ other_user = User.objects.create_user(
     last_name="User",
     password="otherpass",
 )
+
+login_data = {
+    "email": "test@example.com",
+    "password": "testpass",
+}
