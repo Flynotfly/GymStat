@@ -43,3 +43,11 @@ class MetricAPITests(APITestCase):
             admin=True,
         )
         self.client.login(**login_data)
+
+    def test_get_all_metrics(self):
+        responce = self.client.get(get_list_url())
+        self.assertEqual(responce.status_code, 200)
+        self.assertEqual(responce.data["count"], 2)
+        returned_ids = {metric["id"] for metric in responce.data["results"]}
+        excpeted_ids = {self.metric.id, self.metric_admin.id}
+        self.assertEqual(returned_ids, excpeted_ids)
