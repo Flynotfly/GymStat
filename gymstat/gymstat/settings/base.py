@@ -164,7 +164,8 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 60,
     "DEFAULT_FILTER_BACKENDS": [
         "django_filters.rest_framework.DjangoFilterBackend",
-    ]
+    ],
+    "TEST_REQUEST_DEFAULT_FORMAT": "json",
 }
 
 CACHES = {
