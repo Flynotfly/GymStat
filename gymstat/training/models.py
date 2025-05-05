@@ -6,9 +6,9 @@ from django.db import models
 from .managers import TrainingManager
 from .validators import (
     validate_exercise_template_fields,
+    validate_exercise_template_tags,
     validate_training_notes,
     validate_training_template_data,
-    validate_exercise_template_tags,
 )
 
 
@@ -118,11 +118,7 @@ class ExerciseTemplate(models.Model):
                 opclasses=["jsonb_path_ops"],
             ),
             GinIndex(
-                SearchVector(
-                    "name",
-                    "description",
-                    config="english"
-                ),
+                SearchVector("name", "description", config="english"),
                 name="et_search_vector",
             ),
         ]

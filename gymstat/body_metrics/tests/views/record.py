@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework.test import APITestCase
 
-from user.tests import user_data, other_user_data, login_data
+from user.tests import login_data, other_user_data, user_data
 
 from ...models import Metric, Record
 
@@ -75,7 +75,7 @@ class RecordAPITests(APITestCase):
         )
         self.new_record_data = {
             "value": 10,
-            "datetime": "2025-04-10T11:00:00Z"
+            "datetime": "2025-04-10T11:00:00Z",
         }
 
         self.client.login(**login_data)
@@ -84,19 +84,38 @@ class RecordAPITests(APITestCase):
         responce = self.client.get(get_list_url(self.metric))
         self.assertEqual(responce.status_code, 200)
         self.assertEqual(responce.data["count"], 2)
-        self.assertEqual(responce.data["results"][0]["id"], self.user_fresh_record.pk)
-        self.assertEqual(responce.data["results"][0]["value"], self.user_fresh_record.value)
-        self.assertEqual(responce.data["results"][1]["id"], self.user_record.pk)
-        self.assertEqual(responce.data["results"][1]["value"], self.user_record.value)
+        self.assertEqual(
+            responce.data["results"][0]["id"], self.user_fresh_record.pk
+        )
+        self.assertEqual(
+            responce.data["results"][0]["value"], self.user_fresh_record.value
+        )
+        self.assertEqual(
+            responce.data["results"][1]["id"], self.user_record.pk
+        )
+        self.assertEqual(
+            responce.data["results"][1]["value"], self.user_record.value
+        )
 
     def test_get_records_admin_metric(self):
         responce = self.client.get(get_list_url(self.admin_metric))
         self.assertEqual(responce.status_code, 200)
         self.assertEqual(responce.data["count"], 2)
-        self.assertEqual(responce.data["results"][0]["id"], self.admin_metric_fresh_record.pk)
-        self.assertEqual(responce.data["results"][0]["value"], self.admin_metric_fresh_record.value)
-        self.assertEqual(responce.data["results"][1]["id"], self.admin_metric_record.pk)
-        self.assertEqual(responce.data["results"][1]["value"], self.admin_metric_record.value)
+        self.assertEqual(
+            responce.data["results"][0]["id"],
+            self.admin_metric_fresh_record.pk,
+        )
+        self.assertEqual(
+            responce.data["results"][0]["value"],
+            self.admin_metric_fresh_record.value,
+        )
+        self.assertEqual(
+            responce.data["results"][1]["id"], self.admin_metric_record.pk
+        )
+        self.assertEqual(
+            responce.data["results"][1]["value"],
+            self.admin_metric_record.value,
+        )
 
     def test_get_records_other_user_metric(self):
         responce = self.client.get(get_list_url(self.other_user_metric))
@@ -112,14 +131,18 @@ class RecordAPITests(APITestCase):
         responce = self.client.get(get_details_url(self.admin_metric_record))
         self.assertEqual(responce.status_code, 200)
         self.assertEqual(responce.data["id"], self.admin_metric_record.pk)
-        self.assertEqual(responce.data["value"], self.admin_metric_record.value)
+        self.assertEqual(
+            responce.data["value"], self.admin_metric_record.value
+        )
 
     def test_get_single_record_other_user_metric(self):
         responce = self.client.get(get_details_url(self.other_user_record))
         self.assertEqual(responce.status_code, 403)
 
     def test_get_single_record_admin_metric_non_owned(self):
-        responce = self.client.get(get_details_url(self.admin_metric_other_user_record))
+        responce = self.client.get(
+            get_details_url(self.admin_metric_other_user_record)
+        )
         self.assertEqual(responce.status_code, 403)
 
     def test_create_record_user_metric(self):
@@ -134,7 +157,9 @@ class RecordAPITests(APITestCase):
         self.new_record_data["metric"] = self.admin_metric.pk
         responce = self.client.post(get_create_url(), self.new_record_data)
         self.assertEqual(responce.status_code, 201)
-        records = Record.objects.filter(metric=self.admin_metric, owner=self.user)
+        records = Record.objects.filter(
+            metric=self.admin_metric, owner=self.user
+        )
         self.assertEqual(records.count(), 3)
         self.assertEqual(records[0].value, self.new_record_data["value"])
 
@@ -145,42 +170,63 @@ class RecordAPITests(APITestCase):
 
     def test_edit_record_user_metric(self):
         self.new_record_data["metric"] = self.user_record.metric.pk
-        responce = self.client.put(get_details_url(self.user_record), self.new_record_data)
+        responce = self.client.put(
+            get_details_url(self.user_record), self.new_record_data
+        )
         self.assertEqual(responce.status_code, 200)
         self.user_record.refresh_from_db()
         self.assertEqual(self.user_record.value, self.new_record_data["value"])
 
     def test_edit_record_admin_metric(self):
         self.new_record_data["metric"] = self.admin_metric_record.metric.pk
-        responce = self.client.put(get_details_url(self.admin_metric_record), self.new_record_data)
+        responce = self.client.put(
+            get_details_url(self.admin_metric_record), self.new_record_data
+        )
         self.assertEqual(responce.status_code, 200)
         self.admin_metric_record.refresh_from_db()
-        self.assertEqual(self.admin_metric_record.value, self.new_record_data["value"])
+        self.assertEqual(
+            self.admin_metric_record.value, self.new_record_data["value"]
+        )
 
     def test_edit_record_other_user_metric(self):
         self.new_record_data["metric"] = self.other_user_record.metric.pk
-        responce = self.client.put(get_details_url(self.other_user_record), self.new_record_data)
+        responce = self.client.put(
+            get_details_url(self.other_user_record), self.new_record_data
+        )
         self.assertEqual(responce.status_code, 403)
 
     def test_edit_record_admin_metric_non_owned(self):
-        self.new_record_data["metric"] = self.admin_metric_other_user_record.metric.pk
-        responce = self.client.put(get_details_url(self.admin_metric_other_user_record), self.new_record_data)
+        self.new_record_data["metric"] = (
+            self.admin_metric_other_user_record.metric.pk
+        )
+        responce = self.client.put(
+            get_details_url(self.admin_metric_other_user_record),
+            self.new_record_data,
+        )
         self.assertEqual(responce.status_code, 403)
 
     def test_delete_record_user_metric(self):
         responce = self.client.delete(get_details_url(self.user_record))
         self.assertEqual(responce.status_code, 204)
-        self.assertFalse(Record.objects.filter(pk=self.user_record.pk).exists())
+        self.assertFalse(
+            Record.objects.filter(pk=self.user_record.pk).exists()
+        )
 
     def test_delete_record_admin_metric(self):
-        responce = self.client.delete(get_details_url(self.admin_metric_record))
+        responce = self.client.delete(
+            get_details_url(self.admin_metric_record)
+        )
         self.assertEqual(responce.status_code, 204)
-        self.assertFalse(Record.objects.filter(pk=self.admin_metric_record.pk).exists())
+        self.assertFalse(
+            Record.objects.filter(pk=self.admin_metric_record.pk).exists()
+        )
 
     def test_delete_record_other_user_metric(self):
         responce = self.client.delete(get_details_url(self.other_user_record))
         self.assertEqual(responce.status_code, 403)
 
     def test_delete_record_admin_metric_non_owned(self):
-        responce = self.client.delete(get_details_url(self.admin_metric_other_user_record))
+        responce = self.client.delete(
+            get_details_url(self.admin_metric_other_user_record)
+        )
         self.assertEqual(responce.status_code, 403)

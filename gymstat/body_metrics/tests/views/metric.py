@@ -2,9 +2,9 @@ from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework.test import APITestCase
 
-from ...models import Metric
-from user.tests import user_data, other_user_data, login_data
+from user.tests import login_data, other_user_data, user_data
 
+from ...models import Metric
 
 User = get_user_model()
 
@@ -70,7 +70,12 @@ class MetricAPITests(APITestCase):
         self.assertEqual(responce.status_code, 200)
         self.assertEqual(responce.data["count"], 4)
         returned_ids = {metric["id"] for metric in responce.data["results"]}
-        excpeted_ids = {self.metric.id, self.metric_second.id, self.metric_admin.id, self.metric_admin_second.id}
+        excpeted_ids = {
+            self.metric.id,
+            self.metric_second.id,
+            self.metric_admin.id,
+            self.metric_admin_second.id,
+        }
         self.assertEqual(returned_ids, excpeted_ids)
 
     def test_get_user_metrics(self):
@@ -106,23 +111,31 @@ class MetricAPITests(APITestCase):
         self.assertEqual(responce.status_code, 403)
 
     def test_create_metric(self):
-        responce = self.client.post(get_list_create_url(), self.new_metric_data)
+        responce = self.client.post(
+            get_list_create_url(), self.new_metric_data
+        )
         self.assertEqual(responce.status_code, 201)
         self.assertEqual(responce.data["name"], self.new_metric_data["name"])
         self.assertEqual(Metric.objects.filter(owner=self.user).count(), 3)
 
     def test_edit_owned_metric(self):
-        responce = self.client.put(get_details_url(self.metric.pk), self.new_metric_data)
+        responce = self.client.put(
+            get_details_url(self.metric.pk), self.new_metric_data
+        )
         self.assertEqual(responce.status_code, 200)
         self.metric.refresh_from_db()
         self.assertEqual(self.metric.name, self.new_metric_data["name"])
 
     def test_edit_admin_metric(self):
-        responce = self.client.put(get_details_url(self.metric_admin.pk), self.new_metric_data)
+        responce = self.client.put(
+            get_details_url(self.metric_admin.pk), self.new_metric_data
+        )
         self.assertEqual(responce.status_code, 403)
 
     def test_edit_other_user_metric(self):
-        responce = self.client.put(get_details_url(self.metric_other_user.pk), self.new_metric_data)
+        responce = self.client.put(
+            get_details_url(self.metric_other_user.pk), self.new_metric_data
+        )
         self.assertEqual(responce.status_code, 403)
 
     def test_delete_owned_metric(self):
@@ -133,12 +146,18 @@ class MetricAPITests(APITestCase):
     def test_delete_admin_metric(self):
         responce = self.client.delete(get_details_url(self.metric_admin.pk))
         self.assertEqual(responce.status_code, 403)
-        self.assertTrue(Metric.objects.filter(pk=self.metric_admin.id).exists())
+        self.assertTrue(
+            Metric.objects.filter(pk=self.metric_admin.id).exists()
+        )
 
     def test_delete_other_user_metric(self):
-        responce = self.client.delete(get_details_url(self.metric_other_user.pk))
+        responce = self.client.delete(
+            get_details_url(self.metric_other_user.pk)
+        )
         self.assertEqual(responce.status_code, 403)
-        self.assertTrue(Metric.objects.filter(pk=self.metric_other_user.id).exists())
+        self.assertTrue(
+            Metric.objects.filter(pk=self.metric_other_user.id).exists()
+        )
 
     def test_unauthenticated_access(self):
         self.client.logout()
