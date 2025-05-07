@@ -1,7 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
-from django.db.utils import DataError
 
 from user.tests import user_data
 
@@ -41,9 +40,20 @@ class ExerciseTemplateModelTestCase(TestCase):
         self.assertTrue(template.is_active)
         self.assertFalse(template.is_admin)
 
-    def test_empty_name(self):
+    def test_name_too_long(self):
         template = ExerciseTemplate(
-                name="1234567890" * 6,
+                name="a" * 51,
+                owner=self.user,
+                fields=VALID_FIELDS,
+                tags=VALID_TAGS,
+                description=description,
+            )
+        with self.assertRaises(ValidationError):
+            template.full_clean()
+
+    def test_name_is_empty(self):
+        template = ExerciseTemplate(
+                name="",
                 owner=self.user,
                 fields=VALID_FIELDS,
                 tags=VALID_TAGS,
