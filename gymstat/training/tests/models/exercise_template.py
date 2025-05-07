@@ -61,3 +61,84 @@ class ExerciseTemplateModelTestCase(TestCase):
             )
         with self.assertRaises(ValidationError):
             template.full_clean()
+
+    def test_no_description(self):
+        ExerciseTemplate.objects.create(
+            name=name,
+            owner=self.user,
+            fields=VALID_FIELDS,
+            tags=VALID_TAGS,
+        )
+        self.assertEqual(ExerciseTemplate.objects.count(), 1)
+
+    def test_no_owner(self):
+        template = ExerciseTemplate(
+            name=name,
+            fields=VALID_FIELDS,
+            tags=VALID_TAGS,
+            description=description,
+        )
+        with self.assertRaises(ValidationError):
+            template.full_clean()
+
+    def test_no_tags(self):
+        ExerciseTemplate.objects.create(
+            name=name,
+            owner=self.user,
+            fields=VALID_FIELDS,
+            description=description,
+        )
+        self.assertEqual(ExerciseTemplate.objects.count(), 1)
+
+    def test_tags_are_empty(self):
+        ExerciseTemplate.objects.create(
+            name=name,
+            owner=self.user,
+            fields=VALID_FIELDS,
+            tags=[],
+            description=description,
+        )
+        self.assertEqual(ExerciseTemplate.objects.count(), 1)
+
+    def test_invalid_tags(self):
+        template = ExerciseTemplate(
+            name=name,
+            owner=self.user,
+            fields=VALID_FIELDS,
+            tags=INVALID_TAGS,
+            description=description,
+        )
+        with self.assertRaises(ValidationError):
+            template.full_clean()
+
+    def test_no_fields(self):
+        template = ExerciseTemplate(
+            name=name,
+            owner=self.user,
+            tags=VALID_TAGS,
+            description=description,
+        )
+        with self.assertRaises(ValidationError):
+            template.full_clean()
+
+    def test_fields_are_empty(self):
+        template = ExerciseTemplate(
+            name=name,
+            owner=self.user,
+            fields=[],
+            tags=VALID_TAGS,
+            description=description,
+        )
+        with self.assertRaises(ValidationError):
+            template.full_clean()
+
+    def test_fields_are_invalid(self):
+        template = ExerciseTemplate(
+            name=name,
+            owner=self.user,
+            fields=INVALID_FIELDS,
+            tags=VALID_TAGS,
+            description=description,
+        )
+        with self.assertRaises(ValidationError):
+            template.full_clean()
