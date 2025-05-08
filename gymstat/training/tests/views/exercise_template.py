@@ -53,7 +53,7 @@ class ExericseTemplateAPITestCase(APITestCase):
             tags=["chest", "triceps", "free weight"],
             description="It is the best exercise",
         )
-        self.best_exericse = ExerciseTemplate.objects.create(
+        self.best_exercise = ExerciseTemplate.objects.create(
             name="Best exercise",
             owner=self.user,
             fields=["Sets", "Reps", "Weight", "Time"],
@@ -132,7 +132,7 @@ class ExericseTemplateAPITestCase(APITestCase):
         returned_ids = {exercise["id"] for exercise in response.data["results"]}
         expected_ids = {
             self.bench_exercise.pk,
-            self.best_exericse.pk,
+            self.best_exercise.pk,
             self.leg_exercise.pk,
             self.no_tags_exercise.pk,
             self.admin_bench_exercise.pk,
@@ -141,10 +141,10 @@ class ExericseTemplateAPITestCase(APITestCase):
         self.assertEqual(returned_ids, expected_ids)
 
     def test_get_user_exercise(self):
-        response = self.client.get(get_detail_url(self.best_exericse.pk))
+        response = self.client.get(get_detail_url(self.best_exercise.pk))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data["id"], self.best_exericse.pk)
-        self.assertEqual(response.data["name"], self.best_exericse.name)
+        self.assertEqual(response.data["id"], self.best_exercise.pk)
+        self.assertEqual(response.data["name"], self.best_exercise.name)
 
     def test_get_admin_exercise(self):
         response = self.client.get(get_detail_url(self.admin_run_exercise.pk))
@@ -162,10 +162,10 @@ class ExericseTemplateAPITestCase(APITestCase):
         self.assertEqual(exercise.count(), 1)
 
     def test_edit_owned_exercise(self):
-        response = self.client.put(get_detail_url(self.best_exericse.pk), self.new_exercise_data)
+        response = self.client.put(get_detail_url(self.best_exercise.pk), self.new_exercise_data)
         self.assertEqual(response.status_code, 200)
-        self.best_exericse.refresh_from_db()
-        self.assertEqual(self.best_exericse.name, self.new_exercise_data["name"])
+        self.best_exercise.refresh_from_db()
+        self.assertEqual(self.best_exercise.name, self.new_exercise_data["name"])
 
     def test_edit_admin_exercise(self):
         response = self.client.put(get_detail_url(self.admin_run_exercise.pk), self.new_exercise_data)
@@ -176,10 +176,10 @@ class ExericseTemplateAPITestCase(APITestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_delete_owned_exercise(self):
-        response = self.client.delete(get_detail_url(self.best_exericse.pk))
+        response = self.client.delete(get_detail_url(self.best_exercise.pk))
         self.assertEqual(response.status_code, 204)
         self.assertFalse(
-            ExerciseTemplate.objects.filter(pk=self.best_exericse.pk).exists()
+            ExerciseTemplate.objects.filter(pk=self.best_exercise.pk).exists()
         )
 
     def test_delete_admin_exercise(self):
@@ -198,7 +198,7 @@ class ExericseTemplateAPITestCase(APITestCase):
         returned_ids = {exercise["id"] for exercise in response.data["results"]}
         expected_ids = {
             self.bench_exercise.pk,
-            self.best_exericse.pk,
+            self.best_exercise.pk,
             self.leg_exercise.pk,
             self.no_tags_exercise.pk,
         }
@@ -224,7 +224,7 @@ class ExericseTemplateAPITestCase(APITestCase):
         returned_ids = {exercise["id"] for exercise in response.data["results"]}
         expected_ids = {
             self.bench_exercise.pk,
-            self.best_exericse.pk,
+            self.best_exercise.pk,
             self.admin_bench_exercise.pk,
         }
         self.assertEqual(returned_ids, expected_ids)
@@ -250,7 +250,7 @@ class ExericseTemplateAPITestCase(APITestCase):
         returned_ids = {exercise["id"] for exercise in response.data["results"]}
         expected_ids = {
             self.bench_exercise.pk,
-            self.best_exericse.pk,
+            self.best_exercise.pk,
             self.leg_exercise.pk,
             self.admin_bench_exercise.pk,
         }
@@ -264,7 +264,7 @@ class ExericseTemplateAPITestCase(APITestCase):
         returned_ids = {exercise["id"] for exercise in response.data["results"]}
         expected_ids = {
             self.bench_exercise.pk,
-            self.best_exericse.pk,
+            self.best_exercise.pk,
             self.admin_bench_exercise.pk,
         }
         self.assertEqual(returned_ids, expected_ids)
@@ -280,7 +280,7 @@ class ExericseTemplateAPITestCase(APITestCase):
         returned_ids = {exercise["id"] for exercise in response.data["results"]}
         expected_ids = {
             self.bench_exercise.pk,
-            self.best_exericse.pk,
+            self.best_exercise.pk,
         }
         self.assertEqual(returned_ids, expected_ids)
 
