@@ -57,7 +57,7 @@ class ExericseTemplateAPITestCase(APITestCase):
             name="Best exercise",
             owner=self.user,
             fields=["Sets", "Reps", "Weight", "Time"],
-            tags=["chest", "triceps", "free weight"],
+            tags=["chest", "free weight"],
             description="Second Exercise",
         )
         self.leg_exercise = ExerciseTemplate.objects.create(
@@ -211,6 +211,31 @@ class ExericseTemplateAPITestCase(APITestCase):
         returned_ids = {exercise["id"] for exercise in response.data["results"]}
         expected_ids = {
             self.admin_run_exercise.pk,
+            self.admin_bench_exercise.pk,
+        }
+        self.assertEqual(returned_ids, expected_ids)
+
+    # Filter by tag
+    def test_get_by_tag(self):
+        tag = "chest"
+        response = self.client.get(get_list_url(tags=[tag]))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["count"], 3)
+        returned_ids = {exercise["id"] for exercise in response.data["results"]}
+        expected_ids = {
+            self.bench_exercise.pk,
+            self.best_exericse.pk,
+            self.admin_bench_exercise.pk,
+        }
+        self.assertEqual(returned_ids, expected_ids)
+    def test_get_by_several_tags(self):
+        tags = ["chest", "triceps"]
+        response = self.client.get(get_list_url(tags=tags))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["count"], 2)
+        returned_ids = {exercise["id"] for exercise in response.data["results"]}
+        expected_ids = {
+            self.bench_exercise.pk,
             self.admin_bench_exercise.pk,
         }
         self.assertEqual(returned_ids, expected_ids)
