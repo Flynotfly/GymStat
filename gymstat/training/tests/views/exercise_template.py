@@ -210,7 +210,7 @@ class ExericseTemplateAPITestCase(APITestCase):
         self.assertEqual(response.data["count"], 2)
         returned_ids = {exercise["id"] for exercise in response.data["results"]}
         expected_ids = {
-            self.admin_run_exercise,
-            self.admin_bench_exercise,
+            self.admin_run_exercise.pk,
+            self.admin_bench_exercise.pk,
         }
         self.assertEqual(returned_ids, expected_ids)
