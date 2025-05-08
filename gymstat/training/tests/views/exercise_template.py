@@ -250,7 +250,7 @@ class ExericseTemplateAPITestCase(APITestCase):
         returned_ids = {exercise["id"] for exercise in response.data["results"]}
         expected_ids = {
             self.bench_exercise.pk,
-            self.bench_exercise.pk,
+            self.best_exericse.pk,
             self.leg_exercise.pk,
             self.admin_bench_exercise.pk,
         }
@@ -264,7 +264,7 @@ class ExericseTemplateAPITestCase(APITestCase):
         returned_ids = {exercise["id"] for exercise in response.data["results"]}
         expected_ids = {
             self.bench_exercise.pk,
-            self.bench_exercise.pk,
+            self.best_exericse.pk,
             self.admin_bench_exercise.pk,
         }
         self.assertEqual(returned_ids, expected_ids)
