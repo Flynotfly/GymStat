@@ -293,3 +293,29 @@ class ExericseTemplateAPITestCase(APITestCase):
         self.assertEqual(response.data["count"], 1)
         self.assertEqual(response.data["results"][0]["id"], self.admin_run_exercise.pk)
         self.assertEqual(response.data["results"][0]["name"], self.admin_run_exercise.name)
+
+    # Search tests
+    def test_search(self):
+        search = "bench press"
+        response = self.client.get(get_list_url(search=search))
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.data["count"] >= 2)
+        self.assertEqual(response.data["results"][0]["id"], self.bench_exercise.pk)
+        self.assertEqual(response.data["results"][1]["id"], self.admin_bench_exercise.pk)
+
+    def test_search_2(self):
+        search = "exercise"
+        response = self.client.get(get_list_url(search=search))
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.data["count"] >= 3)
+        self.assertEqual(response.data["results"][0]["id"], self.best_exercise.pk)
+        # check 2 and 3 returned templates
+        returned_ids = {
+            response.data["results"][1]["id"],
+            response.data["results"][2]["id"],
+        }
+        expected_ids = {
+            self.bench_exercise.pk,
+            self.admin_bench_exercise.pk,
+        }
+        self.assertEqual(returned_ids, expected_ids)
