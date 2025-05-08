@@ -215,7 +215,7 @@ class ExericseTemplateAPITestCase(APITestCase):
         }
         self.assertEqual(returned_ids, expected_ids)
 
-    # Filter by tag
+    # Filter by type
     def test_get_by_tag(self):
         tag = "chest"
         response = self.client.get(get_list_url(tags=[tag]))
