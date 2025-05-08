@@ -269,4 +269,27 @@ class ExericseTemplateAPITestCase(APITestCase):
         }
         self.assertEqual(returned_ids, expected_ids)
 
-    #
+    # Filter by type, tags and fields
+    def test_complex_filter(self):
+        exercise_type = "user"
+        tags = ["sets", "reps"]
+        fields = ["chest", "free weight"]
+        response = self.client.get(get_list_url(exercise_type=exercise_type, tags=tags, fields=fields))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["count"], 2)
+        returned_ids = {exercise["id"] for exercise in response.data["results"]}
+        expected_ids = {
+            self.bench_exercise.pk,
+            self.best_exericse.pk,
+        }
+        self.assertEqual(returned_ids, expected_ids)
+
+    def test_complex_filter_2(self):
+        exercise_type = "admin"
+        tags = ["running"]
+        fields = ["time"]
+        response = self.client.get(get_list_url(exercise_type=exercise_type, tags=tags, fields=fields))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["count"], 1)
+        self.assertEqual(response.data["results"][0]["id"], self.admin_run_exercise.pk)
+        self.assertEqual(response.data["results"][0]["name"], self.admin_run_exercise.name)
