@@ -19,7 +19,7 @@ class ExerciseTemplateFilter(django_filters.FilterSet):
         model = ExerciseTemplate
         fields = ["tags", "type"]
 
-    def filter_by_tages(self, queryset, name, value):
+    def filter_by_tags(self, queryset, name, value):
         tags = value.split(",")
         query = Q()
         for tag in tags:
