@@ -228,6 +228,7 @@ class ExericseTemplateAPITestCase(APITestCase):
             self.admin_bench_exercise.pk,
         }
         self.assertEqual(returned_ids, expected_ids)
+
     def test_get_by_several_tags(self):
         tags = ["chest", "triceps"]
         response = self.client.get(get_list_url(tags=tags))
