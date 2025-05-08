@@ -17,6 +17,14 @@ other_user_data = {
     "password": "otherpass",
 }
 
+admin_user_data = {
+    "email": "admin@example.com",
+    "first_name": "Admin",
+    "last_name": "User",
+    "password": "adminpass",
+    "is_staff": True,
+}
+
 login_data = {
     "email": "test@example.com",
     "password": "testpass",
