@@ -319,3 +319,15 @@ class ExericseTemplateAPITestCase(APITestCase):
             self.admin_bench_exercise.pk,
         }
         self.assertEqual(returned_ids, expected_ids)
+
+    # All filters and search at the same time
+    def test_filters_and_search(self):
+        exercise_type = "user"
+        tags = ["sets", "reps"]
+        fields = ["chest", "free weight"]
+        search = "exercise"
+        response = self.client.get(get_list_url(exercise_type=exercise_type, tags=tags, fields=fields, search=search))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["count"], 2)
+        self.assertEqual(response.data["results"][0]["id"], self.best_exercise.pk)
+        self.assertEqual(response.data["results"][1]["id"], self.bench_exercise.pk)
