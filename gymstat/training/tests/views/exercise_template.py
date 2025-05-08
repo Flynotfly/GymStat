@@ -1,6 +1,7 @@
 from rest_framework.test import APITestCase
 from django.contrib.auth import get_user_model
 from django.urls import reverse
+from urllib.parse import urlencode
 
 from user.tests import user_data, other_user_data, admin_user_data, login_data
 
@@ -10,8 +11,25 @@ from ...models import ExerciseTemplate
 User = get_user_model()
 
 
-def get_list_url():
-    return reverse("training:exercise-template-list-create")
+def get_list_url(
+        exercise_type: str | None = None,
+        tags: list[str] | None = None,
+        fields: list[str] | None = None,
+        search: str | None = None,
+) -> str:
+    base_url = reverse("training:exercise-template-list-create")
+    query = {}
+    if exercise_type:
+        query["type"] = exercise_type
+    if tags:
+        query["tags"] = ",".join(tags)
+    if fields:
+        query["fields"] = ",".join(fields)
+    if search:
+        query["search"] = search
+    if query:
+        return f"{base_url}?{urlencode(query)}"
+    return base_url
 
 
 def get_create_url():
@@ -171,3 +189,28 @@ class ExericseTemplateAPITestCase(APITestCase):
     def test_delete_other_user_exercise(self):
         response = self.client.delete(get_detail_url(self.other_user_exercise.pk))
         self.assertEqual(response.status_code, 403)
+
+    # Filter by user/admin
+    def test_get_user_exercises(self):
+        response = self.client.get(get_list_url(exercise_type="user"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["count"], 4)
+        returned_ids = {exercise["id"] for exercise in response.data["results"]}
+        expected_ids = {
+            self.bench_exercise.pk,
+            self.best_exericse.pk,
+            self.leg_exercise.pk,
+            self.no_tags_exercise.pk,
+        }
+        self.assertEqual(returned_ids, expected_ids)
+
+    def test_get_admin_exercises(self):
+        response = self.client.get(get_list_url(exercise_type="admin"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["count"], 2)
+        returned_ids = {exercise["id"] for exercise in response.data["results"]}
+        expected_ids = {
+            self.admin_run_exercise,
+            self.admin_bench_exercise,
+        }
+        self.assertEqual(returned_ids, expected_ids)
