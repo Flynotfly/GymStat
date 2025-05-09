@@ -19,3 +19,27 @@ def is_duration(string: str) -> bool:
         else:
             return True
     return False
+
+
+def is_5stars(string: str) -> bool:
+    try:
+        value = int(string)
+    except ValueError:
+        return False
+    else:
+        if 1 <= value <= 5:
+            return True
+        else:
+            return False
+
+
+def is_10stars(string: str) -> bool:
+    try:
+        value = int(string)
+    except ValueError:
+        return False
+    else:
+        if 1 <= value <= 10:
+            return True
+        else:
+            return False
