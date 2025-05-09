@@ -4,19 +4,19 @@ NOTES_FIELDS = ["Text", "Datetime", "Duration", "Number", "5stars", "10stars"]
 
 
 ALLOWED_EXERCISE_FIELDS = {
-    "Sets": "Int",
-    "Reps": "Int",
-    "Weight": ["Float", ["kg", "lbs"]],
-    "Time": "Duration",
-    "Distance": ["Float", ["m", "km", "mi"]],
-    "Speed": ["Float", ["kph", "mph", "mps"]],
-    "Rounds": "Int",
-    "Rest": "Duration",
-    "RPE": "Int",
-    "Attempts": "Int",
-    "Successes": "Int",
-    "Notes": "Text",
-    "Tempo": "Text",
+    "sets": "int",
+    "reps": "int",
+    "weight": ["float", ["kg", "lbs"]],
+    "time": "duration",
+    "distance": ["float", ["m", "km", "mi"]],
+    "speed": ["float", ["kph", "mph", "mps"]],
+    "rounds": "int",
+    "rest": "duration",
+    "rpe": "int",
+    "attempts": "int",
+    "successes": "int",
+    "notes": "text",
+    "tempo": "text",
 }
 
 ALLOWED_EXERCISE_TAGS = {
