@@ -2,6 +2,7 @@ from django.contrib.postgres.search import SearchVector
 from django.db.models import Q
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import ValidationError
 
 from .filters import ExerciseTemplateFilter
 from .models import ExerciseTemplate, Training, TrainingTemplate
@@ -16,21 +17,47 @@ from .serializers import (
 class ExerciseTemplateListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = ExerciseTemplateSerializer
     permission_classes = [IsAuthenticated]
-    filter_class = ExerciseTemplateFilter
+    # filter_class = ExerciseTemplateFilter
 
     def get_queryset(self):
         user = self.request.user
+        exercise_type = self.request.query_params.get("type", "all")
+        _tags = self.request.query_params.get("tags", "").lower()
+        _fields = self.request.query_params.get("fields", "").lower()
         search_query = self.request.query_params.get("search", "")
-        queryset = ExerciseTemplate.objects.all()
+        tags = []
+        if _tags:
+            tags = _tags.split(",")
+        fields = []
+        if _fields:
+            fields = _fields.split(",")
+
+        queryset = ExerciseTemplate.objects.filter(is_active=True)
+
+        match exercise_type:
+            case "user":
+                queryset = queryset.filter(owner=user)
+            case "admin":
+                queryset = queryset.filter(is_admin=True)
+            case "all":
+                queryset = queryset.filter(Q(owner=user) | Q(is_admin=True))
+            case _:
+                raise ValidationError({
+                    "type": f"Invalid template type {exercise_type}."
+                            f"Allowed only 'user', 'admin', 'all'"
+                })
+
+        for tag in tags:
+            queryset = queryset.filter(tags__contains=tag)
+        for field in fields:
+            queryset = queryset.filter(fields__contains=field)
+
         if search_query:
             queryset = queryset.annotate(
                 search=SearchVector("name", weight="A")
                 + SearchVector("description", weight="B")
             ).filter(search=search_query)
 
-        queryset = self.filter_class(
-            queryset=queryset, request=self.request
-        ).qs
         return queryset
 
     def perform_create(self, serializer):
