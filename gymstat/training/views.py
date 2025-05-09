@@ -58,10 +58,11 @@ class ExerciseTemplateListCreateAPIView(generics.ListCreateAPIView):
             queryset = queryset.annotate(
                 rank=SearchRank(vector, query)
             )
-            queryset = queryset.annotate(
-                similary=TrigramSimilarity("name", search_query)
-            )
-            queryset = queryset.filter(Q(rank__gt=0) | Q(similary__gt=0)).order_by("-rank", "-similary", "name")
+            # queryset = queryset.annotate(
+            #     similary=TrigramSimilarity("name", search_query)
+            # )
+            # queryset = queryset.filter(Q(rank__gt=0) | Q(similary__gt=0)).order_by("-rank", "-similary", "name")
+            queryset = queryset.filter(rank__gt=0).order_by("-rank", "name")
 
         return queryset
 
