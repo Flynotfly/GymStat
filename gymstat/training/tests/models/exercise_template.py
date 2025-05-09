@@ -12,8 +12,8 @@ User = get_user_model()
 
 VALID_TAGS = ["chest", "core"]
 INVALID_TAGS = ["chest", "monty"]
-VALID_FIELDS = ["Reps", "Sets", "Notes"]
-INVALID_FIELDS = ["Distance", "monty"]
+VALID_FIELDS = ["reps", "sets", "notes"]
+INVALID_FIELDS = ["distance", "monty"]
 name = "Test exercise"
 description = "Exercise template description"
 

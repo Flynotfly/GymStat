@@ -49,33 +49,33 @@ class ExericseTemplateAPITestCase(APITestCase):
         self.bench_exercise = ExerciseTemplate.objects.create(
             name="Bench press",
             owner=self.user,
-            fields=["Sets", "Reps", "Weight", "Time"],
+            fields=["sets", "reps", "weight", "time"],
             tags=["chest", "triceps", "free weight"],
             description="It is the best exercise",
         )
         self.best_exercise = ExerciseTemplate.objects.create(
             name="Best exercise",
             owner=self.user,
-            fields=["Sets", "Reps", "Weight", "Time"],
+            fields=["sets", "reps", "weight", "time"],
             tags=["chest", "free weight"],
             description="Second Exercise",
         )
         self.leg_exercise = ExerciseTemplate.objects.create(
             name="Leg press",
             owner=self.user,
-            fields=["Sets", "Rest", "Notes"],
+            fields=["sets", "rest", "notes"],
             tags=["legs"],
         )
         self.no_tags_exercise = ExerciseTemplate.objects.create(
             name="No tags",
             owner=self.user,
-            fields=["Sets", "Reps", "Rounds"],
+            fields=["sets", "reps", "rounds"],
             description="Unrelevant description"
         )
         self.unactive_exercise = ExerciseTemplate.objects.create(
             name="Bench press",
             owner=self.user,
-            fields=["Sets", "Reps", "Weight", "Time"],
+            fields=["sets", "reps", "weight", "time"],
             tags=["chest", "triceps", "free weight"],
             description="It is the best exercise",
             is_active=False,
@@ -84,7 +84,7 @@ class ExericseTemplateAPITestCase(APITestCase):
         self.admin_bench_exercise = ExerciseTemplate.objects.create(
             name="Bench abs",
             owner=self.admin_user,
-            fields=["Sets", "Reps", "Weight", "Time"],
+            fields=["sets", "reps", "weight", "time"],
             tags=["chest", "triceps", "free weight"],
             description="Abs exercise that we will do on bench like bench press",
             is_admin=True,
@@ -92,7 +92,7 @@ class ExericseTemplateAPITestCase(APITestCase):
         self.admin_run_exercise = ExerciseTemplate.objects.create(
             name="Running",
             owner=self.admin_user,
-            fields=["Time", "Distance"],
+            fields=["time", "distance"],
             tags=["running"],
             description="Running",
             is_admin=True,
@@ -100,7 +100,7 @@ class ExericseTemplateAPITestCase(APITestCase):
         self.admin_unactive_exercise = ExerciseTemplate.objects.create(
             name="Bench abs",
             owner=self.admin_user,
-            fields=["Sets", "Reps", "Weight", "Time"],
+            fields=["sets", "reps", "weight", "time"],
             tags=["chest", "triceps", "free weight"],
             description="Abs exercise that we will do on bench like bench press",
             is_admin=True,
@@ -110,16 +110,16 @@ class ExericseTemplateAPITestCase(APITestCase):
         self.other_user_exercise = ExerciseTemplate.objects.create(
             name="Bench press",
             owner=self.other_user,
-            fields=["Sets", "Reps", "Weight", "Time"],
+            fields=["sets", "reps", "weight", "time"],
             tags=["chest", "triceps", "free weight"],
             description="It is the best exercise",
         )
 
         self.new_exercise_data = {
             "name": "New exercise",
-            "fields": ["Reps", "Sets", "Distance"],
+            "fields": ["reps", "sets", "distance"],
             "tags": ["cardio", "cycling"],
-            "descripton": "This is description for new exercise",
+            "description": "This is description for new exercise",
         }
 
         self.client.login(**login_data)
@@ -148,7 +148,9 @@ class ExericseTemplateAPITestCase(APITestCase):
 
     def test_get_admin_exercise(self):
         response = self.client.get(get_detail_url(self.admin_run_exercise.pk))
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["id"], self.admin_run_exercise.pk)
+        self.assertEqual(response.data["name"], self.admin_run_exercise.name)
 
     def test_get_other_user_exercise(self):
         response = self.client.get(get_detail_url(self.other_user_exercise.pk))
@@ -215,6 +217,13 @@ class ExericseTemplateAPITestCase(APITestCase):
         }
         self.assertEqual(returned_ids, expected_ids)
 
+    def test_get_with_type_all(self):
+        response = self.client.get(get_list_url(exercise_type="all"))
+        self.assertEqual(response.status_code, 200)
+        sample_response = self.client.get(get_list_url())
+        self.assertEqual(sample_response.status_code, 200)
+        self.assertEqual(list(response), list(sample_response))
+
     # Filter by type
     def test_get_by_tag(self):
         tag = "chest"
@@ -251,7 +260,7 @@ class ExericseTemplateAPITestCase(APITestCase):
         expected_ids = {
             self.bench_exercise.pk,
             self.best_exercise.pk,
-            self.leg_exercise.pk,
+            self.no_tags_exercise.pk,
             self.admin_bench_exercise.pk,
         }
         self.assertEqual(returned_ids, expected_ids)
@@ -272,8 +281,8 @@ class ExericseTemplateAPITestCase(APITestCase):
     # Filter by type, tags and fields
     def test_complex_filter(self):
         exercise_type = "user"
-        tags = ["sets", "reps"]
-        fields = ["chest", "free weight"]
+        tags = ["chest", "free weight"]
+        fields = ["sets", "reps"]
         response = self.client.get(get_list_url(exercise_type=exercise_type, tags=tags, fields=fields))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["count"], 2)
