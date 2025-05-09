@@ -1,4 +1,4 @@
-from django.contrib.postgres.search import SearchVector, SearchRank, SearchQuery
+from django.contrib.postgres.search import SearchVector, SearchRank, SearchQuery, TrigramSimilarity
 from django.db.models import Q
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
@@ -57,7 +57,11 @@ class ExerciseTemplateListCreateAPIView(generics.ListCreateAPIView):
             query = SearchQuery(search_query)
             queryset = queryset.annotate(
                 rank=SearchRank(vector, query)
-            ).filter(rank__gte=0.2).order_by("-rank")
+            )
+            queryset = queryset.annotate(
+                similary=TrigramSimilarity("name", search_query)
+            )
+            queryset = queryset.filter(Q(rank__gte=0.2) | Q(similary__gte=0.2)).order_by("-rank", "-similary", "name")
 
         return queryset
 
