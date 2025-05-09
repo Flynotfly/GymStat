@@ -99,9 +99,16 @@ def validate_training_template_data(data):
 
             # Check required 'Template'
             template = exercise.get("Template")
-            if template is None or not isinstance(template, int):
+            if template is None:
                 raise ValidationError(
-                    "'Template' must be an integer in each exercise."
+                    "'Template' field should be in each exercise."
+                )
+
+            try:
+                int(template)
+            except ValueError:
+                raise ValidationError(
+                    f"'Template' must be an integer in each exercise. Got '{template}'"
                 )
 
             unit_dict = exercise.get("Unit", {})
