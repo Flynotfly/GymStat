@@ -9,6 +9,7 @@ class ExerciseTemplateSerializer(serializers.ModelSerializer):
         model = ExerciseTemplate
         fields = [
             "id",
+            "owner",
             "name",
             "fields",
             "tags",
@@ -18,6 +19,7 @@ class ExerciseTemplateSerializer(serializers.ModelSerializer):
         read_only_fields = [
             "id",
             "is_admin",
+            "owner",
         ]
 
 
