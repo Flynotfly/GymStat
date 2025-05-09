@@ -1,4 +1,6 @@
 from django.core.exceptions import ValidationError
+from .utils import is_5stars, is_10stars, is_datetime, is_duration
+
 
 NOTES_FIELDS = ["Text", "Datetime", "Duration", "Number", "5stars", "10stars"]
 
@@ -75,8 +77,10 @@ def validate_training_template_data(data):
             name = note.get("Name")
             field = note.get("Field")
             required = note.get("Required")
-            default = note.get("Default", "")
+            default = note.get("Default", None)
 
+            if not name:
+                raise ValidationError("Note should have name.")
             if not isinstance(name, str):
                 raise ValidationError("Note name must be a string.")
             if field not in NOTES_FIELDS:
@@ -85,8 +89,34 @@ def validate_training_template_data(data):
                 raise ValidationError(
                     "Note 'Required' must be 'True' or 'False'."
                 )
-            if not isinstance(default, str):
-                raise ValidationError("Note 'Default' must be a string.")
+            if default is not None:
+                if not isinstance(default, str):
+                    raise ValidationError("Note 'Default' must be a string.")
+                is_validation_error = False
+                match field:
+                    case "Datetime":
+                        if not is_datetime(default):
+                            is_validation_error = True
+                    case "Duration":
+                        if not is_duration(default):
+                            is_validation_error = True
+                    case "Number":
+                        try:
+                            float(default)
+                        except ValueError:
+                            is_validation_error = True
+                    case "5stars":
+                        if not is_5stars(default):
+                            is_validation_error = True
+                    case "10stars":
+                        if not is_10stars(default):
+                            is_validation_error = True
+
+                if is_validation_error:
+                    raise ValidationError(
+                        f"Note's 'Default' value should match 'Field'."
+                        f"Got 'Field' is {field} and 'Default' is {default}"
+                    )
 
     # Validate Exercises
     exercises = data.get("Exercises")
