@@ -1,4 +1,4 @@
-from django.contrib.postgres.search import SearchVector
+from django.contrib.postgres.search import SearchVector, SearchRank, SearchQuery
 from django.db.models import Q
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
@@ -53,10 +53,11 @@ class ExerciseTemplateListCreateAPIView(generics.ListCreateAPIView):
             queryset = queryset.filter(fields__contains=field)
 
         if search_query:
+            vector = SearchVector("name", weight="A") + SearchVector("description", weight="B")
+            query = SearchQuery(search_query)
             queryset = queryset.annotate(
-                search=SearchVector("name", weight="A")
-                + SearchVector("description", weight="B")
-            ).filter(search=search_query)
+                rank=SearchRank(vector, query)
+            ).filter(rank__gte=0.2).order_by("-rank")
 
         return queryset
 
