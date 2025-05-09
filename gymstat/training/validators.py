@@ -73,7 +73,7 @@ def validate_training_template_data(data):
             if not isinstance(note, dict):
                 raise ValidationError("Each note must be a dictionary.")
             name = note.get("Name")
-            field = note.get("field")
+            field = note.get("Field")
             required = note.get("Required")
             default = note.get("Default", "")
 
