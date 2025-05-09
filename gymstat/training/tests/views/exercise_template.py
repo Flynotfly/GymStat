@@ -332,8 +332,8 @@ class ExericseTemplateAPITestCase(APITestCase):
     # All filters and search at the same time
     def test_filters_and_search(self):
         exercise_type = "user"
-        tags = ["sets", "reps"]
-        fields = ["chest", "free weight"]
+        tags = ["chest", "free weight"]
+        fields = ["sets", "reps"]
         search = "exercise"
         response = self.client.get(get_list_url(exercise_type=exercise_type, tags=tags, fields=fields, search=search))
         self.assertEqual(response.status_code, 200)
