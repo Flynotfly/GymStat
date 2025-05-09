@@ -4,7 +4,7 @@ from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError
 
-from .filters import ExerciseTemplateFilter
+# from .filters import ExerciseTemplateFilter
 from .models import ExerciseTemplate, Training, TrainingTemplate
 from .permissions import IsAdminObjectReadOnly, IsOwner
 from .serializers import (
