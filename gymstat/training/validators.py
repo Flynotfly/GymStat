@@ -186,7 +186,7 @@ def validate_training_template_data(data):
                                     f"'{field}' must be a float."
                                 )
                         elif expected_type == "Duration":
-                            if not isinstance(value, str):
+                            if not is_duration(value):
                                 raise ValidationError(
                                     f"'{field}' must be a duration string."
                                 )
