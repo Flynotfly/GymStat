@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
-from .utils import is_5stars, is_10stars, is_datetime, is_duration
 
+from .utils import is_5stars, is_10stars, is_datetime, is_duration
 
 NOTES_FIELDS = ["Text", "Datetime", "Duration", "Number", "5stars", "10stars"]
 

@@ -1,21 +1,21 @@
-from rest_framework.test import APITestCase
-from django.contrib.auth import get_user_model
-from django.urls import reverse
 from urllib.parse import urlencode
 
-from user.tests import user_data, other_user_data, admin_user_data, login_data
+from django.contrib.auth import get_user_model
+from django.urls import reverse
+from rest_framework.test import APITestCase
+
+from user.tests import admin_user_data, login_data, other_user_data, user_data
 
 from ...models import ExerciseTemplate
-
 
 User = get_user_model()
 
 
 def get_list_url(
-        exercise_type: str | None = None,
-        tags: list[str] | None = None,
-        fields: list[str] | None = None,
-        search: str | None = None,
+    exercise_type: str | None = None,
+    tags: list[str] | None = None,
+    fields: list[str] | None = None,
+    search: str | None = None,
 ) -> str:
     base_url = reverse("training:exercise-template-list-create")
     query = {}
@@ -70,7 +70,7 @@ class ExericseTemplateAPITestCase(APITestCase):
             name="No tags",
             owner=self.user,
             fields=["sets", "reps", "rounds"],
-            description="Unrelevant description"
+            description="Unrelevant description",
         )
         self.unactive_exercise = ExerciseTemplate.objects.create(
             name="Bench press",
@@ -129,7 +129,9 @@ class ExericseTemplateAPITestCase(APITestCase):
         response = self.client.get(get_list_url())
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["count"], 6)
-        returned_ids = {exercise["id"] for exercise in response.data["results"]}
+        returned_ids = {
+            exercise["id"] for exercise in response.data["results"]
+        }
         expected_ids = {
             self.bench_exercise.pk,
             self.best_exercise.pk,
@@ -160,21 +162,31 @@ class ExericseTemplateAPITestCase(APITestCase):
         response = self.client.post(get_create_url(), self.new_exercise_data)
         self.assertEqual(response.status_code, 201)
         self.assertEqual(ExerciseTemplate.objects.count(), 10)
-        exercise = ExerciseTemplate.objects.filter(name=self.new_exercise_data["name"])
+        exercise = ExerciseTemplate.objects.filter(
+            name=self.new_exercise_data["name"]
+        )
         self.assertEqual(exercise.count(), 1)
 
     def test_edit_owned_exercise(self):
-        response = self.client.put(get_detail_url(self.best_exercise.pk), self.new_exercise_data)
+        response = self.client.put(
+            get_detail_url(self.best_exercise.pk), self.new_exercise_data
+        )
         self.assertEqual(response.status_code, 200)
         self.best_exercise.refresh_from_db()
-        self.assertEqual(self.best_exercise.name, self.new_exercise_data["name"])
+        self.assertEqual(
+            self.best_exercise.name, self.new_exercise_data["name"]
+        )
 
     def test_edit_admin_exercise(self):
-        response = self.client.put(get_detail_url(self.admin_run_exercise.pk), self.new_exercise_data)
+        response = self.client.put(
+            get_detail_url(self.admin_run_exercise.pk), self.new_exercise_data
+        )
         self.assertEqual(response.status_code, 403)
 
     def test_edit_other_user_exercise(self):
-        response = self.client.put(get_detail_url(self.other_user_exercise.pk), self.new_exercise_data)
+        response = self.client.put(
+            get_detail_url(self.other_user_exercise.pk), self.new_exercise_data
+        )
         self.assertEqual(response.status_code, 403)
 
     def test_delete_owned_exercise(self):
@@ -185,11 +197,15 @@ class ExericseTemplateAPITestCase(APITestCase):
         )
 
     def test_delete_admin_exercise(self):
-        response = self.client.delete(get_detail_url(self.admin_run_exercise.pk))
+        response = self.client.delete(
+            get_detail_url(self.admin_run_exercise.pk)
+        )
         self.assertEqual(response.status_code, 403)
 
     def test_delete_other_user_exercise(self):
-        response = self.client.delete(get_detail_url(self.other_user_exercise.pk))
+        response = self.client.delete(
+            get_detail_url(self.other_user_exercise.pk)
+        )
         self.assertEqual(response.status_code, 403)
 
     # Filter by user/admin
@@ -197,7 +213,9 @@ class ExericseTemplateAPITestCase(APITestCase):
         response = self.client.get(get_list_url(exercise_type="user"))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["count"], 4)
-        returned_ids = {exercise["id"] for exercise in response.data["results"]}
+        returned_ids = {
+            exercise["id"] for exercise in response.data["results"]
+        }
         expected_ids = {
             self.bench_exercise.pk,
             self.best_exercise.pk,
@@ -210,7 +228,9 @@ class ExericseTemplateAPITestCase(APITestCase):
         response = self.client.get(get_list_url(exercise_type="admin"))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["count"], 2)
-        returned_ids = {exercise["id"] for exercise in response.data["results"]}
+        returned_ids = {
+            exercise["id"] for exercise in response.data["results"]
+        }
         expected_ids = {
             self.admin_run_exercise.pk,
             self.admin_bench_exercise.pk,
@@ -230,7 +250,9 @@ class ExericseTemplateAPITestCase(APITestCase):
         response = self.client.get(get_list_url(tags=[tag]))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["count"], 3)
-        returned_ids = {exercise["id"] for exercise in response.data["results"]}
+        returned_ids = {
+            exercise["id"] for exercise in response.data["results"]
+        }
         expected_ids = {
             self.bench_exercise.pk,
             self.best_exercise.pk,
@@ -243,7 +265,9 @@ class ExericseTemplateAPITestCase(APITestCase):
         response = self.client.get(get_list_url(tags=tags))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["count"], 2)
-        returned_ids = {exercise["id"] for exercise in response.data["results"]}
+        returned_ids = {
+            exercise["id"] for exercise in response.data["results"]
+        }
         expected_ids = {
             self.bench_exercise.pk,
             self.admin_bench_exercise.pk,
@@ -256,7 +280,9 @@ class ExericseTemplateAPITestCase(APITestCase):
         response = self.client.get(get_list_url(fields=[field]))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["count"], 4)
-        returned_ids = {exercise["id"] for exercise in response.data["results"]}
+        returned_ids = {
+            exercise["id"] for exercise in response.data["results"]
+        }
         expected_ids = {
             self.bench_exercise.pk,
             self.best_exercise.pk,
@@ -270,7 +296,9 @@ class ExericseTemplateAPITestCase(APITestCase):
         response = self.client.get(get_list_url(fields=fields))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["count"], 3)
-        returned_ids = {exercise["id"] for exercise in response.data["results"]}
+        returned_ids = {
+            exercise["id"] for exercise in response.data["results"]
+        }
         expected_ids = {
             self.bench_exercise.pk,
             self.best_exercise.pk,
@@ -283,10 +311,14 @@ class ExericseTemplateAPITestCase(APITestCase):
         exercise_type = "user"
         tags = ["chest", "free weight"]
         fields = ["sets", "reps"]
-        response = self.client.get(get_list_url(exercise_type=exercise_type, tags=tags, fields=fields))
+        response = self.client.get(
+            get_list_url(exercise_type=exercise_type, tags=tags, fields=fields)
+        )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["count"], 2)
-        returned_ids = {exercise["id"] for exercise in response.data["results"]}
+        returned_ids = {
+            exercise["id"] for exercise in response.data["results"]
+        }
         expected_ids = {
             self.bench_exercise.pk,
             self.best_exercise.pk,
@@ -297,11 +329,17 @@ class ExericseTemplateAPITestCase(APITestCase):
         exercise_type = "admin"
         tags = ["running"]
         fields = ["time"]
-        response = self.client.get(get_list_url(exercise_type=exercise_type, tags=tags, fields=fields))
+        response = self.client.get(
+            get_list_url(exercise_type=exercise_type, tags=tags, fields=fields)
+        )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["count"], 1)
-        self.assertEqual(response.data["results"][0]["id"], self.admin_run_exercise.pk)
-        self.assertEqual(response.data["results"][0]["name"], self.admin_run_exercise.name)
+        self.assertEqual(
+            response.data["results"][0]["id"], self.admin_run_exercise.pk
+        )
+        self.assertEqual(
+            response.data["results"][0]["name"], self.admin_run_exercise.name
+        )
 
     # Search tests
     def test_search(self):
@@ -309,15 +347,21 @@ class ExericseTemplateAPITestCase(APITestCase):
         response = self.client.get(get_list_url(search=search))
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.data["count"] >= 2)
-        self.assertEqual(response.data["results"][0]["id"], self.bench_exercise.pk)
-        self.assertEqual(response.data["results"][1]["id"], self.admin_bench_exercise.pk)
+        self.assertEqual(
+            response.data["results"][0]["id"], self.bench_exercise.pk
+        )
+        self.assertEqual(
+            response.data["results"][1]["id"], self.admin_bench_exercise.pk
+        )
 
     def test_search_2(self):
         search = "exercise"
         response = self.client.get(get_list_url(search=search))
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.data["count"] >= 3)
-        self.assertEqual(response.data["results"][0]["id"], self.best_exercise.pk)
+        self.assertEqual(
+            response.data["results"][0]["id"], self.best_exercise.pk
+        )
         # check 2 and 3 returned templates
         returned_ids = {
             response.data["results"][1]["id"],
@@ -335,8 +379,19 @@ class ExericseTemplateAPITestCase(APITestCase):
         tags = ["chest", "free weight"]
         fields = ["sets", "reps"]
         search = "exercise"
-        response = self.client.get(get_list_url(exercise_type=exercise_type, tags=tags, fields=fields, search=search))
+        response = self.client.get(
+            get_list_url(
+                exercise_type=exercise_type,
+                tags=tags,
+                fields=fields,
+                search=search,
+            )
+        )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["count"], 2)
-        self.assertEqual(response.data["results"][0]["id"], self.best_exercise.pk)
-        self.assertEqual(response.data["results"][1]["id"], self.bench_exercise.pk)
+        self.assertEqual(
+            response.data["results"][0]["id"], self.best_exercise.pk
+        )
+        self.assertEqual(
+            response.data["results"][1]["id"], self.bench_exercise.pk
+        )

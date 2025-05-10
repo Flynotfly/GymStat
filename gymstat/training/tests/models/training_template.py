@@ -1,12 +1,10 @@
-from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from django.test import TestCase
 
 from user.tests import user_data
 
-
 from ...models import TrainingTemplate
-
 
 User = get_user_model()
 
@@ -40,9 +38,9 @@ VALID_EXERCISES = [
             {
                 "reps": "3",
                 "attempts": "5",
-                "notes": "This is notes for exercise"
+                "notes": "This is notes for exercise",
             },
-        ]
+        ],
     },
     {
         "Template": "12",
@@ -59,7 +57,7 @@ VALID_EXERCISES = [
                 "weight": "110.12",
                 "speed": "51",
             },
-        ]
+        ],
     },
 ]
 VALID_DATA = {
@@ -92,7 +90,7 @@ class TrainingTemplateModelTestCase(TestCase):
             name=NAME,
             owner=self.user,
             data=VALID_DATA,
-            description=description
+            description=description,
         )
         self.assertEqual(TrainingTemplate.objects.count(), 1)
         template = TrainingTemplate.objects.first()
@@ -175,11 +173,13 @@ class TrainingTemplateModelTestCase(TestCase):
             name=NAME,
             owner=self.user,
             data={
-                "Notes": [{
-                    "Field": "Text",
-                    "Required": "True",
-                    "Default": "default text",
-                }]
+                "Notes": [
+                    {
+                        "Field": "Text",
+                        "Required": "True",
+                        "Default": "default text",
+                    }
+                ]
             },
         )
         with self.assertRaises(ValidationError):
@@ -190,12 +190,14 @@ class TrainingTemplateModelTestCase(TestCase):
             name=NAME,
             owner=self.user,
             data={
-                "Notes": [{
-                    "Name": "",
-                    "Field": "Text",
-                    "Required": "True",
-                    "Default": "default text",
-                }]
+                "Notes": [
+                    {
+                        "Name": "",
+                        "Field": "Text",
+                        "Required": "True",
+                        "Default": "default text",
+                    }
+                ]
             },
         )
         with self.assertRaises(ValidationError):
@@ -206,11 +208,13 @@ class TrainingTemplateModelTestCase(TestCase):
             name=NAME,
             owner=self.user,
             data={
-                "Notes": [{
-                    "Name": "Text field",
-                    "Required": "True",
-                    "Default": "default text",
-                }]
+                "Notes": [
+                    {
+                        "Name": "Text field",
+                        "Required": "True",
+                        "Default": "default text",
+                    }
+                ]
             },
         )
         with self.assertRaises(ValidationError):
@@ -221,12 +225,14 @@ class TrainingTemplateModelTestCase(TestCase):
             name=NAME,
             owner=self.user,
             data={
-                "Notes": [{
-                    "Name": "Text field",
-                    "Field": "",
-                    "Required": "True",
-                    "Default": "default text",
-                }]
+                "Notes": [
+                    {
+                        "Name": "Text field",
+                        "Field": "",
+                        "Required": "True",
+                        "Default": "default text",
+                    }
+                ]
             },
         )
         with self.assertRaises(ValidationError):
@@ -237,12 +243,14 @@ class TrainingTemplateModelTestCase(TestCase):
             name=NAME,
             owner=self.user,
             data={
-                "Notes": [{
-                    "Name": "Text field",
-                    "Field": "Wrong",
-                    "Required": "True",
-                    "Default": "default text",
-                }]
+                "Notes": [
+                    {
+                        "Name": "Text field",
+                        "Field": "Wrong",
+                        "Required": "True",
+                        "Default": "default text",
+                    }
+                ]
             },
         )
         with self.assertRaises(ValidationError):
@@ -253,12 +261,14 @@ class TrainingTemplateModelTestCase(TestCase):
             name=NAME,
             owner=self.user,
             data={
-                "Notes": [{
-                    "Name": "Text field",
-                    "Field": "5stars",
-                    "Required": "True",
-                    "Default": "5",
-                }]
+                "Notes": [
+                    {
+                        "Name": "Text field",
+                        "Field": "5stars",
+                        "Required": "True",
+                        "Default": "5",
+                    }
+                ]
             },
         )
         self.assertEqual(TrainingTemplate.objects.count(), 1)
@@ -268,11 +278,13 @@ class TrainingTemplateModelTestCase(TestCase):
             name=NAME,
             owner=self.user,
             data={
-                "Notes": [{
-                    "Name": "Text field",
-                    "Field": "Text",
-                    "Default": "default text",
-                }]
+                "Notes": [
+                    {
+                        "Name": "Text field",
+                        "Field": "Text",
+                        "Default": "default text",
+                    }
+                ]
             },
         )
         with self.assertRaises(ValidationError):
@@ -283,12 +295,14 @@ class TrainingTemplateModelTestCase(TestCase):
             name=NAME,
             owner=self.user,
             data={
-                "Notes": [{
-                    "Name": "Text field",
-                    "Field": "Text",
-                    "Required": "False",
-                    "Default": "default text",
-                }]
+                "Notes": [
+                    {
+                        "Name": "Text field",
+                        "Field": "Text",
+                        "Required": "False",
+                        "Default": "default text",
+                    }
+                ]
             },
         )
         self.assertEqual(TrainingTemplate.objects.count(), 1)
@@ -298,12 +312,14 @@ class TrainingTemplateModelTestCase(TestCase):
             name=NAME,
             owner=self.user,
             data={
-                "Notes": [{
-                    "Name": "Text field",
-                    "Field": "Text",
-                    "Required": "Wrong",
-                    "Default": "default text",
-                }]
+                "Notes": [
+                    {
+                        "Name": "Text field",
+                        "Field": "Text",
+                        "Required": "Wrong",
+                        "Default": "default text",
+                    }
+                ]
             },
         )
         with self.assertRaises(ValidationError):
@@ -315,11 +331,13 @@ class TrainingTemplateModelTestCase(TestCase):
             name=NAME,
             owner=self.user,
             data={
-                "Notes": [{
-                    "Name": "Text field",
-                    "Field": "Text",
-                    "Required": "True",
-                }]
+                "Notes": [
+                    {
+                        "Name": "Text field",
+                        "Field": "Text",
+                        "Required": "True",
+                    }
+                ]
             },
         )
         self.assertEqual(TrainingTemplate.objects.count(), 1)
@@ -329,12 +347,14 @@ class TrainingTemplateModelTestCase(TestCase):
             name=NAME,
             owner=self.user,
             data={
-                "Notes": [{
-                    "Name": "Text field",
-                    "Field": "Number",
-                    "Required": "True",
-                    "Default": "12.1"
-                }]
+                "Notes": [
+                    {
+                        "Name": "Text field",
+                        "Field": "Number",
+                        "Required": "True",
+                        "Default": "12.1",
+                    }
+                ]
             },
         )
         self.assertEqual(TrainingTemplate.objects.count(), 1)
@@ -344,12 +364,14 @@ class TrainingTemplateModelTestCase(TestCase):
             name=NAME,
             owner=self.user,
             data={
-                "Notes": [{
-                    "Name": "Text field",
-                    "Field": "Number",
-                    "Required": "True",
-                    "Default": "default text",
-                }]
+                "Notes": [
+                    {
+                        "Name": "Text field",
+                        "Field": "Number",
+                        "Required": "True",
+                        "Default": "default text",
+                    }
+                ]
             },
         )
         with self.assertRaises(ValidationError):
@@ -360,12 +382,14 @@ class TrainingTemplateModelTestCase(TestCase):
             name=NAME,
             owner=self.user,
             data={
-                "Notes": [{
-                    "Name": "Text field",
-                    "Field": "Duration",
-                    "Required": "True",
-                    "Default": "12:10:2",
-                }]
+                "Notes": [
+                    {
+                        "Name": "Text field",
+                        "Field": "Duration",
+                        "Required": "True",
+                        "Default": "12:10:2",
+                    }
+                ]
             },
         )
         self.assertEqual(TrainingTemplate.objects.count(), 1)
@@ -375,12 +399,14 @@ class TrainingTemplateModelTestCase(TestCase):
             name=NAME,
             owner=self.user,
             data={
-                "Notes": [{
-                    "Name": "Text field",
-                    "Field": "Duration",
-                    "Required": "True",
-                    "Default": "12:00",
-                }]
+                "Notes": [
+                    {
+                        "Name": "Text field",
+                        "Field": "Duration",
+                        "Required": "True",
+                        "Default": "12:00",
+                    }
+                ]
             },
         )
         self.assertEqual(TrainingTemplate.objects.count(), 1)
@@ -390,12 +416,14 @@ class TrainingTemplateModelTestCase(TestCase):
             name=NAME,
             owner=self.user,
             data={
-                "Notes": [{
-                    "Name": "Text field",
-                    "Field": "Duration",
-                    "Required": "True",
-                    "Default": "10:23:12:2",
-                }]
+                "Notes": [
+                    {
+                        "Name": "Text field",
+                        "Field": "Duration",
+                        "Required": "True",
+                        "Default": "10:23:12:2",
+                    }
+                ]
             },
         )
         with self.assertRaises(ValidationError):
@@ -406,12 +434,14 @@ class TrainingTemplateModelTestCase(TestCase):
             name=NAME,
             owner=self.user,
             data={
-                "Notes": [{
-                    "Name": "Text field",
-                    "Field": "Datetime",
-                    "Required": "True",
-                    "Default": "2020-1-20 0:0:0",
-                }]
+                "Notes": [
+                    {
+                        "Name": "Text field",
+                        "Field": "Datetime",
+                        "Required": "True",
+                        "Default": "2020-1-20 0:0:0",
+                    }
+                ]
             },
         )
         self.assertEqual(TrainingTemplate.objects.count(), 1)
@@ -421,12 +451,14 @@ class TrainingTemplateModelTestCase(TestCase):
             name=NAME,
             owner=self.user,
             data={
-                "Notes": [{
-                    "Name": "Text field",
-                    "Field": "Datetime",
-                    "Required": "True",
-                    "Default": "2004-12-1",
-                }]
+                "Notes": [
+                    {
+                        "Name": "Text field",
+                        "Field": "Datetime",
+                        "Required": "True",
+                        "Default": "2004-12-1",
+                    }
+                ]
             },
         )
         with self.assertRaises(ValidationError):
@@ -498,12 +530,7 @@ class TrainingTemplateModelTestCase(TestCase):
         template = TrainingTemplate(
             name=NAME,
             owner=self.user,
-            data={
-                "Exercises": [{
-                    "Template": "1",
-                    "Sets": [{"foo": "123"}]
-                }]
-            },
+            data={"Exercises": [{"Template": "1", "Sets": [{"foo": "123"}]}]},
         )
         with self.assertRaises(ValidationError):
             template.full_clean()
@@ -514,10 +541,9 @@ class TrainingTemplateModelTestCase(TestCase):
             name=NAME,
             owner=self.user,
             data={
-                "Exercises": [{
-                    "Template": "1",
-                    "Sets": [{"reps": "not-an-int"}]
-                }]
+                "Exercises": [
+                    {"Template": "1", "Sets": [{"reps": "not-an-int"}]}
+                ]
             },
         )
         with self.assertRaises(ValidationError):
@@ -529,10 +555,9 @@ class TrainingTemplateModelTestCase(TestCase):
             name=NAME,
             owner=self.user,
             data={
-                "Exercises": [{
-                    "Template": "1",
-                    "Sets": [{"weight": "not-a-float"}]
-                }]
+                "Exercises": [
+                    {"Template": "1", "Sets": [{"weight": "not-a-float"}]}
+                ]
             },
         )
         with self.assertRaises(ValidationError):
@@ -540,15 +565,11 @@ class TrainingTemplateModelTestCase(TestCase):
 
     def test_set_duration_field_wrong_type(self):
         """Duration fields must be a string."""
-        # assume 'Duration' is one of the allowed types
         template = TrainingTemplate(
             name=NAME,
             owner=self.user,
             data={
-                "Exercises": [{
-                    "Template": "1",
-                    "Sets": [{"rest": "12:00"}]  # 'rest' expecting a duration string
-                }]
+                "Exercises": [{"Template": "1", "Sets": [{"rest": "12:00"}]}]
             },
         )
         with self.assertRaises(ValidationError):
@@ -560,11 +581,13 @@ class TrainingTemplateModelTestCase(TestCase):
             name=NAME,
             owner=self.user,
             data={
-                "Exercises": [{
-                    "Template": "1",
-                    "Unit": {"weight": "no"},
-                    "Sets": [{"weight": "10"}]
-                }]
+                "Exercises": [
+                    {
+                        "Template": "1",
+                        "Unit": {"weight": "no"},
+                        "Sets": [{"weight": "10"}],
+                    }
+                ]
             },
         )
         with self.assertRaises(ValidationError):
@@ -576,10 +599,7 @@ class TrainingTemplateModelTestCase(TestCase):
             name=NAME,
             owner=self.user,
             data={
-                "Exercises": [{
-                    "Template": "1",
-                    "Sets": [{"weight": "10"}]
-                }]
+                "Exercises": [{"Template": "1", "Sets": [{"weight": "10"}]}]
             },
         )
         with self.assertRaises(ValidationError):

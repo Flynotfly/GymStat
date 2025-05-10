@@ -1,8 +1,13 @@
-from django.contrib.postgres.search import SearchVector, SearchRank, SearchQuery, TrigramSimilarity
+from django.contrib.postgres.search import (
+    SearchQuery,
+    SearchRank,
+    SearchVector,
+    TrigramSimilarity,
+)
 from django.db.models import Q
 from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import IsAuthenticated
 
 # from .filters import ExerciseTemplateFilter
 from .models import ExerciseTemplate, Training, TrainingTemplate
@@ -42,10 +47,12 @@ class ExerciseTemplateListCreateAPIView(generics.ListCreateAPIView):
             case "all":
                 queryset = queryset.filter(Q(owner=user) | Q(is_admin=True))
             case _:
-                raise ValidationError({
-                    "type": f"Invalid template type {exercise_type}."
-                            f"Allowed only 'user', 'admin', 'all'"
-                })
+                raise ValidationError(
+                    {
+                        "type": f"Invalid template type {exercise_type}."
+                        f"Allowed only 'user', 'admin', 'all'"
+                    }
+                )
 
         for tag in tags:
             queryset = queryset.filter(tags__contains=tag)
@@ -53,15 +60,17 @@ class ExerciseTemplateListCreateAPIView(generics.ListCreateAPIView):
             queryset = queryset.filter(fields__contains=field)
 
         if search_query:
-            vector = SearchVector("name", weight="A") + SearchVector("description", weight="B")
-            query = SearchQuery(search_query)
-            queryset = queryset.annotate(
-                rank=SearchRank(vector, query)
+            vector = SearchVector("name", weight="A") + SearchVector(
+                "description", weight="B"
             )
+            query = SearchQuery(search_query)
+            queryset = queryset.annotate(rank=SearchRank(vector, query))
             queryset = queryset.annotate(
                 similary=TrigramSimilarity("name", search_query)
             )
-            queryset = queryset.filter(Q(rank__gt=0) | Q(similary__gt=0)).order_by("-rank", "-similary", "name")
+            queryset = queryset.filter(
+                Q(rank__gt=0) | Q(similary__gt=0)
+            ).order_by("-rank", "-similary", "name")
 
         return queryset
 
