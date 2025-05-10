@@ -431,3 +431,156 @@ class TrainingTemplateModelTestCase(TestCase):
         )
         with self.assertRaises(ValidationError):
             template.full_clean()
+
+    # --- Exercises validation tests ---
+    def test_exercises_not_list(self):
+        """Exercises must be a list."""
+        template = TrainingTemplate(
+            name=NAME,
+            owner=self.user,
+            data={"Exercises": {"Template": "1"}},
+        )
+        with self.assertRaises(ValidationError):
+            template.full_clean()
+
+    def test_exercise_element_not_dict(self):
+        """Each exercise must be a dict."""
+        template = TrainingTemplate(
+            name=NAME,
+            owner=self.user,
+            data={"Exercises": ["not a dict"]},
+        )
+        with self.assertRaises(ValidationError):
+            template.full_clean()
+
+    def test_exercise_missing_template(self):
+        """Each exercise must include 'Template'."""
+        template = TrainingTemplate(
+            name=NAME,
+            owner=self.user,
+            data={"Exercises": [{"Sets": []}]},
+        )
+        with self.assertRaises(ValidationError):
+            template.full_clean()
+
+    def test_exercise_template_not_int_string(self):
+        """'Template' must parse to int."""
+        template = TrainingTemplate(
+            name=NAME,
+            owner=self.user,
+            data={"Exercises": [{"Template": "abc"}]},
+        )
+        with self.assertRaises(ValidationError):
+            template.full_clean()
+
+    def test_set_element_not_dict(self):
+        """Each set in 'Sets' must be a dict."""
+        template = TrainingTemplate(
+            name=NAME,
+            owner=self.user,
+            data={"Exercises": [{"Template": "1", "Sets": ["oops"]}]},
+        )
+        with self.assertRaises(ValidationError):
+            template.full_clean()
+
+    def test_set_empty_dict(self):
+        """Each set dict must not be empty."""
+        template = TrainingTemplate(
+            name=NAME,
+            owner=self.user,
+            data={"Exercises": [{"Template": "1", "Sets": [{}]}]},
+        )
+        with self.assertRaises(ValidationError):
+            template.full_clean()
+
+    def test_set_field_not_allowed(self):
+        """Unknown fields in a set should raise."""
+        template = TrainingTemplate(
+            name=NAME,
+            owner=self.user,
+            data={
+                "Exercises": [{
+                    "Template": "1",
+                    "Sets": [{"foo": "123"}]
+                }]
+            },
+        )
+        with self.assertRaises(ValidationError):
+            template.full_clean()
+
+    def test_set_int_field_invalid_value(self):
+        """Integer fields must parse as int."""
+        template = TrainingTemplate(
+            name=NAME,
+            owner=self.user,
+            data={
+                "Exercises": [{
+                    "Template": "1",
+                    "Sets": [{"reps": "not-an-int"}]
+                }]
+            },
+        )
+        with self.assertRaises(ValidationError):
+            template.full_clean()
+
+    def test_set_float_field_invalid_value(self):
+        """Float fields must parse as float."""
+        template = TrainingTemplate(
+            name=NAME,
+            owner=self.user,
+            data={
+                "Exercises": [{
+                    "Template": "1",
+                    "Sets": [{"weight": "not-a-float"}]
+                }]
+            },
+        )
+        with self.assertRaises(ValidationError):
+            template.full_clean()
+
+    def test_set_duration_field_wrong_type(self):
+        """Duration fields must be a string."""
+        # assume 'Duration' is one of the allowed types
+        template = TrainingTemplate(
+            name=NAME,
+            owner=self.user,
+            data={
+                "Exercises": [{
+                    "Template": "1",
+                    "Sets": [{"rest": "12:00"}]  # 'rest' expecting a duration string
+                }]
+            },
+        )
+        with self.assertRaises(ValidationError):
+            template.full_clean()
+
+    def test_unit_missing_allowed_unit(self):
+        """If a field has allowed units, the Unit dict must include one of them."""
+        template = TrainingTemplate(
+            name=NAME,
+            owner=self.user,
+            data={
+                "Exercises": [{
+                    "Template": "1",
+                    "Unit": {"weight": "no"},
+                    "Sets": [{"weight": "10"}]
+                }]
+            },
+        )
+        with self.assertRaises(ValidationError):
+            template.full_clean()
+
+    def test_no_unit(self):
+        """If a field has allowed units, the Unit dict must include one of them."""
+        template = TrainingTemplate(
+            name=NAME,
+            owner=self.user,
+            data={
+                "Exercises": [{
+                    "Template": "1",
+                    "Sets": [{"weight": "10"}]
+                }]
+            },
+        )
+        with self.assertRaises(ValidationError):
+            template.full_clean()
