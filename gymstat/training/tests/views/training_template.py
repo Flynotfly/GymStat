@@ -44,7 +44,7 @@ class TrainingTemplateAPITestCase(APITestCase):
         )
         self.new_template_data = {
             "name": "New template",
-            "data": {},
+            "data": VALID_DATA,
             "description": "ddd",
         }
         self.client.login(**login_data)
