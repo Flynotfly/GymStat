@@ -7,13 +7,13 @@ import {
   FormControlLabel, Radio, RadioGroup,
 } from "@mui/material";
 import {ChangeEvent, useEffect, useRef, useState} from "react";
-import {getExerciseTemplates} from "../api.ts";
+import {createExerciseTemplate, getExerciseTemplates} from "../api.ts";
 import ExerciseTemplateCard from "./ExerciseTemplateCard.tsx";
 import {
-  ExerciseTemplate,
+  ExerciseTemplate, ExerciseTemplateField,
   ExerciseTemplateTag,
   ExerciseTemplateType,
-  ExerciseTemplateTypeChoose
+  ExerciseTemplateTypeChoose, NewExerciseTemplate
 } from "../types/exerciseTemplate";
 import FormControl from "@mui/material/FormControl";
 
@@ -24,14 +24,32 @@ export default function ExerciseTemplatesPage() {
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
 
-  // ----- filters ----- //
+  // ----- filters and search ----- //
   const [selectedType, setSelectedType] = useState<ExerciseTemplateTypeChoose>('all');
   const [selectedTags, setSelectedTags] =  useState<ExerciseTemplateTag[]>([]);
   const [searchText, setSearchText] = useState<string>('');
+  const [debouncedSearchText, setDebouncedSearchText] = useState<string>(searchText);
+
+  // ----- add form ----- //
+  const [open, setOpen] = useState<boolean>(false)
+  const [newTemplate, setNewTemplate] = useState<NewExerciseTemplate>({
+    name: "",
+    description: "",
+    tags: [],
+    fields: [],
+  });
 
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
-  const [debouncedSearchText, setDebouncedSearchText] = useState<string>(searchText);
+  const tagOptions: ExerciseTemplateTag[] = [
+    "chest","biceps","cardio","cycling","running","free weight","machine",
+    "triceps","legs","back","shoulders","abs","core","HIIT","yoga","pilates"
+  ]
+
+  const fieldOptions: ExerciseTemplateField[] = [
+    "sets","reps","weight","time","distance","speed",
+    "rounds","rest","rpe","attempts","successes","notes","tempo"
+  ]
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -74,6 +92,7 @@ export default function ExerciseTemplatesPage() {
       .finally(() => setLoading(false));
   };
 
+  // Update filters
   useEffect(() => {
     setTemplates([]);
     setPage(1);
@@ -81,6 +100,7 @@ export default function ExerciseTemplatesPage() {
     fetchTemplates(1, false)
   }, [selectedType, selectedTags, debouncedSearchText]);
 
+  // Infinity scroll
   useEffect(() => {
     if (loading) return;
     const observer = new IntersectionObserver(
@@ -117,6 +137,19 @@ export default function ExerciseTemplatesPage() {
   const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchText(event.target.value);
   };
+
+  // Add template
+
+  const handleOpen = () => setOpen(true)
+  const handleClose = () => {
+    setOpen(false);
+    setNewTemplate({
+      name: "",
+      description: "",
+      tags: [],
+      fields: [],
+    })
+  }
 
   return (
     <Box sx={{ p: 2 }}>
@@ -155,24 +188,7 @@ export default function ExerciseTemplatesPage() {
         Tags
       </Typography>
       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mb: 2 }}>
-        {[
-          "chest",
-          "biceps",
-          "cardio",
-          "cycling",
-          "running",
-          "free weight",
-          "machine",
-          "triceps",
-          "legs",
-          "back",
-          "shoulders",
-          "abs",
-          "core",
-          "HIIT",
-          "yoga",
-          "pilates"
-        ].map((tag) => (
+        {tagOptions.map((tag) => (
           <FormControlLabel
             key={tag}
             control={
