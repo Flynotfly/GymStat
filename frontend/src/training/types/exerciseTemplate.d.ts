@@ -30,3 +30,18 @@ export type ExerciseTemplateTag =
   | "HIIT"
   | "yoga"
   | "pilates";
+
+export type ExerciseTemplateField =
+  "sets"
+  | "reps"
+  | "weight"
+  | "time"
+  | "distance"
+  | "speed"
+  | "rounds"
+  | "rest"
+  | "rpe"
+  | "attempts"
+  | "successes"
+  | "notes"
+  | "tempo";
