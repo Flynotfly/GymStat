@@ -186,13 +186,19 @@ export default function ExerciseTemplatesPage() {
         ))}
       </Box>
 
-      <Grid2 container spacing={2}>
-        {templates.map(template => (
-          <Grid2 size={{xs: 12, md: 6, lg: 4}} key={template.id}>
-            <ExerciseTemplateCard template={template} />
-          </Grid2>
-        ))}
-      </Grid2>
+      {templates.length > 0 ? (
+        <Grid2 container spacing={2}>
+          {templates.map(template => (
+            <Grid2 size={{xs: 12, md: 6, lg: 4}} key={template.id}>
+              <ExerciseTemplateCard template={template} />
+            </Grid2>
+          ))}
+        </Grid2>
+      ) : !loading && (
+        <Typography variant="body1" sx={{ textAlign: 'center', mt: 4 }}>
+          No templates found.
+        </Typography>
+      )}
 
       {/* Loading Indicator */}
       {loading && <Typography variant="body1" sx={{ textAlign: 'center' }}>Loading...</Typography>}
