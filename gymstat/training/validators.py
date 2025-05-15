@@ -171,26 +171,26 @@ def validate_training_template_data(data):
                             allowed[1] if isinstance(allowed, list) else None
                         )
 
-                        if expected_type == "Int":
+                        if expected_type == "int":
                             try:
                                 int(value)
                             except ValueError:
                                 raise ValidationError(
                                     f"'{field}' must be an integer."
                                 )
-                        elif expected_type == "Float":
+                        elif expected_type == "float":
                             try:
                                 float(value)
                             except ValueError:
                                 raise ValidationError(
                                     f"'{field}' must be a float."
                                 )
-                        elif expected_type == "Duration":
+                        elif expected_type == "duration":
                             if not is_duration(value):
                                 raise ValidationError(
                                     f"'{field}' must be a duration string."
                                 )
-                        elif expected_type == "Text":
+                        elif expected_type == "text":
                             if not isinstance(value, str):
                                 raise ValidationError(
                                     f"'{field}' must be a string."
