@@ -30,8 +30,12 @@ class TrainingTemplateSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "name",
+            "owner",
             "description",
             "data",
+        ]
+        read_only_fields = [
+            "owner",
         ]
 
 
