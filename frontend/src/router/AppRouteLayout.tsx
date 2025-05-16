@@ -14,17 +14,20 @@ export default function AppRouteLayout() {
   let pageTitle = "Home";
 
   // Determine tab index and page title based on the URL's start
-  if (pathname.startsWith("/app/trainings")) {
+  if (pathname.startsWith("/app/trainings/templates")) {
+    tabIndex = 2;
+    pageTitle = "Training templates";
+  } else if (pathname.startsWith("/app/trainings/")) {
     tabIndex = 1;
     pageTitle = "Trainings";
   } else if (pathname.startsWith("/app/exercises")) {
-    tabIndex = 2;
+    tabIndex = 3;
     pageTitle = "Exercises";
   } else if (pathname.startsWith("/app/body")) {
-    tabIndex = 3;
+    tabIndex = 4;
     pageTitle = "Body";
   } else if (pathname.startsWith("/app/tasks")) {
-    tabIndex = 4;
+    tabIndex = 5;
     pageTitle = "Tasks";
   }
 

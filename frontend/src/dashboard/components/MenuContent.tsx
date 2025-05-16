@@ -12,11 +12,13 @@ import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
 import HelpRoundedIcon from '@mui/icons-material/HelpRounded';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
+import DescriptionIcon from '@mui/icons-material/Description';
 import { Link } from "react-router-dom";
 
 const mainListItems = [
   { text: 'Home', icon: <HomeRoundedIcon />, path: "/app" },
   { text: 'Trainings', icon: <AnalyticsRoundedIcon />, path: "/app/trainings" },
+  { text: 'Templates', icon: <DescriptionIcon/>, path: "/app/trainings/templates" },
   { text: 'Exercises', icon: <FitnessCenterIcon />, path: "/app/exercises" },
   { text: 'Body', icon: <PeopleRoundedIcon />, path: "/app/body" },
   { text: 'Tasks', icon: <AssignmentRoundedIcon />, path: "/app/tasks" },
