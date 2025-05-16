@@ -43,7 +43,6 @@ export default function ExerciseTemplatesPage() {
     tags: [],
     fields: [],
   });
-  const [nameError, setNameError] = useState<boolean>(false);
 
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
@@ -144,6 +143,7 @@ export default function ExerciseTemplatesPage() {
   };
 
   // Add template
+
   const handleOpen = () => setOpen(true)
   const handleClose = () => {
     setOpen(false);
@@ -154,12 +154,8 @@ export default function ExerciseTemplatesPage() {
       fields: [],
     })
   }
+
   const handleSubmit = () =>  {
-    if (!newTemplate.name.trim()) {
-      setNameError(true);
-      return;
-    }
-    setNameError(false)
     createExerciseTemplate(newTemplate)
       .then(() => {
         handleClose();
@@ -256,8 +252,6 @@ export default function ExerciseTemplatesPage() {
             onChange={(e) =>
               setNewTemplate({ ...newTemplate, name: e.target.value })
             }
-            error={nameError}
-            helperText={nameError ? "Name is required" : ""}
             sx={{ mb: 2 }}
           />
 
