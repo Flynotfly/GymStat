@@ -483,7 +483,7 @@ export default function NewTrainingTemplatePage() {
                   }}
                 />
               )}
-            />;
+            />
 
             {/* Unit Fields */}
             <Box sx={{ mb: 2 }}>
