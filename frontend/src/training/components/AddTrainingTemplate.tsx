@@ -205,7 +205,7 @@ export default function NewTrainingTemplatePage() {
         }),
       },
     };
-
+    console.log("Send template: ", payload)
     createTrainingTemplate(payload)
       .then(() => navigate("/app/trainings/templates"))
       .catch((err) =>
