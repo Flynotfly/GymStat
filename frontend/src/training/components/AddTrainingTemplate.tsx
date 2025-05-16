@@ -18,7 +18,7 @@ import { useNavigate } from "react-router-dom";
 import { createTrainingTemplate } from "../api";
 import {
   NoteField,
-  NewTrainingTemplate,
+  NewTrainingTemplateStringify,
 } from "../types/trainingTemplate";
 
 interface NoteUI {
@@ -240,7 +240,7 @@ export default function NewTrainingTemplatePage() {
   const handleSubmit = () => {
     if (!canSubmit) return;
 
-    const payload: NewTrainingTemplate = {
+    const payload: NewTrainingTemplateStringify = {
       name: name.trim(),
       description: description.trim(),
       data: {

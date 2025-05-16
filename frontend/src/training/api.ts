@@ -3,7 +3,7 @@ import {
   NewTraining,
   Training
 } from "./types/training";
-import {TrainingTemplate, NewTrainingTemplate} from "./types/trainingTemplate"
+import {TrainingTemplate, NewTrainingTemplateStringify} from "./types/trainingTemplate"
 import {PaginatedResponse} from "../types/api";
 import {
   ExerciseTemplate,
@@ -88,7 +88,7 @@ export function getTrainingTemplates(
 }
 
 export function createTrainingTemplate(
-  trainingTemplate: NewTrainingTemplate
+  trainingTemplate: NewTrainingTemplateStringify
 ): Promise<TrainingTemplate> {
   return request(
     'POST',

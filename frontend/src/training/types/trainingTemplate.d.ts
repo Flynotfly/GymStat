@@ -13,6 +13,13 @@ export interface Note {
   Default?: string;
 }
 
+export interface NoteStringify {
+  Name: string;
+  Field: NoteField;
+  Required: "True" | "False";
+  Default?: string;
+}
+
 export type SetData = {
   [key: string]: string | number;
 };
@@ -28,6 +35,11 @@ export interface TrainingTemplateData {
   Exercises?: Exercise[];
 }
 
+export interface TrainingTemplateDataStringify {
+  Notes?: NoteStringify[];
+  Exercises?: Exercise[]
+}
+
 export interface NewTrainingTemplate{
   name: string,
   description: string,
@@ -35,5 +47,15 @@ export interface NewTrainingTemplate{
 }
 
 export interface TrainingTemplate extends NewTrainingTemplate{
+  id: number,
+}
+
+export interface NewTrainingTemplateStringify{
+  name: string,
+  description: string,
+  data: TrainingTemplateDataStringify,
+}
+
+export interface TrainingTemplateStringify extends NewTrainingTemplateStringify{
   id: number,
 }
