@@ -73,7 +73,7 @@ export default function TrainingTemplatesPage() {
         </Typography>
         <Button
           variant="contained"
-          onClick={() => navigate("/trainings/templates/add")}
+          onClick={() => navigate("/app/trainings/templates/add")}
         >
           Add New Template
         </Button>
