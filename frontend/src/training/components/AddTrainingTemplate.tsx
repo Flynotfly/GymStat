@@ -103,6 +103,7 @@ export default function NewTrainingTemplatePage() {
   const [exHasMore, setExHasMore] = useState<boolean>(true);
   const [exLoading, setExLoading] = useState<boolean>(false);
   const [exSearch, setExSearch] = useState<string>("");
+  const [exInputValue, setExInputValue] = useState<string>("");
   const listboxRef = useRef<HTMLUListElement>(null);
 
   // Compute an array of default‐validation errors
@@ -457,15 +458,21 @@ export default function NewTrainingTemplatePage() {
             </IconButton>
 
             <Autocomplete
-              openOnFocus
+              inputValue={exInputValue}
               getOptionLabel={(opt) => opt.name}
               options={exOptions}
               loading={exLoading}
               value={exOptions.find(o => o.id === ex.Template) || null}
-              onChange={(_, v) =>
+              onChange={(_, v) => {
                 updateExercise(exIdx, { Template: v ? v.id : 0 })
-              }
-              onInputChange={(_, v) => setExSearch(v)}
+                setExInputValue(v ? v.name : "");
+              }}
+              onInputChange={(_, v, reason) => {
+                setExInputValue(v);
+                if (reason === "input") {
+                  setExSearch(v);
+                }
+              }}
               ListboxProps={{ ref: listboxRef }}
               renderInput={(params) => (
                 <TextField
