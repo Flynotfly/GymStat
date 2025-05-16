@@ -4,7 +4,7 @@ import {
   Typography,
   TextField,
   Checkbox,
-  FormControlLabel, Radio, RadioGroup,
+  FormControlLabel, Radio, RadioGroup, Autocomplete,
 } from "@mui/material";
 import {ChangeEvent, useEffect, useRef, useState} from "react";
 import {createExerciseTemplate, getExerciseTemplates} from "../api.ts";
@@ -16,6 +16,11 @@ import {
   ExerciseTemplateTypeChoose, NewExerciseTemplate
 } from "../types/exerciseTemplate";
 import FormControl from "@mui/material/FormControl";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import Button from "@mui/material/Button";
 
 export default function ExerciseTemplatesPage() {
 
@@ -86,7 +91,6 @@ export default function ExerciseTemplatesPage() {
         } else {
           setHasMore(false)
         }
-        console.log('fetch exercise templates: ', data); // TODO: remove
       })
       .catch((err) => console.error("Error fetching exercise templates: ", err))
       .finally(() => setLoading(false));
@@ -151,11 +155,32 @@ export default function ExerciseTemplatesPage() {
     })
   }
 
+  const handleSubmit = () =>  {
+    createExerciseTemplate(newTemplate)
+      .then(() => {
+        handleClose();
+        fetchTemplates(1, false);
+      })
+      .catch(err => console.error("Error fetching templates:", err))
+  }
+
   return (
     <Box sx={{ p: 2 }}>
-      <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
-        Exercises
-      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          mb: 2,
+        }}
+      >
+        <Typography component="h2" variant="h6">
+          Exercises
+        </Typography>
+        <Button variant="contained" onClick={handleOpen}>
+          Add New Template
+        </Button>
+      </Box>
 
       {/*Search bar*/}
       <TextField
@@ -215,6 +240,69 @@ export default function ExerciseTemplatesPage() {
           No templates found.
         </Typography>
       )}
+
+      {/* ——— New Template Dialog ——— */}
+      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
+        <DialogTitle>Add New Exercise Template</DialogTitle>
+        <DialogContent dividers>
+          <TextField
+            fullWidth
+            label="Name"
+            value={newTemplate.name}
+            onChange={(e) =>
+              setNewTemplate({ ...newTemplate, name: e.target.value })
+            }
+            sx={{ mb: 2 }}
+          />
+
+          <TextField
+            fullWidth
+            multiline
+            minRows={3}
+            label="Description"
+            value={newTemplate.description}
+            onChange={(e) =>
+              setNewTemplate({ ...newTemplate, description: e.target.value })
+            }
+            sx={{ mb: 2 }}
+          />
+
+          <Autocomplete
+            multiple
+            options={tagOptions}
+            getOptionLabel={(o) => o}
+            value={newTemplate.tags}
+            onChange={(_, v) =>
+              setNewTemplate({ ...newTemplate, tags: v })
+            }
+            renderInput={(params) => <TextField {...params} label="Tags" />}
+            sx={{ mb: 2 }}
+          />
+
+          <Autocomplete
+            multiple
+            options={fieldOptions}
+            getOptionLabel={(o) => o}
+            value={newTemplate.fields}
+            onChange={(_, v) =>
+              setNewTemplate({ ...newTemplate, fields: v })
+            }
+            renderInput={(params) => (
+              <TextField {...params} label="Fields" />
+            )}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button
+            variant="contained"
+            onClick={handleSubmit}
+            disabled={!newTemplate.name.trim()}
+          >
+            Create
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {/* Loading Indicator */}
       {loading && <Typography variant="body1" sx={{ textAlign: 'center' }}>Loading...</Typography>}
