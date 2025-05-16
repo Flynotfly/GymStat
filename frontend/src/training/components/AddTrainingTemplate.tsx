@@ -207,7 +207,7 @@ export default function NewTrainingTemplatePage() {
     };
 
     createTrainingTemplate(payload)
-      .then(() => navigate("/training-templates"))
+      .then(() => navigate("/app/trainings/templates"))
       .catch((err) =>
         console.error("Error creating training template:", err)
       );
