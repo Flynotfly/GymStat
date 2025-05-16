@@ -14,6 +14,8 @@ const SignIn = lazy(() => import("../core/pages/SignIn.tsx"));
 const SignUp = lazy(() => import("../core/pages/SignUp.tsx"));
 const Promo = lazy(() => import("../core/pages/Promo.tsx"));
 const VerificationEmailSent = lazy(() => import("../core/pages/VerificationEmailSent.tsx"));
+const TrainingTemplates = lazy(() => import("../training/components/TrainingTemplatesPage.tsx"));
+const AddTrainingTemplate = lazy(() => import("../training/components/AddTrainingTemplate.tsx"));
 
 function createRouter() {
   return createBrowserRouter([
@@ -31,6 +33,8 @@ function createRouter() {
           children: [
             { index: true, element: <Home/> },
             { path: "trainings", element: <Training/> },
+            { path: "trainings/templates/", element: <TrainingTemplates/> },
+            { path: "trainings/templates/add/", element: <AddTrainingTemplate/> },
             { path: "exercises", element: <Exercises/>},
             { path: "body", element: <Body/> },
             { path: "tasks", element: <Tasks/> },
