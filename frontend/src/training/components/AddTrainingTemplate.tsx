@@ -1,5 +1,5 @@
 // src/pages/NewTrainingTemplatePage.tsx
-import {useEffect, useMemo, useRef, useState} from "react";
+import {useMemo, useState} from "react";
 import {
   Box,
   Typography,
@@ -11,16 +11,16 @@ import {
   FormControlLabel,
   Paper,
   IconButton,
-  Grid, CircularProgress, Autocomplete,
+  Grid,
 } from "@mui/material";
 import { Add as AddIcon, Delete as DeleteIcon } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import {createTrainingTemplate, getExerciseTemplates} from "../api";
+import {createTrainingTemplate} from "../api";
 import {
   NoteField,
   NewTrainingTemplateStringify,
 } from "../types/trainingTemplate";
-import {ExerciseTemplate} from "../types/exerciseTemplate";
+import ExerciseTemplatePicker from "./ExerciseTemplatePicker.tsx";
 
 interface NoteUI {
   Name: string;
@@ -97,14 +97,6 @@ export default function NewTrainingTemplatePage() {
   const [description, setDescription] = useState("");
   const [notesUI, setNotesUI] = useState<NoteUI[]>([]);
   const [exercisesUI, setExercisesUI] = useState<ExerciseUI[]>([]);
-
-  const [exOptions, setExOptions] = useState<ExerciseTemplate[]>([]);
-  const [exPage, setExPage] = useState<number>(1);
-  const [exHasMore, setExHasMore] = useState<boolean>(true);
-  const [exLoading, setExLoading] = useState<boolean>(false);
-  const [exSearch, setExSearch] = useState<string>("");
-  const [exInputValue, setExInputValue] = useState<string>("");
-  const listboxRef = useRef<HTMLUListElement>(null);
 
   // Compute an array of default‐validation errors
   const defaultErrors = useMemo(() =>
@@ -289,40 +281,6 @@ export default function NewTrainingTemplatePage() {
       );
   };
 
-  // Fetcher for exercise‐templates
-  const fetchExTemplates = (page: number, search: string, append = false) => {
-    setExLoading(true);
-    getExerciseTemplates(page, search)
-      .then(({ results, next }) => {
-          setExOptions(prev => append ? [...prev, ...results] : results);
-          setExPage(page + 1);
-          setExHasMore(!!next);
-        })
-      .finally(() => setExLoading(false));
-  };
-
-  // Reset on search change
-  useEffect(() => {
-    setExOptions([]);
-    setExPage(1);
-    setExHasMore(true);
-    fetchExTemplates(1, exSearch, false);
-  }, [exSearch]);
-
-  // Infinite‐scroll on dropdown
-  useEffect(() => {
-    const lb = listboxRef.current;
-    if (!lb) return;
-    const onScroll = () => {
-        if (lb.scrollTop + lb.clientHeight >= lb.scrollHeight - 20 &&
-              exHasMore && !exLoading) {
-            fetchExTemplates(exPage, exSearch, true);
-          }
-      };
-    lb.addEventListener("scroll", onScroll);
-    return () => lb.removeEventListener("scroll", onScroll);
-  }, [exPage, exHasMore, exLoading]);
-
   return (
     <Box sx={{ p: 2 }}>
       <Typography variant="h5" gutterBottom>
@@ -457,39 +415,9 @@ export default function NewTrainingTemplatePage() {
               <DeleteIcon fontSize="small" />
             </IconButton>
 
-            <Autocomplete
-              inputValue={exInputValue}
-              getOptionLabel={(opt) => opt.name}
-              options={exOptions}
-              loading={exLoading}
-              value={exOptions.find(o => o.id === ex.Template) || null}
-              onChange={(_, v) => {
-                updateExercise(exIdx, { Template: v ? v.id : 0 })
-                setExInputValue(v ? v.name : "");
-              }}
-              onInputChange={(_, v, reason) => {
-                setExInputValue(v);
-                if (reason === "input") {
-                  setExSearch(v);
-                }
-              }}
-              ListboxProps={{ ref: listboxRef }}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Choose Exercise Template"
-                  sx={{ mb: 2 }}
-                  InputProps={{
-                    ...params.InputProps,
-                    endAdornment: (
-                      <>
-                        {exLoading && <CircularProgress size={20} />}
-                        {params.InputProps.endAdornment}
-                      </>
-                    ),
-                  }}
-                />
-              )}
+            <ExerciseTemplatePicker
+              value={ex.Template}
+              onChange={(id) => updateExercise(exIdx, { Template: id })}
             />
 
             {/* Unit Fields */}
