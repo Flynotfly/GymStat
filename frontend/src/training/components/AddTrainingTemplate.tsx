@@ -20,19 +20,14 @@ import {
   NoteField,
   NewTrainingTemplateStringify,
 } from "../types/trainingTemplate";
-import ExerciseTemplatePicker from "./ExerciseTemplatePicker.tsx";
+import ExerciseCard, { ExerciseUI } from "../components/ExerciseCard.tsx";
+
 
 interface NoteUI {
   Name: string;
   Field: NoteField;
   Required: boolean;
   Default?: string;
-}
-
-interface ExerciseUI {
-  Template: number;
-  unitFields: { key: string; value: string }[];
-  setsFields: { key: string; value: string }[][];
 }
 
 // --- Validation helpers ---
@@ -140,102 +135,8 @@ export default function NewTrainingTemplatePage() {
   const addExercise = () => {
     setExercisesUI([
       ...exercisesUI,
-      { Template: 0, unitFields: [], setsFields: [] },
+      { template: null, fields: [] },
     ]);
-  };
-
-  const updateExercise = (
-    idx: number,
-    updates: Partial<ExerciseUI>
-  ) => {
-    const newEx = [...exercisesUI];
-    newEx[idx] = { ...newEx[idx], ...updates };
-    setExercisesUI(newEx);
-  };
-
-  const removeExercise = (idx: number) => {
-    setExercisesUI(exercisesUI.filter((_, i) => i !== idx));
-  };
-
-  const addUnitField = (exIdx: number) => {
-    const ex = exercisesUI[exIdx];
-    updateExercise(exIdx, {
-      unitFields: [
-        ...ex.unitFields,
-        { key: "", value: "" },
-      ],
-    });
-  };
-
-  const updateUnitField = (
-    exIdx: number,
-    fieldIdx: number,
-    updates: { key?: string; value?: string }
-  ) => {
-    const ex = exercisesUI[exIdx];
-    const newUF = [...ex.unitFields];
-    newUF[fieldIdx] = { ...newUF[fieldIdx], ...updates };
-    updateExercise(exIdx, { unitFields: newUF });
-  };
-
-  const removeUnitField = (exIdx: number, fieldIdx: number) => {
-    const ex = exercisesUI[exIdx];
-    updateExercise(exIdx, {
-      unitFields: ex.unitFields.filter((_, i) => i !== fieldIdx),
-    });
-  };
-
-  const addSet = (exIdx: number) => {
-    const ex = exercisesUI[exIdx];
-    updateExercise(exIdx, {
-      setsFields: [...ex.setsFields, []],
-    });
-  };
-
-  const addSetPair = (exIdx: number, setIdx: number) => {
-    const ex = exercisesUI[exIdx];
-    const newSets = ex.setsFields.map((set, i) =>
-      i === setIdx ? [...set, { key: "", value: "" }] : set
-    );
-    updateExercise(exIdx, { setsFields: newSets });
-  };
-
-  const updateSetPair = (
-    exIdx: number,
-    setIdx: number,
-    pairIdx: number,
-    updates: { key?: string; value?: string }
-  ) => {
-    const ex = exercisesUI[exIdx];
-    const newSets = ex.setsFields.map((set, i) =>
-      i !== setIdx
-        ? set
-        : set.map((pair, j) =>
-          j === pairIdx ? { ...pair, ...updates } : pair
-        )
-    );
-    updateExercise(exIdx, { setsFields: newSets });
-  };
-
-  const removeSetPair = (
-    exIdx: number,
-    setIdx: number,
-    pairIdx: number
-  ) => {
-    const ex = exercisesUI[exIdx];
-    const newSets = ex.setsFields.map((set, i) =>
-      i === setIdx
-        ? set.filter((_, j) => j !== pairIdx)
-        : set
-    );
-    updateExercise(exIdx, { setsFields: newSets });
-  };
-
-  const removeSet = (exIdx: number, setIdx: number) => {
-    const ex = exercisesUI[exIdx];
-    updateExercise(exIdx, {
-      setsFields: ex.setsFields.filter((_, i) => i !== setIdx),
-    });
   };
 
   const handleSubmit = () => {
@@ -254,21 +155,18 @@ export default function NewTrainingTemplatePage() {
           })),
         }),
         ...(exercisesUI.length > 0 && {
-          Exercises: exercisesUI.map((e) => ({
-            Template: e.Template,
-            ...(e.unitFields.length > 0 && {
-              Unit: Object.fromEntries(
-                e.unitFields.map(({ key, value }) => [
-                  key,
-                  value,
-                ])
-              ),
-            }),
-            Sets: e.setsFields.map((set) =>
-              Object.fromEntries(
-                set.map(({ key, value }) => [key, value])
-              )
-            ),
+          Exercises: exercisesUI.map(ex => ({
+            Template: ex.template!.id,
+            Unit: ex.fields.reduce<Record<string,string>>((acc,f) => {
+              if (f.unit) acc[f.name] = f.unit;
+              return acc;
+            }, {}),
+            Sets: [
+              ex.fields.reduce<Record<string,string|number>>((acc,f) => {
+                acc[f.name] = f.default!;
+                return acc;
+              }, {}),
+            ],
           })),
         }),
       },
@@ -402,183 +300,19 @@ export default function NewTrainingTemplatePage() {
           </Button>
         </Box>
 
-        {exercisesUI.map((ex, exIdx) => (
-          <Paper
-            key={exIdx}
-            sx={{ p: 2, mb: 2, position: "relative" }}
-          >
-            <IconButton
-              size="small"
-              sx={{ position: "absolute", top: 8, right: 8 }}
-              onClick={() => removeExercise(exIdx)}
-            >
-              <DeleteIcon fontSize="small" />
-            </IconButton>
-
-            <ExerciseTemplatePicker
-              value={ex.Template}
-              onChange={(id) => updateExercise(exIdx, { Template: id })}
-            />
-
-            {/* Unit Fields */}
-            <Box sx={{ mb: 2 }}>
-              <Typography variant="subtitle1">
-                Unit Fields
-              </Typography>
-              {ex.unitFields.map((uf, ufIdx) => (
-                <Grid
-                  container
-                  spacing={1}
-                  key={ufIdx}
-                  alignItems="center"
-                  sx={{ mb: 1 }}
-                >
-                  <Grid item xs={5}>
-                    <TextField
-                      fullWidth
-                      placeholder="key"
-                      value={uf.key}
-                      onChange={(e) =>
-                        updateUnitField(exIdx, ufIdx, {
-                          key: e.target.value,
-                        })
-                      }
-                    />
-                  </Grid>
-                  <Grid item xs={5}>
-                    <TextField
-                      fullWidth
-                      placeholder="value"
-                      value={uf.value}
-                      onChange={(e) =>
-                        updateUnitField(exIdx, ufIdx, {
-                          value: e.target.value,
-                        })
-                      }
-                    />
-                  </Grid>
-                  <Grid item xs={2}>
-                    <IconButton
-                      onClick={() =>
-                        removeUnitField(exIdx, ufIdx)
-                      }
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </Grid>
-                </Grid>
-              ))}
-              <Button
-                size="small"
-                startIcon={<AddIcon />}
-                onClick={() => addUnitField(exIdx)}
-              >
-                Add Unit Field
-              </Button>
-            </Box>
-
-            {/* Sets */}
-            <Box>
-              <Typography variant="subtitle1">
-                Sets
-              </Typography>
-              {ex.setsFields.map((set, setIdx) => (
-                <Paper
-                  key={setIdx}
-                  variant="outlined"
-                  sx={{ p: 1, mb: 1 }}
-                >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      mb: 1,
-                    }}
-                  >
-                    <Typography>
-                      Set #{setIdx + 1}
-                    </Typography>
-                    <IconButton
-                      size="small"
-                      onClick={() =>
-                        removeSet(exIdx, setIdx)
-                      }
-                    >
-                      <DeleteIcon fontSize="small" />
-                    </IconButton>
-                  </Box>
-                  {set.map((pair, pairIdx) => (
-                    <Grid
-                      container
-                      spacing={1}
-                      key={pairIdx}
-                      alignItems="center"
-                      sx={{ mb: 1 }}
-                    >
-                      <Grid item xs={5}>
-                        <TextField
-                          fullWidth
-                          placeholder="key"
-                          value={pair.key}
-                          onChange={(e) =>
-                            updateSetPair(
-                              exIdx,
-                              setIdx,
-                              pairIdx,
-                              { key: e.target.value }
-                            )
-                          }
-                        />
-                      </Grid>
-                      <Grid item xs={5}>
-                        <TextField
-                          fullWidth
-                          placeholder="value"
-                          value={pair.value}
-                          onChange={(e) =>
-                            updateSetPair(
-                              exIdx,
-                              setIdx,
-                              pairIdx,
-                              { value: e.target.value }
-                            )
-                          }
-                        />
-                      </Grid>
-                      <Grid item xs={2}>
-                        <IconButton
-                          onClick={() =>
-                            removeSetPair(
-                              exIdx,
-                              setIdx,
-                              pairIdx
-                            )
-                          }
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </Grid>
-                    </Grid>
-                  ))}
-                  <Button
-                    size="small"
-                    startIcon={<AddIcon />}
-                    onClick={() => addSetPair(exIdx, setIdx)}
-                  >
-                    Add Field
-                  </Button>
-                </Paper>
-              ))}
-              <Button
-                size="small"
-                startIcon={<AddIcon />}
-                onClick={() => addSet(exIdx)}
-              >
-                Add Set
-              </Button>
-            </Box>
-          </Paper>
+        {exercisesUI.map((ex, idx) => (
+          <ExerciseCard
+            key={idx}
+            exercise={ex}
+            onChange={updated => {
+              setExercisesUI(ui =>
+                ui.map((u, i) => (i === idx ? updated : u))
+              );
+            }}
+            onRemove={() => {
+              setExercisesUI(ui => ui.filter((_, i) => i !== idx));
+            }}
+          />
         ))}
       </Box>
 
