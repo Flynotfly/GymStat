@@ -17,7 +17,7 @@ export default function AppRouteLayout() {
   if (pathname.startsWith("/app/trainings/templates")) {
     tabIndex = 2;
     pageTitle = "Training templates";
-  } else if (pathname.startsWith("/app/trainings/")) {
+  } else if (pathname.startsWith("/app/trainings")) {
     tabIndex = 1;
     pageTitle = "Trainings";
   } else if (pathname.startsWith("/app/exercises")) {
