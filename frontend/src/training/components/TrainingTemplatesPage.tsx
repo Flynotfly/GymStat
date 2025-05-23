@@ -3,59 +3,54 @@ import {
   Box,
   Typography,
   Button,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
+  Card,
+  CardHeader,
+  CardContent,
+  Grid,
+  Paper,
+  Chip,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
 } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { getTrainingTemplates } from "../api"; // should accept a page number and return { results: TrainingTemplate[], next: boolean | string | null }
+import { getTrainingTemplates } from "../api";
 import { TrainingTemplate } from "../types/trainingTemplate";
 
 export default function TrainingTemplatesPage() {
   const [templates, setTemplates] = useState<TrainingTemplate[]>([]);
-  const [page, setPage] = useState<number>(1);
-  const [hasMore, setHasMore] = useState<boolean>(true);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(false);
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
-  const fetchTemplates = (pageToFetch: number, append = false) => {
+  const fetchTemplates = (pg: number, append = false) => {
     setLoading(true);
-    getTrainingTemplates(pageToFetch)
+    getTrainingTemplates(pg)
       .then(({ results, next }) => {
-        setTemplates(prev =>
-          append ? [...prev, ...results] : results
-        );
-        setPage(pageToFetch + 1);
+        setTemplates(prev => (append ? [...prev, ...results] : results));
+        setPage(pg + 1);
         setHasMore(Boolean(next));
       })
-      .catch(err => console.error("Error fetching training templates:", err))
       .finally(() => setLoading(false));
   };
 
-  // initial load
-  useEffect(() => {
-    fetchTemplates(1, false);
-  }, []);
+  useEffect(() => { fetchTemplates(1, false); }, []);
 
-  // infinite scroll
   useEffect(() => {
     if (loading) return;
-    const obs = new IntersectionObserver(
-      entries => {
-        if (entries[0].isIntersecting && hasMore && !loading) {
-          fetchTemplates(page, true);
-        }
-      },
-      { threshold: 1 }
-    );
+    const obs = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasMore && !loading) {
+        fetchTemplates(page, true);
+      }
+    }, { threshold: 1 });
     const el = loadMoreRef.current;
     if (el) obs.observe(el);
-    return () => {
-      if (el) obs.unobserve(el);
-    };
+    return () => { if (el) obs.unobserve(el); };
   }, [page, hasMore, loading]);
 
   return (
@@ -84,34 +79,109 @@ export default function TrainingTemplatesPage() {
           No training templates found.
         </Typography>
       ) : (
-        templates.map(tpl => (
-          <Accordion key={tpl.id} TransitionProps={{ unmountOnExit: true }}>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography>{tpl.name}</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Typography variant="subtitle2" gutterBottom>
-                Description
-              </Typography>
-              <Typography paragraph>{tpl.description}</Typography>
+        templates.map((tpl) => (
+          <Card variant="outlined" sx={{ mb: 2 }} key={tpl.id}>
+            <CardHeader
+              title={tpl.name}
+              subheader={tpl.description}
+            />
+            <CardContent>
+              {/* NOTES */}
+              {tpl.data.Notes?.length ? (
+                <Box mb={2}>
+                  <Typography variant="subtitle2" gutterBottom>
+                    Notes
+                  </Typography>
+                  <Grid container spacing={1}>
+                    {tpl.data.Notes.map((note, i) => (
+                      <Grid item xs={12} sm={6} key={i}>
+                        <Paper variant="outlined" sx={{ p: 1 }}>
+                          <Typography variant="body2">
+                            <strong>Name:</strong> {note.Name}
+                          </Typography>
+                          <Typography variant="body2">
+                            <strong>Field:</strong> {note.Field}
+                          </Typography>
+                          <Typography variant="body2">
+                            <strong>Required:</strong>{" "}
+                            {note.Required ? "Yes" : "No"}
+                          </Typography>
+                          {note.Default && (
+                            <Typography variant="body2">
+                              <strong>Default:</strong> {note.Default}
+                            </Typography>
+                          )}
+                        </Paper>
+                      </Grid>
+                    ))}
+                  </Grid>
+                </Box>
+              ) : null}
 
-              <Typography variant="subtitle2" gutterBottom>
-                Data
-              </Typography>
-              <Box
-                component="pre"
-                sx={{
-                  bgcolor: "#f5f5f5",
-                  p: 1,
-                  borderRadius: 1,
-                  overflowX: "auto",
-                  fontSize: "0.875rem",
-                }}
-              >
-                {JSON.stringify(tpl.data, null, 2)}
-              </Box>
-            </AccordionDetails>
-          </Accordion>
+              {/* EXERCISES */}
+              {tpl.data.Exercises?.length ? (
+                <Box>
+                  <Typography variant="subtitle2" gutterBottom>
+                    Exercises
+                  </Typography>
+                  {tpl.data.Exercises.map((ex, ei) => {
+                    const setKeys = ex.Sets
+                      ? Array.from(
+                        new Set(
+                          ex.Sets.flatMap((s) => Object.keys(s))
+                        )
+                      )
+                      : [];
+                    return (
+                      <Box key={ei} sx={{ mb: 2 }}>
+                        <Typography variant="body2" gutterBottom>
+                          <strong>Template ID:</strong> {ex.Template}
+                        </Typography>
+
+                        {/* Units */}
+                        {ex.Unit && (
+                          <Box sx={{ mb: 1 }}>
+                            {Object.entries(ex.Unit).map(([k, v]) => (
+                              <Chip
+                                key={k}
+                                label={`${k}: ${v}`}
+                                size="small"
+                                sx={{ mr: 0.5, mb: 0.5 }}
+                              />
+                            ))}
+                          </Box>
+                        )}
+
+                        {/* Sets table */}
+                        {ex.Sets && ex.Sets.length > 0 && (
+                          <Table size="small">
+                            <TableHead>
+                              <TableRow>
+                                {setKeys.map((key) => (
+                                  <TableCell key={key}>{key}</TableCell>
+                                ))}
+                              </TableRow>
+                            </TableHead>
+                            <TableBody>
+                              {ex.Sets.map((set, si) => (
+                                <TableRow key={si}>
+                                  {setKeys.map((key) => (
+                                    <TableCell key={key}>
+                                      {set[key] ?? "-"}
+                                    </TableCell>
+                                  ))}
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                        )}
+                      </Box>
+                    );
+                  })}
+                </Box>
+              ) : null}
+            </CardContent>
+          </Card>
         ))
       )}
 
@@ -120,7 +190,6 @@ export default function TrainingTemplatesPage() {
           Loading more…
         </Typography>
       )}
-      {/* this empty div triggers loading the next page when it comes into view */}
       <div ref={loadMoreRef} />
     </Box>
   );
