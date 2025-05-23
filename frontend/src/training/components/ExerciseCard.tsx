@@ -17,6 +17,7 @@ import {
   AllowedFieldName,
 } from "../constants/exerciseFields";
 import { ExerciseTemplate } from "../types/exerciseTemplate";
+import ExerciseTemplatePicker from "./ExerciseTemplatePicker";
 
 type FieldUI = {
   name: AllowedFieldName;
@@ -121,6 +122,10 @@ export default function ExerciseCard({ exercise, onChange, onRemove }: Props) {
 
   return (
     <Paper sx={{ p: 2, mb: 2, position: "relative" }}>
+      <ExerciseTemplatePicker
+        value={exercise.template?.id ?? null}
+        onChange={tpl => onChange({ ...exercise, template: tpl })}
+      />
       <IconButton
         size="small"
         sx={{ position: "absolute", top: 8, right: 8 }}

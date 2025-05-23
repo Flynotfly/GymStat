@@ -4,8 +4,8 @@ import { getExerciseTemplates } from "../api";
 import { ExerciseTemplate } from "../types/exerciseTemplate";
 
 interface Props {
-  value: number;
-  onChange: (id: number) => void;
+  value: number | null;
+  onChange: (template: ExerciseTemplate | null) => void;
 }
 
 export default function ExerciseTemplatePicker({ value, onChange }: Props) {
@@ -66,7 +66,7 @@ export default function ExerciseTemplatePicker({ value, onChange }: Props) {
       }}
       value={selected}
       onChange={(_, v) => {
-        onChange(v ? v.id : 0);
+        onChange(v);
         setInputValue(v ? v.name : "");
       }}
       ListboxProps={{ ref: listboxRef }}
