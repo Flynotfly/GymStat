@@ -1,3 +1,4 @@
+// src/components/ExerciseCard.tsx
 import { useEffect, useMemo } from "react";
 import {
   Paper,
@@ -10,7 +11,7 @@ import {
   IconButton,
   Button,
 } from "@mui/material";
-import AddIcon from '@mui/icons-material/Add';
+import AddIcon from "@mui/icons-material/Add";
 import { Delete as DeleteIcon } from "@mui/icons-material";
 import {
   ALLOWED_EXERCISE_FIELDS,
@@ -39,30 +40,32 @@ interface Props {
 }
 
 export default function ExerciseCard({ exercise, onChange, onRemove }: Props) {
-  // 1) Whenever user picks a different template, reset fields to the template’s defaults
+  // Reset fields when template changes
   useEffect(() => {
-    if (!exercise.template) return;
-    const defaults = (exercise.template.fields as AllowedFieldName[]).map(
-      (fieldName) => {
-        const spec = ALLOWED_EXERCISE_FIELDS[fieldName];
-        // if spec is [type, units], pick first unit by default
-        const unit = Array.isArray(spec) ? spec[1][0] : undefined;
-        return { name: fieldName, unit, default: "" };
-      }
-    );
+    if (!exercise.template) {
+      onChange({ ...exercise, fields: [] });
+      return;
+    }
+    const defaults: FieldUI[] = (exercise.template
+        .fields as AllowedFieldName[]
+    ).map((fieldName) => {
+      const spec = ALLOWED_EXERCISE_FIELDS[fieldName];
+      const unit = Array.isArray(spec) ? spec[1][0] : undefined;
+      return { name: fieldName, unit, default: "" };
+    });
     onChange({ ...exercise, fields: defaults });
-  }, [exercise.template?.id]);
+  }, [exercise.template]);
 
-  // 2) track which fields are still available to add
+  // Which fields remain available
   const available = useMemo<AllowedFieldName[]>(
     () =>
       (Object.keys(ALLOWED_EXERCISE_FIELDS) as AllowedFieldName[]).filter(
-        (k) => !exercise.fields.find((f) => f.name === k)
+        (k) => !exercise.fields.some((f) => f.name === k)
       ),
     [exercise.fields]
   );
 
-  // 3) handlers
+  // Handlers
   const replaceField = (idx: number, name: AllowedFieldName) => {
     const spec = ALLOWED_EXERCISE_FIELDS[name];
     const unit = Array.isArray(spec) ? spec[1][0] : undefined;
@@ -97,7 +100,7 @@ export default function ExerciseCard({ exercise, onChange, onRemove }: Props) {
     });
   };
 
-  // 4) validation for “default” values
+  // Validate default values
   const defaultErrors = useMemo(() => {
     return exercise.fields.map((f) => {
       if (!f.default) return "";
@@ -124,8 +127,9 @@ export default function ExerciseCard({ exercise, onChange, onRemove }: Props) {
     <Paper sx={{ p: 2, mb: 2, position: "relative" }}>
       <ExerciseTemplatePicker
         value={exercise.template?.id ?? null}
-        onChange={tpl => onChange({ ...exercise, template: tpl })}
+        onChange={(tpl) => onChange({ ...exercise, template: tpl })}
       />
+
       <IconButton
         size="small"
         sx={{ position: "absolute", top: 8, right: 8 }}
@@ -134,7 +138,6 @@ export default function ExerciseCard({ exercise, onChange, onRemove }: Props) {
         <DeleteIcon />
       </IconButton>
 
-      {/* template header */}
       <Typography variant="subtitle1" gutterBottom>
         {exercise.template?.name || "No template chosen"}
       </Typography>
@@ -142,13 +145,17 @@ export default function ExerciseCard({ exercise, onChange, onRemove }: Props) {
         {exercise.template?.description}
       </Typography>
 
-      {/* fields editor */}
       {exercise.fields.map((f, idx) => {
         const spec = ALLOWED_EXERCISE_FIELDS[f.name];
-        const units: readonly string[] = Array.isArray(spec) ? spec[1] : null;
+        const units: readonly string[] = Array.isArray(spec) ? spec[1] : [];
         return (
-          <Grid container spacing={1} alignItems="center" key={idx} sx={{ mb: 1 }}>
-            {/* choose field */}
+          <Grid
+            container
+            spacing={1}
+            alignItems="center"
+            key={idx}
+            sx={{ mb: 1 }}
+          >
             <Grid item xs={4}>
               <Select
                 fullWidth
@@ -157,7 +164,6 @@ export default function ExerciseCard({ exercise, onChange, onRemove }: Props) {
                   replaceField(idx, e.target.value as AllowedFieldName)
                 }
               >
-                {/* allow re-selecting same field in this row */}
                 {[f.name, ...available].map((opt) => (
                   <MenuItem key={opt} value={opt}>
                     {opt}
@@ -166,15 +172,14 @@ export default function ExerciseCard({ exercise, onChange, onRemove }: Props) {
               </Select>
             </Grid>
 
-            {/* if this field has units, render unit chooser */}
-            {units && (
+            {units.length > 0 && (
               <Grid item xs={3}>
                 <Select
                   fullWidth
                   value={f.unit}
                   onChange={(e) => changeUnit(idx, e.target.value)}
                 >
-                  {units.map((u) => (
+                  {units.map((u: string) => (
                     <MenuItem key={u} value={u}>
                       {u}
                     </MenuItem>
@@ -183,8 +188,7 @@ export default function ExerciseCard({ exercise, onChange, onRemove }: Props) {
               </Grid>
             )}
 
-            {/* default value input */}
-            <Grid item xs={units ? 4 : 7}>
+            <Grid item xs={units?.length ? 4 : 7}>
               <TextField
                 fullWidth
                 value={f.default || ""}
@@ -194,7 +198,6 @@ export default function ExerciseCard({ exercise, onChange, onRemove }: Props) {
               />
             </Grid>
 
-            {/* remove */}
             <Grid item xs={1}>
               <IconButton size="small" onClick={() => removeField(idx)}>
                 <DeleteIcon />
@@ -204,7 +207,6 @@ export default function ExerciseCard({ exercise, onChange, onRemove }: Props) {
         );
       })}
 
-      {/* add-field button */}
       <Box>
         <Button
           size="small"
