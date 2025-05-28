@@ -142,15 +142,21 @@ class Exercise(models.Model):
         on_delete=models.CASCADE,
     )
     order = models.PositiveIntegerField()
-    data = models.JSONField()
+    units = models.JSONField(blank=True, default=dict)
+    sets = models.JSONField(blank=True, default=dict)
 
     class Meta:
         indexes = [
             models.Index(fields=["order"]),
             models.Index(fields=["training", "order"]),
             GinIndex(
-                name="exercise_data",
-                fields=["data"],
+                name="exercise_units",
+                fields=["units"],
+                opclasses=["jsonb_path_ops"],
+            ),
+            GinIndex(
+                name="exercise_sets",
+                fields=["sets"],
                 opclasses=["jsonb_path_ops"],
             ),
         ]
