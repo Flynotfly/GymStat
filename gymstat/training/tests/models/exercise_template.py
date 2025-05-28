@@ -22,13 +22,15 @@ class ExerciseTemplateModelTestCase(TestCase):
         self.user = User.objects.create_user(**user_data)
 
     def test_success_create(self):
-        ExerciseTemplate.objects.create(
+        template = ExerciseTemplate(
             name=name,
             owner=self.user,
             fields=VALID_FIELDS,
             tags=VALID_TAGS,
             description=description,
         )
+        template.full_clean()
+        template.save()
         self.assertEqual(ExerciseTemplate.objects.count(), 1)
         template = ExerciseTemplate.objects.first()
         self.assertEqual(template.name, name)
@@ -62,12 +64,14 @@ class ExerciseTemplateModelTestCase(TestCase):
             template.full_clean()
 
     def test_no_description(self):
-        ExerciseTemplate.objects.create(
+        template = ExerciseTemplate(
             name=name,
             owner=self.user,
             fields=VALID_FIELDS,
             tags=VALID_TAGS,
         )
+        template.full_clean()
+        template.save()
         self.assertEqual(ExerciseTemplate.objects.count(), 1)
 
     def test_no_owner(self):
@@ -81,22 +85,26 @@ class ExerciseTemplateModelTestCase(TestCase):
             template.full_clean()
 
     def test_no_tags(self):
-        ExerciseTemplate.objects.create(
+        template = ExerciseTemplate(
             name=name,
             owner=self.user,
             fields=VALID_FIELDS,
             description=description,
         )
+        template.full_clean()
+        template.save()
         self.assertEqual(ExerciseTemplate.objects.count(), 1)
 
     def test_tags_are_empty(self):
-        ExerciseTemplate.objects.create(
+        template = ExerciseTemplate(
             name=name,
             owner=self.user,
             fields=VALID_FIELDS,
             tags=[],
             description=description,
         )
+        template.full_clean()
+        template.save()
         self.assertEqual(ExerciseTemplate.objects.count(), 1)
 
     def test_invalid_tags(self):
