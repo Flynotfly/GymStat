@@ -60,7 +60,7 @@ class Training(models.Model):
     title = models.CharField(max_length=70, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     notes = models.JSONField(
-        validators=[validate_training_notes], blank=True, null=True
+        validators=[validate_training_notes], blank=True, default=dict,
     )
     created_at = models.DateTimeField(auto_now_add=True)
     edited_at = models.DateTimeField(auto_now=True)
