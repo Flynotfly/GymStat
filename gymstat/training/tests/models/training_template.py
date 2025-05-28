@@ -128,8 +128,9 @@ class TrainingTemplateModelTestCase(TestCase):
             name=NAME,
             owner=self.user,
         )
-        with self.assertRaises(ValidationError):
-            template.full_clean()
+        template.full_clean()
+        template.save()
+        self.assertEqual(TrainingTemplate.objects.count(), 1)
 
     def test_empty_data(self):
         template = TrainingTemplate(
