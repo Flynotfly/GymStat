@@ -7,6 +7,7 @@ from django.test import TestCase
 
 from user.tests import user_data, other_user_data
 
+from ...validators import NOTES_FIELDS
 from ...models import Training, TrainingTemplate, Exercise, ExerciseTemplate
 
 User = get_user_model()
@@ -98,6 +99,7 @@ class TrainingModelTestCase(TestCase):
             "Order": "3",
         }
 
+    # --- General ---
     def test_success_create(self):
         description = "This is valid description"
         Training.objects.create_training(
@@ -132,3 +134,285 @@ class TrainingModelTestCase(TestCase):
         self.assertEqual(second_exercise.order, 2)
         self.assertEqual(second_exercise.units, {})
         self.assertEqual(second_exercise.sets, {})
+
+    def test_create_training_no_title(self):
+        description = "This is valid description"
+        Training.objects.create_training(
+            owner=self.user,
+            template=self.template,
+            conducted=VALID_CONDUCTED,
+            description=description,
+            notes=VALID_NOTES,
+            exercises_data=[
+                self.first_exercise_data,
+                self.second_exercise_data,
+            ]
+        )
+        self.assertEqual(Training.objects.count(), 1)
+        self.assertEqual(Exercise.objects.count(), 2)
+
+    def test_create_training_title_too_long(self):
+        description = "This is valid description"
+        with self.assertRaises(ValidationError):
+            Training.objects.create_training(
+                owner=self.user,
+                template=self.template,
+                conducted=VALID_CONDUCTED,
+                title="a" * 75,
+                description=description,
+                notes=VALID_NOTES,
+                exercises_data=[
+                    self.first_exercise_data,
+                    self.second_exercise_data,
+                ]
+            )
+
+    def test_create_training_no_description(self):
+        Training.objects.create_training(
+            owner=self.user,
+            template=self.template,
+            conducted=VALID_CONDUCTED,
+            title=VALID_TITLE,
+            notes=VALID_NOTES,
+            exercises_data=[
+                self.first_exercise_data,
+                self.second_exercise_data,
+            ]
+        )
+        self.assertEqual(Training.objects.count(), 1)
+        self.assertEqual(Exercise.objects.count(), 2)
+
+    # --- Notes ---
+    def test_create_training_no_notes(self):
+        Training.objects.create_training(
+            owner=self.user,
+            template=self.template,
+            conducted=VALID_CONDUCTED,
+            title=VALID_TITLE,
+            exercises_data=[
+                self.first_exercise_data,
+                self.second_exercise_data,
+            ]
+        )
+        self.assertEqual(Training.objects.count(), 1)
+        self.assertEqual(Exercise.objects.count(), 2)
+
+    def test_create_training_non_list_notes(self):
+        with self.assertRaises(ValidationError):
+            Training.objects.create_training(
+                owner=self.user,
+                template=self.template,
+                conducted=VALID_CONDUCTED,
+                title=VALID_TITLE,
+                notes={
+                    "Name": "Text field",
+                    "Field": "Text",
+                    "Required": "True",
+                    "Value": "I wrote this text",
+                },
+                exercises_data=[
+                    self.first_exercise_data,
+                    self.second_exercise_data,
+                ]
+            )
+
+    def test_create_training_single_note(self):
+        Training.objects.create_training(
+            owner=self.user,
+            template=self.template,
+            conducted=VALID_CONDUCTED,
+            title=VALID_TITLE,
+            notes=[
+                {
+                    "Name": "Text field",
+                    "Field": "Text",
+                    "Required": "True",
+                    "Value": "I wrote this te",
+                },
+            ],
+            exercises_data=[
+                self.first_exercise_data,
+                self.second_exercise_data,
+            ]
+        )
+        self.assertEqual(Training.objects.count(), 1)
+        self.assertEqual(Exercise.objects.count(), 2)
+
+    def test_create_training_with_wrong_notes_fields(self):
+        notes = [
+            {
+                "Field": "Text",
+                "Required": "True",
+                "Value": "I wrote this te",
+            },
+            {
+                "Name": "Text field",
+                "Required": "True",
+                "Value": "I wrote this te",
+            },
+            {
+                "Name": "Text field",
+                "Field": "Text",
+                "Value": "I wrote this te",
+            },
+            {
+                "Name": "Text field",
+                "Field": "Text",
+                "Required": "True",
+            },
+            {
+                "Name": "Text field",
+                "Field": "Text",
+                "Required": "True",
+                "Value": "I wrote this te",
+                "Wrong": "Yes",
+            },
+        ]
+        for note in notes:
+            with self.assertRaises(ValidationError):
+                Training.objects.create_training(
+                    owner=self.user,
+                    template=self.template,
+                    conducted=VALID_CONDUCTED,
+                    title=VALID_TITLE,
+                    notes=[note],
+                    exercises_data=[
+                        self.first_exercise_data,
+                        self.second_exercise_data,
+                    ]
+                )
+
+    def test_create_training_empty_note_name(self):
+        with self.assertRaises(ValidationError):
+            Training.objects.create_training(
+                owner=self.user,
+                template=self.template,
+                conducted=VALID_CONDUCTED,
+                title=VALID_TITLE,
+                notes=[
+                    {
+                        "Name": "",
+                        "Field": "Text",
+                        "Required": "True",
+                        "Value": "I wrote this te",
+                    },
+                ],
+                exercises_data=[
+                    self.first_exercise_data,
+                    self.second_exercise_data,
+                ]
+            )
+
+    def test_create_training_note_fields(self):
+        for field in NOTES_FIELDS:
+            Training.objects.create_training(
+                owner=self.user,
+                template=self.template,
+                conducted=VALID_CONDUCTED,
+                title=VALID_TITLE,
+                notes=[
+                    {
+                        "Name": "Text field",
+                        "Field": field,
+                        "Required": "False",
+                        "Value": "",
+                    },
+                ],
+                exercises_data=[
+                    self.first_exercise_data,
+                    self.second_exercise_data,
+                ]
+            )
+        self.assertEqual(Training.objects.count(), len(NOTES_FIELDS))
+        self.assertEqual(Exercise.objects.count(), len(NOTES_FIELDS) * 2)
+
+    def test_create_training_wrong_note_field(self):
+        with self.assertRaises(ValidationError):
+            Training.objects.create_training(
+                owner=self.user,
+                template=self.template,
+                conducted=VALID_CONDUCTED,
+                title=VALID_TITLE,
+                notes=[
+                    {
+                        "Name": "Title",
+                        "Field": "Wrong",
+                        "Required": "True",
+                        "Value": "I wrote this te",
+                    },
+                ],
+                exercises_data=[
+                    self.first_exercise_data,
+                    self.second_exercise_data,
+                ]
+            )
+
+    def test_create_training_notes_required_is_false(self):
+        Training.objects.create_training(
+            owner=self.user,
+            template=self.template,
+            conducted=VALID_CONDUCTED,
+            title=VALID_TITLE,
+            notes=[
+                {
+                    "Name": "Text field",
+                    "Field": "Text",
+                    "Required": "False",
+                    "Value": "I wrote this te",
+                },
+            ],
+            exercises_data=[
+                self.first_exercise_data,
+                self.second_exercise_data,
+            ]
+        )
+        self.assertEqual(Training.objects.count(), 1)
+        self.assertEqual(Exercise.objects.count(), 2)
+
+    def test_create_training_wrong_required(self):
+        with self.assertRaises(ValidationError):
+            Training.objects.create_training(
+                owner=self.user,
+                template=self.template,
+                conducted=VALID_CONDUCTED,
+                title=VALID_TITLE,
+                notes=[
+                    {
+                        "Name": "Text field",
+                        "Field": "Text",
+                        "Required": "Wrong",
+                        "Value": "I wrote this te",
+                    },
+                ],
+                exercises_data=[
+                    self.first_exercise_data,
+                    self.second_exercise_data,
+                ]
+            )
+
+    # --- Exercises ---
+    def test_create_training_no_exercises(self):
+        Training.objects.create_training(
+            owner=self.user,
+            template=self.template,
+            conducted=VALID_CONDUCTED,
+            title=VALID_TITLE,
+            notes=VALID_NOTES,
+        )
+        self.assertEqual(Training.objects.count(), 1)
+        self.assertEqual(Exercise.objects.count(), 0)
+
+    def test_create_training_unnaccessible_exercise(self):
+        with self.assertRaises(ValidationError):
+            Training.objects.create_training(
+                owner=self.user,
+                template=self.template,
+                conducted=VALID_CONDUCTED,
+                title=VALID_TITLE,
+                notes=VALID_NOTES,
+                exercises_data=[
+                    self.first_exercise_data,
+                    self.second_exercise_data,
+                    self.unaccessible_exercise_data,
+                ]
+            )
