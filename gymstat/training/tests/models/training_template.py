@@ -72,11 +72,13 @@ class TrainingTemplateModelTestCase(TestCase):
 
     # Basic create
     def test_success_create(self):
-        TrainingTemplate.objects.create(
+        template = TrainingTemplate(
             name=NAME,
             owner=self.user,
             data=VALID_DATA,
         )
+        template.full_clean()
+        template.save()
         self.assertEqual(TrainingTemplate.objects.count(), 1)
         template = TrainingTemplate.objects.first()
         self.assertEqual(template.name, NAME)
@@ -86,12 +88,14 @@ class TrainingTemplateModelTestCase(TestCase):
 
     def test_create_with_description(self):
         description = "This is descrription of template"
-        TrainingTemplate.objects.create(
+        template = TrainingTemplate(
             name=NAME,
             owner=self.user,
             data=VALID_DATA,
             description=description,
         )
+        template.full_clean()
+        template.save()
         self.assertEqual(TrainingTemplate.objects.count(), 1)
         template = TrainingTemplate.objects.first()
         self.assertEqual(template.name, NAME)
@@ -128,27 +132,34 @@ class TrainingTemplateModelTestCase(TestCase):
             template.full_clean()
 
     def test_empty_data(self):
-        TrainingTemplate.objects.create(
+        template = TrainingTemplate(
             name=NAME,
             owner=self.user,
             data={},
         )
+        template.full_clean()
+        template.save()
         self.assertEqual(TrainingTemplate.objects.count(), 1)
 
     def test_no_exercises(self):
-        TrainingTemplate.objects.create(
+        template = TrainingTemplate(
             name=NAME,
             owner=self.user,
             data={"Notes": VALID_NOTES},
         )
+        template.full_clean()
+        template.save()
+
         self.assertEqual(TrainingTemplate.objects.count(), 1)
 
     def test_no_notes(self):
-        TrainingTemplate.objects.create(
+        template = TrainingTemplate(
             name=NAME,
             owner=self.user,
             data={"Exercises": VALID_EXERCISES},
         )
+        template.full_clean()
+        template.save()
         self.assertEqual(TrainingTemplate.objects.count(), 1)
 
     # Test notes
@@ -257,7 +268,7 @@ class TrainingTemplateModelTestCase(TestCase):
             template.full_clean()
 
     def test_notes_with_different_field(self):
-        TrainingTemplate.objects.create(
+        template = TrainingTemplate(
             name=NAME,
             owner=self.user,
             data={
@@ -271,6 +282,8 @@ class TrainingTemplateModelTestCase(TestCase):
                 ]
             },
         )
+        template.full_clean()
+        template.save()
         self.assertEqual(TrainingTemplate.objects.count(), 1)
 
     def test_notes_without_required(self):
@@ -291,7 +304,7 @@ class TrainingTemplateModelTestCase(TestCase):
             template.full_clean()
 
     def test_notes_with_required_is_false(self):
-        TrainingTemplate.objects.create(
+        template = TrainingTemplate(
             name=NAME,
             owner=self.user,
             data={
@@ -305,6 +318,8 @@ class TrainingTemplateModelTestCase(TestCase):
                 ]
             },
         )
+        template.full_clean()
+        template.save()
         self.assertEqual(TrainingTemplate.objects.count(), 1)
 
     def test_notes_with_wrong_required(self):
@@ -327,7 +342,7 @@ class TrainingTemplateModelTestCase(TestCase):
 
     # Test notes default
     def test_notes_without_default(self):
-        TrainingTemplate.objects.create(
+        template = TrainingTemplate(
             name=NAME,
             owner=self.user,
             data={
@@ -340,10 +355,12 @@ class TrainingTemplateModelTestCase(TestCase):
                 ]
             },
         )
+        template.full_clean()
+        template.save()
         self.assertEqual(TrainingTemplate.objects.count(), 1)
 
     def test_notes_number_default_success(self):
-        TrainingTemplate.objects.create(
+        template = TrainingTemplate(
             name=NAME,
             owner=self.user,
             data={
@@ -357,6 +374,8 @@ class TrainingTemplateModelTestCase(TestCase):
                 ]
             },
         )
+        template.full_clean()
+        template.save()
         self.assertEqual(TrainingTemplate.objects.count(), 1)
 
     def test_notes_number_default_fail(self):
@@ -378,7 +397,7 @@ class TrainingTemplateModelTestCase(TestCase):
             template.full_clean()
 
     def test_notes_duration_hours_default_success(self):
-        TrainingTemplate.objects.create(
+        template = TrainingTemplate(
             name=NAME,
             owner=self.user,
             data={
@@ -392,10 +411,12 @@ class TrainingTemplateModelTestCase(TestCase):
                 ]
             },
         )
+        template.full_clean()
+        template.save()
         self.assertEqual(TrainingTemplate.objects.count(), 1)
 
     def test_notes_duration_minutes_default_success(self):
-        TrainingTemplate.objects.create(
+        template = TrainingTemplate(
             name=NAME,
             owner=self.user,
             data={
@@ -409,6 +430,8 @@ class TrainingTemplateModelTestCase(TestCase):
                 ]
             },
         )
+        template.full_clean()
+        template.save()
         self.assertEqual(TrainingTemplate.objects.count(), 1)
 
     def test_notes_duration_default_fail(self):
@@ -430,7 +453,7 @@ class TrainingTemplateModelTestCase(TestCase):
             template.full_clean()
 
     def test_notes_datetime_default_success(self):
-        TrainingTemplate.objects.create(
+        template = TrainingTemplate(
             name=NAME,
             owner=self.user,
             data={
@@ -444,6 +467,8 @@ class TrainingTemplateModelTestCase(TestCase):
                 ]
             },
         )
+        template.full_clean()
+        template.save()
         self.assertEqual(TrainingTemplate.objects.count(), 1)
 
     def test_notes_datetime_default_fail(self):
@@ -466,7 +491,6 @@ class TrainingTemplateModelTestCase(TestCase):
 
     # --- Exercises validation tests ---
     def test_exercises_not_list(self):
-        """Exercises must be a list."""
         template = TrainingTemplate(
             name=NAME,
             owner=self.user,
@@ -476,7 +500,6 @@ class TrainingTemplateModelTestCase(TestCase):
             template.full_clean()
 
     def test_exercise_element_not_dict(self):
-        """Each exercise must be a dict."""
         template = TrainingTemplate(
             name=NAME,
             owner=self.user,
@@ -486,7 +509,6 @@ class TrainingTemplateModelTestCase(TestCase):
             template.full_clean()
 
     def test_exercise_missing_template(self):
-        """Each exercise must include 'Template'."""
         template = TrainingTemplate(
             name=NAME,
             owner=self.user,
@@ -496,7 +518,6 @@ class TrainingTemplateModelTestCase(TestCase):
             template.full_clean()
 
     def test_exercise_template_not_int_string(self):
-        """'Template' must parse to int."""
         template = TrainingTemplate(
             name=NAME,
             owner=self.user,
@@ -506,7 +527,6 @@ class TrainingTemplateModelTestCase(TestCase):
             template.full_clean()
 
     def test_set_element_not_dict(self):
-        """Each set in 'Sets' must be a dict."""
         template = TrainingTemplate(
             name=NAME,
             owner=self.user,
@@ -516,7 +536,6 @@ class TrainingTemplateModelTestCase(TestCase):
             template.full_clean()
 
     def test_set_empty_dict(self):
-        """Each set dict must not be empty."""
         template = TrainingTemplate(
             name=NAME,
             owner=self.user,
@@ -526,7 +545,6 @@ class TrainingTemplateModelTestCase(TestCase):
             template.full_clean()
 
     def test_set_field_not_allowed(self):
-        """Unknown fields in a set should raise."""
         template = TrainingTemplate(
             name=NAME,
             owner=self.user,
@@ -536,7 +554,6 @@ class TrainingTemplateModelTestCase(TestCase):
             template.full_clean()
 
     def test_set_int_field_invalid_value(self):
-        """Integer fields must parse as int."""
         template = TrainingTemplate(
             name=NAME,
             owner=self.user,
@@ -550,7 +567,6 @@ class TrainingTemplateModelTestCase(TestCase):
             template.full_clean()
 
     def test_set_float_field_invalid_value(self):
-        """Float fields must parse as float."""
         template = TrainingTemplate(
             name=NAME,
             owner=self.user,
@@ -564,7 +580,6 @@ class TrainingTemplateModelTestCase(TestCase):
             template.full_clean()
 
     def test_set_duration_field_wrong_type(self):
-        """Duration fields must be a string."""
         template = TrainingTemplate(
             name=NAME,
             owner=self.user,
@@ -576,7 +591,6 @@ class TrainingTemplateModelTestCase(TestCase):
             template.full_clean()
 
     def test_unit_missing_allowed_unit(self):
-        """If a field has allowed units, the Unit dict must include one of them."""
         template = TrainingTemplate(
             name=NAME,
             owner=self.user,
@@ -594,7 +608,6 @@ class TrainingTemplateModelTestCase(TestCase):
             template.full_clean()
 
     def test_no_unit(self):
-        """If a field has allowed units, the Unit dict must include one of them."""
         template = TrainingTemplate(
             name=NAME,
             owner=self.user,
@@ -607,7 +620,6 @@ class TrainingTemplateModelTestCase(TestCase):
 
     # --- Exercises validation tests ---
     def test_exercises_not_list(self):
-        """Exercises must be a list."""
         template = TrainingTemplate(
             name=NAME,
             owner=self.user,
@@ -617,7 +629,6 @@ class TrainingTemplateModelTestCase(TestCase):
             template.full_clean()
 
     def test_exercise_element_not_dict(self):
-        """Each exercise must be a dict."""
         template = TrainingTemplate(
             name=NAME,
             owner=self.user,
@@ -627,7 +638,6 @@ class TrainingTemplateModelTestCase(TestCase):
             template.full_clean()
 
     def test_exercise_missing_template(self):
-        """Each exercise must include 'Template'."""
         template = TrainingTemplate(
             name=NAME,
             owner=self.user,
@@ -637,7 +647,6 @@ class TrainingTemplateModelTestCase(TestCase):
             template.full_clean()
 
     def test_exercise_template_not_int_string(self):
-        """'Template' must parse to int."""
         template = TrainingTemplate(
             name=NAME,
             owner=self.user,
@@ -647,7 +656,6 @@ class TrainingTemplateModelTestCase(TestCase):
             template.full_clean()
 
     def test_set_element_not_dict(self):
-        """Each set in 'Sets' must be a dict."""
         template = TrainingTemplate(
             name=NAME,
             owner=self.user,
@@ -657,7 +665,6 @@ class TrainingTemplateModelTestCase(TestCase):
             template.full_clean()
 
     def test_set_empty_dict(self):
-        """Each set dict must not be empty."""
         template = TrainingTemplate(
             name=NAME,
             owner=self.user,
@@ -667,7 +674,6 @@ class TrainingTemplateModelTestCase(TestCase):
             template.full_clean()
 
     def test_set_field_not_allowed(self):
-        """Unknown fields in a set should raise."""
         template = TrainingTemplate(
             name=NAME,
             owner=self.user,
@@ -682,7 +688,6 @@ class TrainingTemplateModelTestCase(TestCase):
             template.full_clean()
 
     def test_set_int_field_invalid_value(self):
-        """Integer fields must parse as int."""
         template = TrainingTemplate(
             name=NAME,
             owner=self.user,
@@ -697,7 +702,6 @@ class TrainingTemplateModelTestCase(TestCase):
             template.full_clean()
 
     def test_set_float_field_invalid_value(self):
-        """Float fields must parse as float."""
         template = TrainingTemplate(
             name=NAME,
             owner=self.user,
@@ -712,15 +716,13 @@ class TrainingTemplateModelTestCase(TestCase):
             template.full_clean()
 
     def test_set_duration_field_wrong_type(self):
-        """Duration fields must be a string."""
-        # assume 'Duration' is one of the allowed types
         template = TrainingTemplate(
             name=NAME,
             owner=self.user,
             data={
                 "Exercises": [{
                     "Template": "1",
-                    "Sets": [{"rest": "12:00"}]  # 'rest' expecting a duration string
+                    "Sets": [{"rest": "yes"}]
                 }]
             },
         )
@@ -728,7 +730,6 @@ class TrainingTemplateModelTestCase(TestCase):
             template.full_clean()
 
     def test_unit_missing_allowed_unit(self):
-        """If a field has allowed units, the Unit dict must include one of them."""
         template = TrainingTemplate(
             name=NAME,
             owner=self.user,
@@ -744,7 +745,6 @@ class TrainingTemplateModelTestCase(TestCase):
             template.full_clean()
 
     def test_no_unit(self):
-        """If a field has allowed units, the Unit dict must include one of them."""
         template = TrainingTemplate(
             name=NAME,
             owner=self.user,
