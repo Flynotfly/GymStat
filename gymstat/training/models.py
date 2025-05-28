@@ -20,7 +20,7 @@ class TrainingTemplate(models.Model):
     )
     name = models.CharField(max_length=70)
     description = models.TextField(blank=True, null=True)
-    data = models.JSONField(validators=[validate_training_template_data], blank=True)
+    data = models.JSONField(validators=[validate_training_template_data], blank=True, default=dict)
     created_at = models.DateTimeField(auto_now_add=True)
     edited_at = models.DateTimeField(auto_now=True)
 
