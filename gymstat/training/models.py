@@ -58,6 +58,7 @@ class Training(models.Model):
     )
     conducted = models.DateTimeField()
     title = models.CharField(max_length=70, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
     notes = models.JSONField(
         validators=[validate_training_notes], blank=True, null=True
     )
