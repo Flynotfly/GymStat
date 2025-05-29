@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from training.constants import NOTES_FIELDS
 
-from .utils import is_5stars, is_10stars, is_datetime, is_duration
+from .utils import is_duration, check_note_field
 
 ALLOWED_EXERCISE_FIELDS = {
     "sets": "int",
@@ -90,27 +90,9 @@ def validate_training_template_data(data):
             if default is not None:
                 if not isinstance(default, str):
                     raise ValidationError("Note 'Default' must be a string.")
-                is_validation_error = False
-                match field:
-                    case "Datetime":
-                        if not is_datetime(default):
-                            is_validation_error = True
-                    case "Duration":
-                        if not is_duration(default):
-                            is_validation_error = True
-                    case "Number":
-                        try:
-                            float(default)
-                        except ValueError:
-                            is_validation_error = True
-                    case "5stars":
-                        if not is_5stars(default):
-                            is_validation_error = True
-                    case "10stars":
-                        if not is_10stars(default):
-                            is_validation_error = True
-
-                if is_validation_error:
+                try:
+                    check_note_field(field, default)
+                except ValidationError:
                     raise ValidationError(
                         f"Note's 'Default' value should match 'Field'."
                         f"Got 'Field' is {field} and 'Default' is {default}"
