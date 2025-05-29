@@ -12,7 +12,7 @@ class CheckNoteFieldTestCase(TestCase):
         else:
             with self.assertRaises(ValidationError):
                 check_note_field(field, value)
-    
+
     def test_text_field(self):
         self.do_test("Text", "test 2", True)
 
@@ -33,37 +33,37 @@ class CheckNoteFieldTestCase(TestCase):
 
     def test_5stars_field_5stars(self):
         self.do_test("5stars", "3", True)
-    
+
     def test_5stars_field_too_small(self):
         self.do_test("5stars", "-2", False)
-    
+
     def test_5stars_field_zero(self):
         self.do_test("5stars", "0", False)
-    
+
     def test_5stars_field_too_big(self):
         self.do_test("5stars", "6", False)
-    
+
     def test_5stars_field_float(self):
         self.do_test("5stars", "3.12", False)
-    
+
     def test_5stars_field_text(self):
         self.do_test("5stars", "text", False)
 
     def test_10stars_field_10stars(self):
         self.do_test("10stars", "7", True)
-    
+
     def test_10stars_field_too_small(self):
         self.do_test("10stars", "-2", False)
-    
+
     def test_10stars_field_zero(self):
         self.do_test("10stars", "0", False)
-    
+
     def test_10stars_field_too_big(self):
         self.do_test("10stars", "13", False)
-    
+
     def test_10stars_field_float(self):
         self.do_test("10stars", "5.12", False)
-    
+
     def test_10stars_field_text(self):
         self.do_test("10stars", "text", False)
 
@@ -102,4 +102,3 @@ class CheckNoteFieldTestCase(TestCase):
 
     def test_duration_field_text(self):
         self.do_test("Duration", "text", False)
-

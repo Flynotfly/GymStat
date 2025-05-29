@@ -678,12 +678,7 @@ class TrainingTemplateModelTestCase(TestCase):
         template = TrainingTemplate(
             name=NAME,
             owner=self.user,
-            data={
-                "Exercises": [{
-                    "Template": "1",
-                    "Sets": [{"foo": "123"}]
-                }]
-            },
+            data={"Exercises": [{"Template": "1", "Sets": [{"foo": "123"}]}]},
         )
         with self.assertRaises(ValidationError):
             template.full_clean()
@@ -693,10 +688,9 @@ class TrainingTemplateModelTestCase(TestCase):
             name=NAME,
             owner=self.user,
             data={
-                "Exercises": [{
-                    "Template": "1",
-                    "Sets": [{"reps": "not-an-int"}]
-                }]
+                "Exercises": [
+                    {"Template": "1", "Sets": [{"reps": "not-an-int"}]}
+                ]
             },
         )
         with self.assertRaises(ValidationError):
@@ -707,10 +701,9 @@ class TrainingTemplateModelTestCase(TestCase):
             name=NAME,
             owner=self.user,
             data={
-                "Exercises": [{
-                    "Template": "1",
-                    "Sets": [{"weight": "not-a-float"}]
-                }]
+                "Exercises": [
+                    {"Template": "1", "Sets": [{"weight": "not-a-float"}]}
+                ]
             },
         )
         with self.assertRaises(ValidationError):
@@ -720,12 +713,7 @@ class TrainingTemplateModelTestCase(TestCase):
         template = TrainingTemplate(
             name=NAME,
             owner=self.user,
-            data={
-                "Exercises": [{
-                    "Template": "1",
-                    "Sets": [{"rest": "yes"}]
-                }]
-            },
+            data={"Exercises": [{"Template": "1", "Sets": [{"rest": "yes"}]}]},
         )
         with self.assertRaises(ValidationError):
             template.full_clean()
@@ -735,11 +723,13 @@ class TrainingTemplateModelTestCase(TestCase):
             name=NAME,
             owner=self.user,
             data={
-                "Exercises": [{
-                    "Template": "1",
-                    "Unit": {"weight": "no"},
-                    "Sets": [{"weight": "10"}]
-                }]
+                "Exercises": [
+                    {
+                        "Template": "1",
+                        "Unit": {"weight": "no"},
+                        "Sets": [{"weight": "10"}],
+                    }
+                ]
             },
         )
         with self.assertRaises(ValidationError):
@@ -750,10 +740,7 @@ class TrainingTemplateModelTestCase(TestCase):
             name=NAME,
             owner=self.user,
             data={
-                "Exercises": [{
-                    "Template": "1",
-                    "Sets": [{"weight": "10"}]
-                }]
+                "Exercises": [{"Template": "1", "Sets": [{"weight": "10"}]}]
             },
         )
         with self.assertRaises(ValidationError):

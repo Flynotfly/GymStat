@@ -1,14 +1,14 @@
-import zoneinfo
 import datetime
+import zoneinfo
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from user.tests import user_data, other_user_data
-
 from training.constants import NOTES_FIELDS
-from ...models import Training, TrainingTemplate, Exercise, ExerciseTemplate
+from user.tests import other_user_data, user_data
+
+from ...models import Exercise, ExerciseTemplate, Training, TrainingTemplate
 
 User = get_user_model()
 
@@ -53,9 +53,7 @@ class TrainingModelTestCase(TestCase):
         )
 
         self.exercise_template = ExerciseTemplate.objects.create(
-            name="Bench press",
-            owner=self.user,
-            fields=["reps", "weight"]
+            name="Bench press", owner=self.user, fields=["reps", "weight"]
         )
         self.admin_exercise_template = ExerciseTemplate.objects.create(
             name="Core training",
@@ -72,9 +70,7 @@ class TrainingModelTestCase(TestCase):
         self.first_exercise_data = {
             "Template": str(self.exercise_template.pk),
             "Order": "1",
-            "Units": {
-                "weight": "kg"
-            },
+            "Units": {"weight": "kg"},
             "Sets": [
                 {
                     "reps": "7",
@@ -88,7 +84,7 @@ class TrainingModelTestCase(TestCase):
                     "reps": "8",
                     "weight": "70",
                 },
-            ]
+            ],
         }
         self.second_exercise_data = {
             "Template": str(self.admin_exercise_template.pk),
@@ -112,7 +108,7 @@ class TrainingModelTestCase(TestCase):
             exercises_data=[
                 self.first_exercise_data,
                 self.second_exercise_data,
-            ]
+            ],
         )
         self.assertEqual(Training.objects.count(), 1)
         self.assertEqual(Exercise.objects.count(), 2)
@@ -127,10 +123,14 @@ class TrainingModelTestCase(TestCase):
         self.assertEqual(first_exercise.training, training)
         self.assertEqual(first_exercise.template, self.exercise_template)
         self.assertEqual(first_exercise.order, 1)
-        self.assertEqual(first_exercise.units, self.first_exercise_data["Units"])
+        self.assertEqual(
+            first_exercise.units, self.first_exercise_data["Units"]
+        )
         self.assertEqual(first_exercise.sets, self.first_exercise_data["Sets"])
         self.assertEqual(second_exercise.training, training)
-        self.assertEqual(second_exercise.template, self.admin_exercise_template)
+        self.assertEqual(
+            second_exercise.template, self.admin_exercise_template
+        )
         self.assertEqual(second_exercise.order, 2)
         self.assertEqual(second_exercise.units, {})
         self.assertEqual(second_exercise.sets, {})
@@ -146,7 +146,7 @@ class TrainingModelTestCase(TestCase):
             exercises_data=[
                 self.first_exercise_data,
                 self.second_exercise_data,
-            ]
+            ],
         )
         self.assertEqual(Training.objects.count(), 1)
         self.assertEqual(Exercise.objects.count(), 2)
@@ -164,7 +164,7 @@ class TrainingModelTestCase(TestCase):
                 exercises_data=[
                     self.first_exercise_data,
                     self.second_exercise_data,
-                ]
+                ],
             )
 
     def test_create_training_no_description(self):
@@ -177,7 +177,7 @@ class TrainingModelTestCase(TestCase):
             exercises_data=[
                 self.first_exercise_data,
                 self.second_exercise_data,
-            ]
+            ],
         )
         self.assertEqual(Training.objects.count(), 1)
         self.assertEqual(Exercise.objects.count(), 2)
@@ -192,7 +192,7 @@ class TrainingModelTestCase(TestCase):
             exercises_data=[
                 self.first_exercise_data,
                 self.second_exercise_data,
-            ]
+            ],
         )
         self.assertEqual(Training.objects.count(), 1)
         self.assertEqual(Exercise.objects.count(), 2)
@@ -213,7 +213,7 @@ class TrainingModelTestCase(TestCase):
                 exercises_data=[
                     self.first_exercise_data,
                     self.second_exercise_data,
-                ]
+                ],
             )
 
     def test_create_training_single_note(self):
@@ -233,7 +233,7 @@ class TrainingModelTestCase(TestCase):
             exercises_data=[
                 self.first_exercise_data,
                 self.second_exercise_data,
-            ]
+            ],
         )
         self.assertEqual(Training.objects.count(), 1)
         self.assertEqual(Exercise.objects.count(), 2)
@@ -279,7 +279,7 @@ class TrainingModelTestCase(TestCase):
                     exercises_data=[
                         self.first_exercise_data,
                         self.second_exercise_data,
-                    ]
+                    ],
                 )
 
     def test_create_training_empty_note_name(self):
@@ -300,7 +300,7 @@ class TrainingModelTestCase(TestCase):
                 exercises_data=[
                     self.first_exercise_data,
                     self.second_exercise_data,
-                ]
+                ],
             )
 
     def test_create_training_note_fields(self):
@@ -321,7 +321,7 @@ class TrainingModelTestCase(TestCase):
                 exercises_data=[
                     self.first_exercise_data,
                     self.second_exercise_data,
-                ]
+                ],
             )
         self.assertEqual(Training.objects.count(), len(NOTES_FIELDS))
         self.assertEqual(Exercise.objects.count(), len(NOTES_FIELDS) * 2)
@@ -344,7 +344,7 @@ class TrainingModelTestCase(TestCase):
                 exercises_data=[
                     self.first_exercise_data,
                     self.second_exercise_data,
-                ]
+                ],
             )
 
     def test_create_training_notes_required_is_false(self):
@@ -364,7 +364,7 @@ class TrainingModelTestCase(TestCase):
             exercises_data=[
                 self.first_exercise_data,
                 self.second_exercise_data,
-            ]
+            ],
         )
         self.assertEqual(Training.objects.count(), 1)
         self.assertEqual(Exercise.objects.count(), 2)
@@ -387,7 +387,7 @@ class TrainingModelTestCase(TestCase):
                 exercises_data=[
                     self.first_exercise_data,
                     self.second_exercise_data,
-                ]
+                ],
             )
 
     # --- Exercises ---
@@ -414,5 +414,5 @@ class TrainingModelTestCase(TestCase):
                     self.first_exercise_data,
                     self.second_exercise_data,
                     self.unaccessible_exercise_data,
-                ]
+                ],
             )

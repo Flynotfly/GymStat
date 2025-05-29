@@ -1,11 +1,11 @@
-from rest_framework.test import APITestCase
 from django.contrib.auth import get_user_model
 from django.urls import reverse
+from rest_framework.test import APITestCase
 
 from user.tests import login_data, other_user_data, user_data
 
-from ..models.training_template import VALID_DATA
 from ...models import TrainingTemplate
+from ..models.training_template import VALID_DATA
 
 User = get_user_model()
 
@@ -52,8 +52,10 @@ class TrainingTemplateAPITestCase(APITestCase):
     def test_get_all_templates(self):
         response = self.client.get(get_list_url())
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data['count'], 2)
-        returned_ids = {exercise["id"] for exercise in response.data["results"]}
+        self.assertEqual(response.data["count"], 2)
+        returned_ids = {
+            exercise["id"] for exercise in response.data["results"]
+        }
         expected_ids = {
             self.template.pk,
             self.second_template.pk,
@@ -74,17 +76,23 @@ class TrainingTemplateAPITestCase(APITestCase):
         response = self.client.post(get_create_url(), self.new_template_data)
         self.assertEqual(response.status_code, 201)
         self.assertEqual(TrainingTemplate.objects.count(), 4)
-        template = TrainingTemplate.objects.filter(name=self.new_template_data["name"])
+        template = TrainingTemplate.objects.filter(
+            name=self.new_template_data["name"]
+        )
         self.assertEqual(template.count(), 1)
 
     def test_edit_template(self):
-        response = self.client.put(get_detail_url(self.template.pk), self.new_template_data)
+        response = self.client.put(
+            get_detail_url(self.template.pk), self.new_template_data
+        )
         self.assertEqual(response.status_code, 200)
         self.template.refresh_from_db()
         self.assertEqual(self.template.name, self.new_template_data["name"])
 
     def test_edit_other_user_template(self):
-        response = self.client.put(get_detail_url(self.other_user_template.pk), self.new_template_data)
+        response = self.client.put(
+            get_detail_url(self.other_user_template.pk), self.new_template_data
+        )
         self.assertEqual(response.status_code, 403)
 
     def test_delete_template(self):
@@ -93,5 +101,7 @@ class TrainingTemplateAPITestCase(APITestCase):
         self.assertFalse(TrainingTemplate.objects.filter(pk=self.template.pk))
 
     def test_delete_other_user_template(self):
-        response = self.client.delete(get_detail_url(self.other_user_template.pk))
+        response = self.client.delete(
+            get_detail_url(self.other_user_template.pk)
+        )
         self.assertEqual(response.status_code, 403)

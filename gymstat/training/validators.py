@@ -1,7 +1,8 @@
 from django.core.exceptions import ValidationError
+
 from training.constants import NOTES_FIELDS
 
-from .utils import check_note_field, check_exercise_field
+from .utils import check_exercise_field, check_note_field
 
 ALLOWED_EXERCISE_FIELDS = {
     "sets": "int",

@@ -20,7 +20,9 @@ class TrainingTemplate(models.Model):
     )
     name = models.CharField(max_length=70)
     description = models.TextField(blank=True, null=True)
-    data = models.JSONField(validators=[validate_training_template_data], blank=True, default=dict)
+    data = models.JSONField(
+        validators=[validate_training_template_data], blank=True, default=dict
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     edited_at = models.DateTimeField(auto_now=True)
 
@@ -60,7 +62,9 @@ class Training(models.Model):
     title = models.CharField(max_length=70, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     notes = models.JSONField(
-        validators=[validate_training_notes], blank=True, default=dict,
+        validators=[validate_training_notes],
+        blank=True,
+        default=dict,
     )
     created_at = models.DateTimeField(auto_now_add=True)
     edited_at = models.DateTimeField(auto_now=True)

@@ -1,6 +1,8 @@
-from ...utils import check_exercise_field
-from django.core.exceptions import ValidationError
 from unittest import TestCase
+
+from django.core.exceptions import ValidationError
+
+from ...utils import check_exercise_field
 
 
 class CheckExerciseFieldTestCase(TestCase):
