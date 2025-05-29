@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from ...utils import check_note_field
 
 
-class TestCheckNoteField(TestCase):
+class CheckNoteFieldTestCase(TestCase):
     def do_test(self, field: str, value: str, expect: bool):
         if expect:
             self.assertTrue(check_note_field(field, value))
