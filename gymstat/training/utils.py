@@ -1,4 +1,57 @@
 from datetime import datetime
+from typing import Literal
+from django.core.exceptions import ValidationError
+
+
+def check_note_field(field: str, value: str) -> Literal[True]:
+    match field:
+        case "Text":
+            return True
+        case "Number":
+            try:
+                float(value)
+            except ValueError:
+                raise ValidationError("")
+            else:
+                return True
+        case "Datetime":
+            try:
+                datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
+            except ValueError:
+                raise ValidationError("")
+            else:
+                return True
+        case "Duration":
+            for fmt in ("%H:%M:%S", "%M:%S"):
+                try:
+                    datetime.strptime(value, fmt)
+                except ValueError:
+                    continue
+                else:
+                    return True
+            raise ValidationError("")
+        case "5stars":
+            try:
+                value = int(value)
+            except ValueError:
+                raise ValidationError("")
+            else:
+                if 1 <= value <= 5:
+                    return True
+                else:
+                    raise ValidationError("")
+        case "10stars":
+            try:
+                value = int(value)
+            except ValueError:
+                raise ValidationError("")
+            else:
+                if 1 <= value <= 10:
+                    return True
+                else:
+                    raise ValidationError("")
+        case _:
+            raise ValidationError("")
 
 
 def is_datetime(string: str) -> bool:
