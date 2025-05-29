@@ -80,6 +80,7 @@ def check_exercise_field(field: str, value: str) -> Literal[True]:
                     continue
                 else:
                     return True
+            raise ValidationError("")
         case _:
             raise ValidationError("")
 
@@ -126,4 +127,3 @@ def is_10stars(string: str) -> bool:
             return True
         else:
             return False
-
