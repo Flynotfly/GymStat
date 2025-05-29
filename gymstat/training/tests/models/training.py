@@ -7,7 +7,7 @@ from django.test import TestCase
 
 from user.tests import user_data, other_user_data
 
-from ...validators import NOTES_FIELDS
+from training.constants import NOTES_FIELDS
 from ...models import Training, TrainingTemplate, Exercise, ExerciseTemplate
 
 User = get_user_model()
