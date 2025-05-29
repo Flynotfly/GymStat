@@ -54,6 +54,36 @@ def check_note_field(field: str, value: str) -> Literal[True]:
             raise ValidationError("")
 
 
+def check_exercise_field(field: str, value: str) -> Literal[True]:
+    match field:
+        case "text":
+            return True
+        case "int":
+            try:
+                int(value)
+            except ValueError:
+                raise ValidationError("")
+            else:
+                return True
+        case "float":
+            try:
+                float(value)
+            except ValueError:
+                raise ValidationError("")
+            else:
+                return True
+        case "duration":
+            for fmt in ("%H:%M:%S", "%M:%S"):
+                try:
+                    datetime.strptime(value, fmt)
+                except ValueError:
+                    continue
+                else:
+                    return True
+        case _:
+            raise ValidationError("")
+
+
 def is_datetime(string: str) -> bool:
     try:
         datetime.strptime(string, "%Y-%m-%d %H:%M:%S")
@@ -96,3 +126,4 @@ def is_10stars(string: str) -> bool:
             return True
         else:
             return False
+
