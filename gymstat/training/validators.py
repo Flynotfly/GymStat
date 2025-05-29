@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from training.constants import NOTES_FIELDS
 
-from .utils import is_duration, check_note_field
+from .utils import check_note_field, check_exercise_field
 
 ALLOWED_EXERCISE_FIELDS = {
     "sets": "int",
@@ -151,34 +151,7 @@ def validate_training_template_data(data):
                             allowed[1] if isinstance(allowed, list) else None
                         )
 
-                        if expected_type == "int":
-                            try:
-                                int(value)
-                            except ValueError:
-                                raise ValidationError(
-                                    f"'{field}' must be an integer."
-                                )
-                        elif expected_type == "float":
-                            try:
-                                float(value)
-                            except ValueError:
-                                raise ValidationError(
-                                    f"'{field}' must be a float."
-                                )
-                        elif expected_type == "duration":
-                            if not is_duration(value):
-                                raise ValidationError(
-                                    f"'{field}' must be a duration string."
-                                )
-                        elif expected_type == "text":
-                            if not isinstance(value, str):
-                                raise ValidationError(
-                                    f"'{field}' must be a string."
-                                )
-                        else:
-                            raise ValidationError(
-                                f"Unknown type '{expected_type}' for '{field}'."
-                            )
+                        check_exercise_field(expected_type, value)
 
                         # Validate units if applicable
                         if allowed_units:
