@@ -2,7 +2,7 @@ import datetime
 import zoneinfo
 
 from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, PermissionDenied
 from django.test import TestCase
 
 from training.constants import NOTES_FIELDS
@@ -96,7 +96,7 @@ class TrainingModelTestCase(TestCase):
         }
         self.unaccessible_exercise_data = {
             "Template": self.other_user_exercise_template,
-            "Order": "3",
+            "Order": 3,
         }
 
     # --- General ---
@@ -136,8 +136,8 @@ class TrainingModelTestCase(TestCase):
             second_exercise.template, self.admin_exercise_template
         )
         self.assertEqual(second_exercise.order, 2)
-        self.assertEqual(second_exercise.units, {})
-        self.assertEqual(second_exercise.sets, {})
+        self.assertEqual(second_exercise.units, None)
+        self.assertEqual(second_exercise.sets, None)
 
     def test_create_training_no_title(self):
         description = "This is valid description"
@@ -187,7 +187,7 @@ class TrainingModelTestCase(TestCase):
         self.assertEqual(Exercise.objects.count(), 2)
 
     def test_create_training_wrong_template(self):
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(PermissionDenied):
             description = "This is valid description"
             Training.objects.create_training(
                 owner=self.user,
@@ -444,7 +444,7 @@ class TrainingModelTestCase(TestCase):
         self.assertEqual(Exercise.objects.count(), 0)
 
     def test_create_training_unnaccessible_exercise(self):
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(PermissionDenied):
             Training.objects.create_training(
                 owner=self.user,
                 template=self.template,
@@ -493,7 +493,7 @@ class TrainingModelTestCase(TestCase):
                 notes=VALID_NOTES,
                 exercises_data=[
                     {
-                        "Template": str(self.admin_exercise_template.pk),
+                        "Template": self.admin_exercise_template,
                     }
                 ],
             )
@@ -508,8 +508,8 @@ class TrainingModelTestCase(TestCase):
                 notes=VALID_NOTES,
                 exercises_data=[
                     {
-                        "Template": str(self.admin_exercise_template.pk),
-                        "Order": "0",
+                        "Template": self.admin_exercise_template,
+                        "Order": 0,
                     }
                 ],
             )
@@ -524,8 +524,8 @@ class TrainingModelTestCase(TestCase):
                 notes=VALID_NOTES,
                 exercises_data=[
                     {
-                        "Template": str(self.admin_exercise_template.pk),
-                        "Order": "-1",
+                        "Template": self.admin_exercise_template,
+                        "Order": -1,
                     }
                 ],
             )
@@ -540,8 +540,8 @@ class TrainingModelTestCase(TestCase):
                 notes=VALID_NOTES,
                 exercises_data=[
                     {
-                        "Template": str(self.admin_exercise_template.pk),
-                        "Order": "2",
+                        "Template": self.admin_exercise_template,
+                        "Order": 2,
                     }
                 ],
             )
@@ -555,8 +555,8 @@ class TrainingModelTestCase(TestCase):
             notes=VALID_NOTES,
             exercises_data=[
                 {
-                    "Template": str(self.admin_exercise_template.pk),
-                    "Order": "2",
+                    "Template": self.admin_exercise_template,
+                    "Order": 1,
                     "Sets": [
                         {
                             "reps": "3",
@@ -579,8 +579,8 @@ class TrainingModelTestCase(TestCase):
                 notes=VALID_NOTES,
                 exercises_data=[
                     {
-                        "Template": str(self.exercise_template.pk),
-                        "Order": "2",
+                        "Template": self.exercise_template,
+                        "Order": 2,
                         "Sets": [
                             {
                                 "reps": "3",
@@ -660,33 +660,31 @@ class TrainingModelTestCase(TestCase):
             description=description,
             notes=notes,
             exercises_data=[
-                self.second_exercise_data,
+                first_exercise_data,
                 second_exercise_data,
             ],
         )
-        self.assertEqual(Training.objects.count(), 2)
-        self.assertEqual(Exercise.objects.count(), 4)
-        training = Training.objects.filter(title=title).prefetch_related(
-            "exercises"
-        )
-        self.assertEqual(training.count(), 1)
-        training = training.first()
+        self.assertEqual(Training.objects.count(), 1)
+        self.assertEqual(Exercise.objects.count(), 2)
+        training.refresh_from_db()
         self.assertEqual(training.owner, self.user)
         self.assertEqual(training.template, self.second_training_template)
         self.assertEqual(training.conducted, conducted)
         self.assertEqual(training.title, title)
         self.assertEqual(training.description, description)
         self.assertEqual(training.notes, notes)
-        first_exercise, second_exercise = training.exercises.all()
+        exercises = Exercise.objects.filter(training=training)
+        self.assertEqual(exercises.count(), 2)
+        first_exercise, second_exercise = exercises
         self.assertEqual(first_exercise.training, training)
         self.assertEqual(
-            first_exercise.template, self.first_exercise_data["Template"]
+            first_exercise.template, first_exercise_data["Template"]
         )
         self.assertEqual(first_exercise.order, 1)
-        self.assertEqual(first_exercise.units, {})
-        self.assertEqual(first_exercise.sets, {})
+        self.assertEqual(first_exercise.units, None)
+        self.assertEqual(first_exercise.sets, None)
         self.assertEqual(second_exercise.training, training)
-        self.assertEqual(second_exercise.template, self.exercise_template)
+        self.assertEqual(second_exercise.template, second_exercise_data["Template"])
         self.assertEqual(second_exercise.order, 2)
         self.assertEqual(second_exercise.units, second_exercise_data["Units"])
         self.assertEqual(second_exercise.sets, second_exercise_data["Sets"])
