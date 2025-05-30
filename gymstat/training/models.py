@@ -181,7 +181,7 @@ class Exercise(models.Model):
             for exercise in sets:
                 for field, value in exercise.items():
                     if isinstance(ALLOWED_EXERCISE_FIELDS[field], list):
-                        if field not in units:
+                        if not units or field not in units:
                             raise ValidationError(
                                 f"Field {field} in 'Sets' must have unit"
                             )
