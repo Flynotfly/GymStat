@@ -182,6 +182,22 @@ class TrainingModelTestCase(TestCase):
         self.assertEqual(Training.objects.count(), 1)
         self.assertEqual(Exercise.objects.count(), 2)
 
+    def test_create_training_wrong_template(self):
+        with self.assertRaises(ValidationError):
+            description = "This is valid description"
+            Training.objects.create_training(
+                owner=self.user,
+                template=self.other_user_template,
+                conducted=VALID_CONDUCTED,
+                title=VALID_TITLE,
+                description=description,
+                notes=VALID_NOTES,
+                exercises_data=[
+                    self.first_exercise_data,
+                    self.second_exercise_data,
+                ],
+            )
+
     # --- Notes ---
     def test_create_training_no_notes(self):
         Training.objects.create_training(
@@ -414,5 +430,79 @@ class TrainingModelTestCase(TestCase):
                     self.first_exercise_data,
                     self.second_exercise_data,
                     self.unaccessible_exercise_data,
+                ],
+            )
+
+    def test_create_training_two_exercises_with_same_order(self):
+        with self.assertRaises(ValidationError):
+            Training.objects.create_training(
+                owner=self.user,
+                template=self.template,
+                conducted=VALID_CONDUCTED,
+                title=VALID_TITLE,
+                notes=VALID_NOTES,
+                exercises_data=[
+                    self.second_exercise_data,
+                    self.second_exercise_data,
+                ],
+            )
+
+    def test_create_training_no_order(self):
+        with self.assertRaises(ValidationError):
+            Training.objects.create_training(
+                owner=self.user,
+                template=self.template,
+                conducted=VALID_CONDUCTED,
+                title=VALID_TITLE,
+                notes=VALID_NOTES,
+                exercises_data=[
+                    {
+                        "Template": str(self.admin_exercise_template.pk),
+                    }
+                ],
+            )
+
+    def test_create_training_no_unit_success(self):
+        Training.objects.create_training(
+            owner=self.user,
+            template=self.template,
+            conducted=VALID_CONDUCTED,
+            title=VALID_TITLE,
+            notes=VALID_NOTES,
+            exercises_data=[
+                {
+                    "Template": str(self.admin_exercise_template.pk),
+                    "Order": "2",
+                    "Sets": [
+                        {
+                            "reps": "3",
+                            "rest": "10:00",
+                        }
+                    ]
+                }
+            ],
+        )
+        self.assertEqual(Training.objects.count(), 1)
+        self.assertEqual(Exercise.objects.count(), 1)
+
+    def test_create_training_no_unit_fail(self):
+        with self.assertRaises(ValidationError):
+            Training.objects.create_training(
+                owner=self.user,
+                template=self.template,
+                conducted=VALID_CONDUCTED,
+                title=VALID_TITLE,
+                notes=VALID_NOTES,
+                exercises_data=[
+                    {
+                        "Template": str(self.exercise_template.pk),
+                        "Order": "2",
+                        "Sets": [
+                            {
+                                "reps": "3",
+                                "weight": "100",
+                            }
+                        ]
+                    }
                 ],
             )
