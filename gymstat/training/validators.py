@@ -163,14 +163,45 @@ def validate_training_template_data(data):
                                 )
 
 
-def validate_training_notes(value):
-    if not isinstance(value, dict):
-        raise ValidationError("Notes must be a dictionary.")
-    for key, val in value.items():
-        if not isinstance(key, str) or not isinstance(val, str):
+def validate_training_notes(notes):
+    if not notes:
+        return
+    if not isinstance(notes, list):
+        raise ValidationError("Notes must be a list or None.")
+    for note in notes:
+        if not isinstance(note, dict):
+            raise ValidationError("Each note must be a dict.")
+
+        expected_keys = {"Name", "Field", "Required", "Value"}
+        actual_keys = set(note.keys())
+        if actual_keys != expected_keys:
             raise ValidationError(
-                "Notes dictionary keys and values must be strings."
+                "Each note must have exactly these keys: Name, Field, Required, Value."
             )
+
+        # Name: non‐empty string
+        name = note["Name"]
+        if not isinstance(name, str) or not name.strip():
+            raise ValidationError("Note ‘Name’ must be a non‐empty string.")
+
+        # Field: must be one of the allowed NOTES_FIELDS
+        field = note["Field"]
+        if field not in NOTES_FIELDS:
+            raise ValidationError(f"Note ‘Field’ value '{field}' is not valid.")
+
+        # Required: string "True" or "False"
+        required = note["Required"]
+        if required not in ("True", "False"):
+            raise ValidationError("Note ‘Required’ must be the string 'True' or 'False'.")
+
+        # Value: must be a string; if required=="True", must be non‐empty
+        value = note["Value"]
+        if not isinstance(value, str):
+            raise ValidationError("Note ‘Value’ must be a string.")
+        if required == "True" and not value:
+            raise ValidationError("This note is required but its ‘Value’ is empty.")
+        if value:
+            check_note_field(field, value)
 
 
 def validate_exercise_template_fields(value):
