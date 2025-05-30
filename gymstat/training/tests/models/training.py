@@ -72,8 +72,8 @@ class TrainingModelTestCase(TestCase):
         )
 
         self.first_exercise_data = {
-            "Template": str(self.exercise_template.pk),
-            "Order": "1",
+            "Template": self.exercise_template,
+            "Order": 1,
             "Units": {"weight": "kg"},
             "Sets": [
                 {
@@ -91,11 +91,11 @@ class TrainingModelTestCase(TestCase):
             ],
         }
         self.second_exercise_data = {
-            "Template": str(self.admin_exercise_template.pk),
-            "Order": "2",
+            "Template": self.admin_exercise_template,
+            "Order": 2,
         }
         self.unaccessible_exercise_data = {
-            "Template": str(self.other_user_exercise_template.pk),
+            "Template": self.other_user_exercise_template,
             "Order": "3",
         }
 
@@ -630,12 +630,12 @@ class TrainingModelTestCase(TestCase):
             name="Leg press", owner=self.user, fields=["reps", "weight", "rest"]
         )
         first_exercise_data = {
-            "Template": str(self.admin_exercise_template.pk),
-            "Order": "1",
+            "Template": self.admin_exercise_template,
+            "Order": 1,
         }
         second_exercise_data = {
-            "Template": str(exercise_template.pk),
-            "Order": "2",
+            "Template": exercise_template,
+            "Order": 2,
             "Units": {"weight": "lbs"},
             "Sets": [
                 {
