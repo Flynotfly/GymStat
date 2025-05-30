@@ -27,7 +27,7 @@ class TrainingTemplateAPITestCase(APITestCase):
         self.user = User.objects.create_user(**user_data)
         self.other_user = User.objects.create_user(**other_user_data)
         self.template = TrainingTemplate.objects.create(
-            name="Usual training",
+            name="Usuall training",
             owner=self.user,
             data=VALID_DATA,
             description="This is description",
