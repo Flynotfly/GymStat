@@ -562,7 +562,7 @@ class TrainingModelTestCase(TestCase):
                             "reps": "3",
                             "rest": "10:00",
                         }
-                    ]
+                    ],
                 }
             ],
         )
@@ -586,7 +586,7 @@ class TrainingModelTestCase(TestCase):
                                 "reps": "3",
                                 "weight": "100",
                             }
-                        ]
+                        ],
                     }
                 ],
             )
@@ -627,7 +627,9 @@ class TrainingModelTestCase(TestCase):
             },
         ]
         exercise_template = ExerciseTemplate.objects.create(
-            name="Leg press", owner=self.user, fields=["reps", "weight", "rest"]
+            name="Leg press",
+            owner=self.user,
+            fields=["reps", "weight", "rest"],
         )
         first_exercise_data = {
             "Template": self.admin_exercise_template,
@@ -638,11 +640,7 @@ class TrainingModelTestCase(TestCase):
             "Order": 2,
             "Units": {"weight": "lbs"},
             "Sets": [
-                {
-                    "reps": "10",
-                    "weight": "80",
-                    "rest": "20:00"
-                },
+                {"reps": "10", "weight": "80", "rest": "20:00"},
                 {
                     "reps": "4",
                     "weight": "60",
@@ -664,11 +662,13 @@ class TrainingModelTestCase(TestCase):
             exercises_data=[
                 self.second_exercise_data,
                 second_exercise_data,
-            ]
+            ],
         )
         self.assertEqual(Training.objects.count(), 2)
         self.assertEqual(Exercise.objects.count(), 4)
-        training = Training.objects.filter(title=title).prefetch_related("exercises")
+        training = Training.objects.filter(title=title).prefetch_related(
+            "exercises"
+        )
         self.assertEqual(training.count(), 1)
         training = training.first()
         self.assertEqual(training.owner, self.user)
@@ -679,7 +679,9 @@ class TrainingModelTestCase(TestCase):
         self.assertEqual(training.notes, notes)
         first_exercise, second_exercise = training.exercises.all()
         self.assertEqual(first_exercise.training, training)
-        self.assertEqual(first_exercise.template, self.first_exercise_data["Template"])
+        self.assertEqual(
+            first_exercise.template, self.first_exercise_data["Template"]
+        )
         self.assertEqual(first_exercise.order, 1)
         self.assertEqual(first_exercise.units, {})
         self.assertEqual(first_exercise.sets, {})

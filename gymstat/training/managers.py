@@ -8,7 +8,6 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import models, transaction
 
-
 if TYPE_CHECKING:
     from training.models import (
         Training,
@@ -114,18 +113,20 @@ class TrainingManager(models.Manager):
             units = single_exercise_data.get("Units")
             sets = single_exercise_data.get("Sets")
             exercise = Exercise(
-                    training=training,
-                    template=template,
-                    order=order,
-                    units=units,
-                    sets=sets,
-                )
+                training=training,
+                template=template,
+                order=order,
+                units=units,
+                sets=sets,
+            )
             exercise.full_clean()
             orders.append(order)
             exercises_to_create.append(exercise)
 
         # Check order
         if not set(orders) == set(range(1, len(orders) + 1)):
-            raise ValidationError("The order of exercises is incorrect. It should start from 1 and increase by 1.")
+            raise ValidationError(
+                "The order of exercises is incorrect. It should start from 1 and increase by 1."
+            )
 
         Exercise.objects.bulk_create(exercises_to_create)

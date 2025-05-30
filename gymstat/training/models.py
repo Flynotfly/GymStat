@@ -1,18 +1,18 @@
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVector
-from django.db import models
 from django.core.exceptions import ValidationError
+from django.db import models
 
 from .constants import ALLOWED_EXERCISE_FIELDS
 from .managers import TrainingManager
 from .validators import (
+    validate_exercise_sets,
     validate_exercise_template_fields,
     validate_exercise_template_tags,
+    validate_exercise_units,
     validate_training_notes,
     validate_training_template_data,
-    validate_exercise_units,
-    validate_exercise_sets,
 )
 
 
@@ -150,8 +150,12 @@ class Exercise(models.Model):
         on_delete=models.CASCADE,
     )
     order = models.PositiveIntegerField()
-    units = models.JSONField(validators=[validate_exercise_units], blank=True, default=dict)
-    sets = models.JSONField(validators=[validate_exercise_sets], blank=True, default=list)
+    units = models.JSONField(
+        validators=[validate_exercise_units], blank=True, default=dict
+    )
+    sets = models.JSONField(
+        validators=[validate_exercise_sets], blank=True, default=list
+    )
 
     class Meta:
         indexes = [
@@ -178,7 +182,9 @@ class Exercise(models.Model):
                 for field, value in exercise:
                     if isinstance(ALLOWED_EXERCISE_FIELDS[field], list):
                         if field not in units:
-                            raise ValidationError(f"Field {field} in 'Sets' must have unit")
+                            raise ValidationError(
+                                f"Field {field} in 'Sets' must have unit"
+                            )
 
     def __repr__(self):
         return f"<Exercise ({self.template.name}) for Training {self.training.id}>"

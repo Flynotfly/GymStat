@@ -1,6 +1,10 @@
 from django.core.exceptions import ValidationError
 
-from training.constants import NOTES_FIELDS, ALLOWED_EXERCISE_FIELDS, ALLOWED_EXERCISE_TAGS
+from training.constants import (
+    ALLOWED_EXERCISE_FIELDS,
+    ALLOWED_EXERCISE_TAGS,
+    NOTES_FIELDS,
+)
 
 from .utils import check_exercise_field, check_note_field
 
@@ -152,19 +156,25 @@ def validate_training_notes(notes):
         # Field: must be one of the allowed NOTES_FIELDS
         field = note["Field"]
         if field not in NOTES_FIELDS:
-            raise ValidationError(f"Note ‘Field’ value '{field}' is not valid.")
+            raise ValidationError(
+                f"Note ‘Field’ value '{field}' is not valid."
+            )
 
         # Required: string "True" or "False"
         required = note["Required"]
         if required not in ("True", "False"):
-            raise ValidationError("Note ‘Required’ must be the string 'True' or 'False'.")
+            raise ValidationError(
+                "Note ‘Required’ must be the string 'True' or 'False'."
+            )
 
         # Value: must be a string; if required=="True", must be non‐empty
         value = note["Value"]
         if not isinstance(value, str):
             raise ValidationError("Note ‘Value’ must be a string.")
         if required == "True" and not value:
-            raise ValidationError("This note is required but its ‘Value’ is empty.")
+            raise ValidationError(
+                "This note is required but its ‘Value’ is empty."
+            )
         if value:
             check_note_field(field, value)
 
@@ -184,13 +194,19 @@ def validate_exercise_units(units):
         raise ValidationError("'Units' field must be a dict")
     for key, value in units.items():
         if key not in ALLOWED_EXERCISE_FIELDS:
-            raise ValidationError(f"Got unexpected field {key} in 'Unit'. Allowed fields: {', '.join(ALLOWED_EXERCISE_FIELDS)}")
+            raise ValidationError(
+                f"Got unexpected field {key} in 'Unit'. Allowed fields: {', '.join(ALLOWED_EXERCISE_FIELDS)}"
+            )
         field_type = ALLOWED_EXERCISE_FIELDS[key]
         if isinstance(field_type, str):
-            raise ValidationError(f"Field {key} don't require unit. Don't put it in 'Unit'")
+            raise ValidationError(
+                f"Field {key} don't require unit. Don't put it in 'Unit'"
+            )
         _, allowed_units = field_type
         if value not in allowed_units:
-            raise ValidationError(f"Unit {value} not supported in {key} field. Allowed units for {key} field: {', '.join(allowed_units)}")
+            raise ValidationError(
+                f"Unit {value} not supported in {key} field. Allowed units for {key} field: {', '.join(allowed_units)}"
+            )
 
 
 def validate_exercise_sets(sets):
@@ -200,11 +216,14 @@ def validate_exercise_sets(sets):
         raise ValidationError("'Sets' field must be a list")
     for exercise in sets:
         if not isinstance(exercise, dict):
-            raise ValidationError("Exercise inside of 'Sets' list must be a dict")
+            raise ValidationError(
+                "Exercise inside of 'Sets' list must be a dict"
+            )
         for field, value in exercise.items():
             if field not in ALLOWED_EXERCISE_FIELDS:
                 raise ValidationError(
-                    f"Got unexpected field {field} in 'Sets'. Allowed fields: {', '.join(ALLOWED_EXERCISE_FIELDS)}")
+                    f"Got unexpected field {field} in 'Sets'. Allowed fields: {', '.join(ALLOWED_EXERCISE_FIELDS)}"
+                )
             field_type = ALLOWED_EXERCISE_FIELDS[field]
             if isinstance(field_type, list):
                 field_type = field_type[0]
