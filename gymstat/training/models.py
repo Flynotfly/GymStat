@@ -4,6 +4,7 @@ from django.contrib.postgres.search import SearchVector
 from django.db import models
 from django.core.exceptions import ValidationError
 
+from .constants import ALLOWED_EXERCISE_FIELDS
 from .managers import TrainingManager
 from .validators import (
     validate_exercise_template_fields,
@@ -168,6 +169,16 @@ class Exercise(models.Model):
             ),
         ]
         ordering = ["order"]
+
+    def clean(self):
+        sets: list | None = self.sets
+        units: dict | None = self.units
+        if sets:
+            for exercise in sets:
+                for field, value in exercise:
+                    if isinstance(ALLOWED_EXERCISE_FIELDS[field], list):
+                        if field not in units:
+                            raise ValidationError(f"Field {field} in 'Sets' must have unit")
 
     def __repr__(self):
         return f"<Exercise ({self.template.name}) for Training {self.training.id}>"
