@@ -278,7 +278,7 @@ class TrainingModelTestCase(TestCase):
             {
                 "Name": "Text field",
                 "Field": "Text",
-                "Required": "True",
+                "Required": "False",
             },
             {
                 "Name": "Text field",
