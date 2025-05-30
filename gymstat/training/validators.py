@@ -228,6 +228,24 @@ def validate_exercise_units(units):
             raise ValidationError(f"Unit {value} not supported in {key} field. Allowed units for {key} field: {', '.join(allowed_units)}")
 
 
+def validate_exercise_sets(sets):
+    if not sets:
+        return
+    if not isinstance(sets, list):
+        raise ValidationError("'Sets' field must be a list")
+    for exercise in sets:
+        if not isinstance(exercise, dict):
+            raise ValidationError("Exercise inside of 'Sets' list must be a dict")
+        for field, value in exercise.items():
+            if field not in ALLOWED_EXERCISE_FIELDS:
+                raise ValidationError(
+                    f"Got unexpected field {field} in 'Sets'. Allowed fields: {', '.join(ALLOWED_EXERCISE_FIELDS)}")
+            field_type = ALLOWED_EXERCISE_FIELDS[field]
+            if isinstance(field_type, list):
+                field_type = field_type[0]
+            check_exercise_field(field_type, value)
+
+
 def validate_exercise_data(data, exercise_template):
     if not isinstance(data, dict):
         raise ValidationError("Exercise data must be a dictionary.")

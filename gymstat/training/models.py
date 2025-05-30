@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVector
 from django.db import models
+from django.core.exceptions import ValidationError
 
 from .managers import TrainingManager
 from .validators import (
@@ -10,6 +11,7 @@ from .validators import (
     validate_training_notes,
     validate_training_template_data,
     validate_exercise_units,
+    validate_exercise_sets,
 )
 
 
@@ -148,7 +150,7 @@ class Exercise(models.Model):
     )
     order = models.PositiveIntegerField()
     units = models.JSONField(validators=[validate_exercise_units], blank=True, default=dict)
-    sets = models.JSONField(blank=True, default=list)
+    sets = models.JSONField(validators=[validate_exercise_sets], blank=True, default=list)
 
     class Meta:
         indexes = [
