@@ -147,7 +147,7 @@ class Exercise(models.Model):
     )
     order = models.PositiveIntegerField()
     units = models.JSONField(blank=True, default=dict)
-    sets = models.JSONField(blank=True, default=dict)
+    sets = models.JSONField(blank=True, default=list)
 
     class Meta:
         indexes = [
