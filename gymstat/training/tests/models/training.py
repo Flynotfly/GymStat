@@ -47,7 +47,7 @@ class TrainingModelTestCase(TestCase):
             name="Training template",
             owner=self.user,
         )
-        self.second_training_tempalte = TrainingTemplate.objects.create(
+        self.second_training_template = TrainingTemplate.objects.create(
             name="Second training template",
             owner=self.user,
         )
@@ -572,7 +572,7 @@ class TrainingModelTestCase(TestCase):
         Training.objects.update_training(
             training=training,
             owner=self.user,
-            template=self.second_training_tempalte,
+            template=self.second_training_template,
             conducted=conducted,
             title=title,
             description=description,
@@ -588,7 +588,7 @@ class TrainingModelTestCase(TestCase):
         self.assertEqual(training.count(), 1)
         training = training.first()
         self.assertEqual(training.owner, self.user)
-        self.assertEqual(training.template, self.second_training_tempalte)
+        self.assertEqual(training.template, self.second_training_template)
         self.assertEqual(training.conducted, conducted)
         self.assertEqual(training.title, title)
         self.assertEqual(training.description, description)
@@ -602,5 +602,5 @@ class TrainingModelTestCase(TestCase):
         self.assertEqual(second_exercise.training, training)
         self.assertEqual(second_exercise.template, self.exercise_template)
         self.assertEqual(second_exercise.order, 3)
-        self.assertEqual(second_exercise.units, exercise_template["Units"])
-        self.assertEqual(second_exercise.sets, exercise_template["Sets"])
+        self.assertEqual(second_exercise.units, second_exercise_data["Units"])
+        self.assertEqual(second_exercise.sets, second_exercise_data["Sets"])
