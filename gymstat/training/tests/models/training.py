@@ -549,9 +549,13 @@ class TrainingModelTestCase(TestCase):
         exercise_template = ExerciseTemplate.objects.create(
             name="Leg press", owner=self.user, fields=["reps", "weight", "rest"]
         )
+        first_exercise_data = {
+            "Template": str(self.admin_exercise_template.pk),
+            "Order": "1",
+        }
         second_exercise_data = {
             "Template": str(exercise_template.pk),
-            "Order": "3",
+            "Order": "2",
             "Units": {"weight": "lbs"},
             "Sets": [
                 {
@@ -595,12 +599,12 @@ class TrainingModelTestCase(TestCase):
         self.assertEqual(training.notes, notes)
         first_exercise, second_exercise = training.exercises.all()
         self.assertEqual(first_exercise.training, training)
-        self.assertEqual(first_exercise.template, self.admin_exercise_template)
-        self.assertEqual(first_exercise.order, 2)
+        self.assertEqual(first_exercise.template, self.first_exercise_data["Template"])
+        self.assertEqual(first_exercise.order, 1)
         self.assertEqual(first_exercise.units, {})
         self.assertEqual(first_exercise.sets, {})
         self.assertEqual(second_exercise.training, training)
         self.assertEqual(second_exercise.template, self.exercise_template)
-        self.assertEqual(second_exercise.order, 3)
+        self.assertEqual(second_exercise.order, 2)
         self.assertEqual(second_exercise.units, second_exercise_data["Units"])
         self.assertEqual(second_exercise.sets, second_exercise_data["Sets"])
