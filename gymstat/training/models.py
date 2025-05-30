@@ -151,10 +151,10 @@ class Exercise(models.Model):
     )
     order = models.PositiveIntegerField()
     units = models.JSONField(
-        validators=[validate_exercise_units], blank=True, default=dict
+        validators=[validate_exercise_units], blank=True, null=True
     )
     sets = models.JSONField(
-        validators=[validate_exercise_sets], blank=True, default=list
+        validators=[validate_exercise_sets], blank=True, null=True
     )
 
     class Meta:
@@ -179,7 +179,7 @@ class Exercise(models.Model):
         units: dict | None = self.units
         if sets:
             for exercise in sets:
-                for field, value in exercise:
+                for field, value in exercise.items():
                     if isinstance(ALLOWED_EXERCISE_FIELDS[field], list):
                         if field not in units:
                             raise ValidationError(
