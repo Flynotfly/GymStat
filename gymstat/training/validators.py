@@ -1,43 +1,8 @@
 from django.core.exceptions import ValidationError
 
-from training.constants import NOTES_FIELDS
+from training.constants import NOTES_FIELDS, ALLOWED_EXERCISE_FIELDS, ALLOWED_EXERCISE_TAGS
 
 from .utils import check_exercise_field, check_note_field
-
-ALLOWED_EXERCISE_FIELDS = {
-    "sets": "int",
-    "reps": "int",
-    "weight": ["float", ["kg", "lbs"]],
-    "time": "duration",
-    "distance": ["float", ["m", "km", "mi"]],
-    "speed": ["float", ["kph", "mph", "mps"]],
-    "rounds": "int",
-    "rest": "duration",
-    "rpe": "int",
-    "attempts": "int",
-    "successes": "int",
-    "notes": "text",
-    "tempo": "text",
-}
-
-ALLOWED_EXERCISE_TAGS = {
-    "chest",
-    "biceps",
-    "cardio",
-    "cycling",
-    "running",
-    "free weight",
-    "machine",
-    "triceps",
-    "legs",
-    "back",
-    "shoulders",
-    "abs",
-    "core",
-    "HIIT",
-    "yoga",
-    "pilates",
-}
 
 
 def _validate_json_list(
