@@ -1,3 +1,5 @@
+import datetime
+
 from django.apps import apps
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied, ValidationError
@@ -7,26 +9,34 @@ from .validators import validate_exercise_data
 
 User = get_user_model()
 
+Exercise = apps.get_model("training", "Exercise")
+TrainingTemplate = apps.get_model("training", "TrainingTemplate")
+ExerciseTemplate = apps.get_model("training", "ExerciseTemplate")
+
 
 class TrainingManager(models.Manager):
 
     @transaction.atomic
     def create_training(
         self,
-        owner,
-        conducted,
-        template=None,
-        title=None,
-        notes=None,
-        exercises_data=None,
+        owner: User,
+        conducted: datetime.datetime,
+        template: TrainingTemplate = None,
+        title: str = None,
+        description: str = None,
+        notes: list = None,
+        exercises_data: list = None,
     ):
-        training = self.create(
+        training = self.model(
             owner=owner,
             conducted=conducted,
             template=template,
             title=title,
+            description=description,
             notes=notes,
         )
+        training.full_clean()
+        training.save()
         if exercises_data:
             self._process_exercise_data(owner, training, exercises_data)
         return training
