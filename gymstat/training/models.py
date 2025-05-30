@@ -68,7 +68,7 @@ class Training(models.Model):
     notes = models.JSONField(
         validators=[validate_training_notes],
         blank=True,
-        default=dict,
+        null=True,
     )
     created_at = models.DateTimeField(auto_now_add=True)
     edited_at = models.DateTimeField(auto_now=True)
