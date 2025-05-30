@@ -9,6 +9,7 @@ from .validators import (
     validate_exercise_template_tags,
     validate_training_notes,
     validate_training_template_data,
+    validate_exercise_units,
 )
 
 
@@ -146,7 +147,7 @@ class Exercise(models.Model):
         on_delete=models.CASCADE,
     )
     order = models.PositiveIntegerField()
-    units = models.JSONField(blank=True, default=dict)
+    units = models.JSONField(validators=[validate_exercise_units], blank=True, default=dict)
     sets = models.JSONField(blank=True, default=list)
 
     class Meta:

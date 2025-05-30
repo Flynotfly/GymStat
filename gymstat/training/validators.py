@@ -212,6 +212,22 @@ def validate_exercise_template_tags(value):
     return _validate_json_list(value, "tags", ALLOWED_EXERCISE_TAGS)
 
 
+def validate_exercise_units(units):
+    if not units:
+        return
+    if not isinstance(units, dict):
+        raise ValidationError("'Units' field must be a dict")
+    for key, value in units.items():
+        if key not in ALLOWED_EXERCISE_FIELDS:
+            raise ValidationError(f"Got unexpected field {key} in 'Unit'. Allowed fields: {', '.join(ALLOWED_EXERCISE_FIELDS)}")
+        field_type = ALLOWED_EXERCISE_FIELDS[key]
+        if isinstance(field_type, str):
+            raise ValidationError(f"Field {key} don't require unit. Don't put it in 'Unit'")
+        _, allowed_units = field_type
+        if value not in allowed_units:
+            raise ValidationError(f"Unit {value} not supported in {key} field. Allowed units for {key} field: {', '.join(allowed_units)}")
+
+
 def validate_exercise_data(data, exercise_template):
     if not isinstance(data, dict):
         raise ValidationError("Exercise data must be a dictionary.")
