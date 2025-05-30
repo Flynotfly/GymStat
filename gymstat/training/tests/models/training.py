@@ -47,6 +47,10 @@ class TrainingModelTestCase(TestCase):
             name="Training template",
             owner=self.user,
         )
+        self.second_training_tempalte = TrainingTemplate.objects.create(
+            name="Second training template",
+            owner=self.user,
+        )
         self.other_user_template = TrainingTemplate.objects.create(
             name="Other user template",
             owner=self.other_user,
@@ -506,3 +510,97 @@ class TrainingModelTestCase(TestCase):
                     }
                 ],
             )
+
+    # --- Update training ---
+    def test_update_training(self):
+        description = "This is valid description"
+        Training.objects.create_training(
+            owner=self.user,
+            template=self.template,
+            conducted=VALID_CONDUCTED,
+            title=VALID_TITLE,
+            description=description,
+            notes=VALID_NOTES,
+            exercises_data=[
+                self.first_exercise_data,
+                self.second_exercise_data,
+            ],
+        )
+        self.assertEqual(Training.objects.count(), 1)
+        self.assertEqual(Exercise.objects.count(), 2)
+        training = Training.objects.first()
+        conducted = datetime.datetime(2025, 5, 2, 20, 40, 30, tzinfo=berlin_tz)
+        title = "New title"
+        description = "Brand new description"
+        notes = [
+            {
+                "Name": "Rate",
+                "Field": "5stars",
+                "Required": "True",
+                "Value": "3",
+            },
+            {
+                "Name": "Duration field in notes",
+                "Field": "Duration",
+                "Required": "False",
+                "Value": "",
+            },
+        ]
+        exercise_template = ExerciseTemplate.objects.create(
+            name="Leg press", owner=self.user, fields=["reps", "weight", "rest"]
+        )
+        second_exercise_data = {
+            "Template": str(exercise_template.pk),
+            "Order": "3",
+            "Units": {"weight": "lbs"},
+            "Sets": [
+                {
+                    "reps": "10",
+                    "weight": "80",
+                    "rest": "20:00"
+                },
+                {
+                    "reps": "4",
+                    "weight": "60",
+                },
+                {
+                    "reps": "8",
+                    "weight": "70",
+                },
+            ],
+        }
+        Training.objects.update_training(
+            training=training,
+            owner=self.user,
+            template=self.second_training_tempalte,
+            conducted=conducted,
+            title=title,
+            description=description,
+            notes=notes,
+            exercises_data=[
+                self.second_exercise_data,
+                second_exercise_data,
+            ]
+        )
+        self.assertEqual(Training.objects.count(), 2)
+        self.assertEqual(Exercise.objects.count(), 4)
+        training = Training.objects.filter(title=title).prefetch_related("exercises")
+        self.assertEqual(training.count(), 1)
+        training = training.first()
+        self.assertEqual(training.owner, self.user)
+        self.assertEqual(training.template, self.second_training_tempalte)
+        self.assertEqual(training.conducted, conducted)
+        self.assertEqual(training.title, title)
+        self.assertEqual(training.description, description)
+        self.assertEqual(training.notes, notes)
+        first_exercise, second_exercise = training.exercises.all()
+        self.assertEqual(first_exercise.training, training)
+        self.assertEqual(first_exercise.template, self.admin_exercise_template)
+        self.assertEqual(first_exercise.order, 2)
+        self.assertEqual(first_exercise.units, {})
+        self.assertEqual(first_exercise.sets, {})
+        self.assertEqual(second_exercise.training, training)
+        self.assertEqual(second_exercise.template, self.exercise_template)
+        self.assertEqual(second_exercise.order, 3)
+        self.assertEqual(second_exercise.units, exercise_template["Units"])
+        self.assertEqual(second_exercise.sets, exercise_template["Sets"])
