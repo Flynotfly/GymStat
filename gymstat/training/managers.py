@@ -8,8 +8,6 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import models, transaction
 
-from .validators import validate_exercise_data
-
 
 if TYPE_CHECKING:
     from training.models import (
@@ -21,7 +19,6 @@ if TYPE_CHECKING:
 User = get_user_model()
 
 Exercise = apps.get_model("training", "Exercise")
-ExerciseTemplate = apps.get_model("training", "ExerciseTemplate")
 
 
 class TrainingManager(models.Manager):
@@ -80,12 +77,15 @@ class TrainingManager(models.Manager):
         return training
 
     @staticmethod
-    def _process_exercise_data(owner, training, exercises_data):
-        Exercise = apps.get_model("training", "Exercise")
+    def _process_exercise_data(
+        owner: User,
+        training: Training,
+        exercises_data: list,
+    ):
         unauthorized_templates = []
-        for idx, exercise_data in enumerate(exercises_data, start=1):
+        for idx, single_exercise_data in enumerate(exercises_data, start=1):
             # Expect the template to be an instance
-            exercise_template = exercise_data.get("template")
+            exercise_template = single_exercise_data.get("Template")
             if not exercise_template:
                 raise ValidationError(
                     f"Exercise #{idx} is missing a template."
@@ -107,24 +107,25 @@ class TrainingManager(models.Manager):
             )
 
         exercises_to_create = []
-        for idx, exercise_data in enumerate(exercises_data, start=1):
-            template = exercise_data.get("template")
-            order = exercise_data.get("order")
-            data = exercise_data.get("data")
-
-            try:
-                validate_exercise_data(data, template)
-            except ValidationError as ve:
-                raise ValidationError(
-                    f"Validation error in exercise #{idx} with template '{template.name}': {ve}"
-                )
-
-            exercises_to_create.append(
-                Exercise(
+        orders = []
+        for idx, single_exercise_data in enumerate(exercises_data, start=1):
+            template = single_exercise_data.get("Template")
+            order = single_exercise_data.get("Order")
+            units = single_exercise_data.get("Units")
+            sets = single_exercise_data.get("Sets")
+            exercise = Exercise(
                     training=training,
                     template=template,
                     order=order,
-                    data=data,
+                    units=units,
+                    sets=sets,
                 )
-            )
+            exercise.full_clean()
+            orders.append(order)
+            exercises_to_create.append(exercise)
+
+        # Check order
+        if not set(orders) == set(range(1, len(orders) + 1)):
+            raise ValidationError("The order of exercises is incorrect. It should start from 1 and increase by 1.")
+
         Exercise.objects.bulk_create(exercises_to_create)
