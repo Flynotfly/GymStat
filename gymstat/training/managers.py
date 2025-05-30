@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 import datetime
+from typing import TYPE_CHECKING
 
 from django.apps import apps
 from django.contrib.auth import get_user_model
@@ -7,10 +10,17 @@ from django.db import models, transaction
 
 from .validators import validate_exercise_data
 
+
+if TYPE_CHECKING:
+    from training.models import (
+        Training,
+        TrainingTemplate,
+    )
+
+
 User = get_user_model()
 
 Exercise = apps.get_model("training", "Exercise")
-TrainingTemplate = apps.get_model("training", "TrainingTemplate")
 ExerciseTemplate = apps.get_model("training", "ExerciseTemplate")
 
 
@@ -21,11 +31,11 @@ class TrainingManager(models.Manager):
         self,
         owner: User,
         conducted: datetime.datetime,
-        template: TrainingTemplate = None,
-        title: str = None,
-        description: str = None,
-        notes: list = None,
-        exercises_data: list = None,
+        template: TrainingTemplate | None = None,
+        title: str | None = None,
+        description: str | None = None,
+        notes: list | None = None,
+        exercises_data: list | None = None,
     ):
         training = self.model(
             owner=owner,
@@ -44,13 +54,14 @@ class TrainingManager(models.Manager):
     @transaction.atomic
     def update_training(
         self,
-        training,
-        owner,
-        conducted,
-        template=None,
-        title=None,
-        notes=None,
-        exercises_data=None,
+        training: Training,
+        owner: User,
+        conducted: datetime.datetime,
+        template: TrainingTemplate | None = None,
+        title: str | None = None,
+        description: str | None = None,
+        notes: list | None = None,
+        exercises_data: list | None = None,
     ):
         if training.owner != owner:
             raise PermissionDenied("You are not the owner of this training.")
@@ -58,7 +69,9 @@ class TrainingManager(models.Manager):
         training.conducted = conducted
         training.template = template
         training.title = title
+        training.description = description
         training.notes = notes
+        training.full_clean()
         training.save()
 
         training.exercises.all().delete()
