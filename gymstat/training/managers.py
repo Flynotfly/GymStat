@@ -80,6 +80,9 @@ class TrainingManager(models.Manager):
         exercises_data: list,
     ):
         Exercise = apps.get_model("training", "Exercise")
+
+        if not isinstance(exercises_data, list):
+            raise ValidationError("Exercises data must be a list")
         unauthorized_templates = []
         for idx, single_exercise_data in enumerate(exercises_data, start=1):
             # Expect the template to be an instance
