@@ -17,8 +17,6 @@ if TYPE_CHECKING:
 
 User = get_user_model()
 
-Exercise = apps.get_model("training", "Exercise")
-
 
 class TrainingManager(models.Manager):
 
@@ -81,6 +79,7 @@ class TrainingManager(models.Manager):
         training: Training,
         exercises_data: list,
     ):
+        Exercise = apps.get_model("training", "Exercise")
         unauthorized_templates = []
         for idx, single_exercise_data in enumerate(exercises_data, start=1):
             # Expect the template to be an instance
