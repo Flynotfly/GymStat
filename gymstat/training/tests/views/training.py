@@ -91,7 +91,7 @@ class TrainingAPITestCase(APITestCase):
         self.exercise_data_first_another = {
             "Template": self.exercise_template_first,
             "Order": 1,
-            "Units": {"weight": "kg"},
+            "Units": {"weight": "lbs"},
             "Sets": [
                 {
                     "reps": "7",
@@ -226,3 +226,23 @@ class TrainingAPITestCase(APITestCase):
         self.assertEqual(exercises.count(), 2)
         self.assertEqual(exercises[0].template, self.exercise_template_first)
         self.assertEqual(exercises[1].template, self.exercise_template_admin)
+
+    def test_edit_training(self):
+        response = self.client.put(get_detail_url(self.training.pk), {self.new_training_data})
+        self.assertEqual(response.status_code, 200)
+        self.training.refresh_from_db()
+        self.assertEqual(self.training.title, self.new_training_data["title"])
+        self.assertEqual(self.training.exercises[0].units, self.new_training_data["exercises_data"][0]["Units"])
+
+    def test_edit_other_user_training(self):
+        response = self.client.put(get_detail_url(self.training_other_user.pk), {self.new_training_data})
+        self.assertEqual(response.status_code, 403)
+
+    def test_delete_training(self):
+        response = self.client.delete(get_detail_url(self.training.pk))
+        self.assertEqual(response.status_code, 204)
+        self.assertFalse(Training.objects.filter(pk=self.training.pk).exists())
+
+    def test_delete_other_user_training(self):
+        response = self.client.delete(get_detail_url(self.training_other_user.pk))
+        self.assertEqual(response.status_code, 403)
