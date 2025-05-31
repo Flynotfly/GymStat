@@ -1,7 +1,7 @@
 import {baseURL, request} from "../core/api.ts";
 import {
-  NewTraining,
-  Training
+  NewTrainingStringify,
+  TrainingStringify
 } from "./types/training";
 import {TrainingTemplate, NewTrainingTemplateStringify} from "./types/trainingTemplate"
 import {PaginatedResponse} from "../types/api";
@@ -123,7 +123,7 @@ export function deleteTrainingTemplate(
 
 export function getTrainings(
   page: number = 1
-): Promise<PaginatedResponse<Training>> {
+): Promise<PaginatedResponse<TrainingStringify>> {
   return request(
     'GET',
     URLs['TRAININGS'] + '?page=' + page,
@@ -131,8 +131,8 @@ export function getTrainings(
 }
 
 export function createTraining(
-  training: NewTraining
-): Promise<Training> {
+  training: NewTrainingStringify
+): Promise<TrainingStringify> {
   return request(
     'POST',
     URLs['TRAININGS'],
@@ -141,8 +141,8 @@ export function createTraining(
 }
 
 export function editTraining(
-  training: Training
-): Promise<Training> {
+  training: TrainingStringify
+): Promise<TrainingStringify> {
   const { id } = training;
   return request(
     'PUT',
