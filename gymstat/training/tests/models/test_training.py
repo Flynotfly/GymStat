@@ -72,10 +72,10 @@ class TrainingModelTestCase(TestCase):
         )
 
         self.first_exercise_data = {
-            "Template": self.exercise_template,
-            "Order": 1,
-            "Units": {"weight": "kg"},
-            "Sets": [
+            "template": self.exercise_template,
+            "order": 1,
+            "units": {"weight": "kg"},
+            "sets": [
                 {
                     "reps": "7",
                     "weight": "45",
@@ -91,12 +91,12 @@ class TrainingModelTestCase(TestCase):
             ],
         }
         self.second_exercise_data = {
-            "Template": self.admin_exercise_template,
-            "Order": 2,
+            "template": self.admin_exercise_template,
+            "order": 2,
         }
         self.unaccessible_exercise_data = {
-            "Template": self.other_user_exercise_template,
-            "Order": 3,
+            "template": self.other_user_exercise_template,
+            "order": 3,
         }
 
     # --- General ---
@@ -128,9 +128,9 @@ class TrainingModelTestCase(TestCase):
         self.assertEqual(first_exercise.template, self.exercise_template)
         self.assertEqual(first_exercise.order, 1)
         self.assertEqual(
-            first_exercise.units, self.first_exercise_data["Units"]
+            first_exercise.units, self.first_exercise_data["units"]
         )
-        self.assertEqual(first_exercise.sets, self.first_exercise_data["Sets"])
+        self.assertEqual(first_exercise.sets, self.first_exercise_data["sets"])
         self.assertEqual(second_exercise.training, training)
         self.assertEqual(
             second_exercise.template, self.admin_exercise_template
@@ -507,7 +507,7 @@ class TrainingModelTestCase(TestCase):
                 notes=VALID_NOTES,
                 exercises_data=[
                     {
-                        "Template": self.admin_exercise_template,
+                        "template": self.admin_exercise_template,
                     }
                 ],
             )
@@ -522,8 +522,8 @@ class TrainingModelTestCase(TestCase):
                 notes=VALID_NOTES,
                 exercises_data=[
                     {
-                        "Template": self.admin_exercise_template,
-                        "Order": 0,
+                        "template": self.admin_exercise_template,
+                        "order": 0,
                     }
                 ],
             )
@@ -538,8 +538,8 @@ class TrainingModelTestCase(TestCase):
                 notes=VALID_NOTES,
                 exercises_data=[
                     {
-                        "Template": self.admin_exercise_template,
-                        "Order": -1,
+                        "template": self.admin_exercise_template,
+                        "order": -1,
                     }
                 ],
             )
@@ -554,8 +554,8 @@ class TrainingModelTestCase(TestCase):
                 notes=VALID_NOTES,
                 exercises_data=[
                     {
-                        "Template": self.admin_exercise_template,
-                        "Order": 2,
+                        "template": self.admin_exercise_template,
+                        "order": 2,
                     }
                 ],
             )
@@ -569,9 +569,9 @@ class TrainingModelTestCase(TestCase):
             notes=VALID_NOTES,
             exercises_data=[
                 {
-                    "Template": self.admin_exercise_template,
-                    "Order": 1,
-                    "Sets": [
+                    "template": self.admin_exercise_template,
+                    "order": 1,
+                    "sets": [
                         {
                             "reps": "3",
                             "rest": "10:00",
@@ -593,9 +593,9 @@ class TrainingModelTestCase(TestCase):
                 notes=VALID_NOTES,
                 exercises_data=[
                     {
-                        "Template": self.exercise_template,
-                        "Order": 2,
-                        "Sets": [
+                        "template": self.exercise_template,
+                        "order": 2,
+                        "sets": [
                             {
                                 "reps": "3",
                                 "weight": "100",
@@ -646,14 +646,14 @@ class TrainingModelTestCase(TestCase):
             fields=["reps", "weight", "rest"],
         )
         first_exercise_data = {
-            "Template": self.admin_exercise_template,
-            "Order": 1,
+            "template": self.admin_exercise_template,
+            "order": 1,
         }
         second_exercise_data = {
-            "Template": exercise_template,
-            "Order": 2,
-            "Units": {"weight": "lbs"},
-            "Sets": [
+            "template": exercise_template,
+            "order": 2,
+            "units": {"weight": "lbs"},
+            "sets": [
                 {"reps": "10", "weight": "80", "rest": "20:00"},
                 {
                     "reps": "4",
@@ -692,15 +692,15 @@ class TrainingModelTestCase(TestCase):
         first_exercise, second_exercise = exercises
         self.assertEqual(first_exercise.training, training)
         self.assertEqual(
-            first_exercise.template, first_exercise_data["Template"]
+            first_exercise.template, first_exercise_data["template"]
         )
         self.assertEqual(first_exercise.order, 1)
         self.assertEqual(first_exercise.units, None)
         self.assertEqual(first_exercise.sets, None)
         self.assertEqual(second_exercise.training, training)
         self.assertEqual(
-            second_exercise.template, second_exercise_data["Template"]
+            second_exercise.template, second_exercise_data["template"]
         )
         self.assertEqual(second_exercise.order, 2)
-        self.assertEqual(second_exercise.units, second_exercise_data["Units"])
-        self.assertEqual(second_exercise.sets, second_exercise_data["Sets"])
+        self.assertEqual(second_exercise.units, second_exercise_data["units"])
+        self.assertEqual(second_exercise.sets, second_exercise_data["sets"])

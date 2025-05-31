@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.urls import reverse
+from django.utils.dateparse import parse_datetime
 from rest_framework.test import APITestCase
 
 from user.tests import admin_user_data, login_data, other_user_data, user_data
@@ -66,10 +67,10 @@ class TrainingAPITestCase(APITestCase):
         )
 
         self.exercise_data_first = {
-            "Template": self.exercise_template_first,
-            "Order": 1,
-            "Units": {"weight": "kg"},
-            "Sets": [
+            "template": self.exercise_template_first,
+            "order": 1,
+            "units": {"weight": "kg"},
+            "sets": [
                 {
                     "reps": "7",
                     "weight": "45",
@@ -87,10 +88,10 @@ class TrainingAPITestCase(APITestCase):
             ],
         }
         self.exercise_data_first_another = {
-            "Template": self.exercise_template_first,
-            "Order": 1,
-            "Units": {"weight": "lbs"},
-            "Sets": [
+            "template": self.exercise_template_first,
+            "order": 1,
+            "units": {"weight": "lbs"},
+            "sets": [
                 {
                     "reps": "7",
                     "weight": "45",
@@ -105,10 +106,10 @@ class TrainingAPITestCase(APITestCase):
             ],
         }
         self.exercise_data_second_admin = {
-            "Template": self.exercise_template_admin,
-            "Order": 2,
-            "Units": {"weight": "kg"},
-            "Sets": [
+            "template": self.exercise_template_admin,
+            "order": 2,
+            "units": {"weight": "kg"},
+            "sets": [
                 {
                     "reps": "7",
                     "weight": "45",
@@ -123,9 +124,9 @@ class TrainingAPITestCase(APITestCase):
             ],
         }
         self.exercise_data_other_user = {
-            "Template": self.exercise_template_other_user,
-            "Order": 1,
-            "Sets": [
+            "template": self.exercise_template_other_user,
+            "order": 1,
+            "sets": [
                 {
                     "reps": "7",
                     "sets": "3",
@@ -162,7 +163,7 @@ class TrainingAPITestCase(APITestCase):
         self.training_other_user = Training.objects.create_training(
             owner=self.other_user,
             conducted=VALID_CONDUCTED,
-            template=self.training_template,
+            template=self.training_template_other_user,
             title="Another user training",
             notes=VALID_NOTES,
             exercises_data=[
@@ -174,9 +175,43 @@ class TrainingAPITestCase(APITestCase):
             "conducted": VALID_CONDUCTED,
             "title": "New training",
             "notes": VALID_NOTES,
-            "exercises_data": [
-                self.exercise_data_first_another,
-                self.exercise_data_second_admin,
+            "exercises": [
+                {
+                    "template": self.exercise_template_first.pk,
+                    "order": 1,
+                    "units": {"weight": "lbs"},
+                    "sets": [
+                        {
+                            "reps": "7",
+                            "weight": "45",
+                            "time": "01:10",
+                            "sets": "3",
+                        },
+                        {
+                            "reps": "4",
+                            "weight": "60",
+                            "time": "01:11:10",
+                        },
+                    ],
+                },
+                {
+                    "template": self.exercise_template_admin.pk,
+                    "order": 2,
+                    "units": {"weight": "kg"},
+                    "sets": [
+                        {
+                            "reps": "7",
+                            "weight": "45",
+                            "time": "01:10",
+                            "sets": "3",
+                        },
+                        {
+                            "reps": "4",
+                            "weight": "60",
+                            "time": "01:11:10",
+                        },
+                    ],
+                },
             ],
         }
 
@@ -199,8 +234,9 @@ class TrainingAPITestCase(APITestCase):
         response = self.client.get(get_detail_url(self.training.pk))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["id"], self.training.pk)
-        self.assertEqual(response.data["owner"], self.training.owner)
-        self.assertEqual(response.data["conducted"], self.training.conducted)
+        self.assertEqual(response.data["owner"], self.training.owner.pk)
+        returned_dt = parse_datetime(response.data["conducted"])
+        self.assertEqual(returned_dt, self.training.conducted)
         self.assertEqual(response.data["template"], self.training.template.pk)
         self.assertEqual(response.data["title"], self.training.title)
         self.assertEqual(
@@ -213,16 +249,16 @@ class TrainingAPITestCase(APITestCase):
                 response.data["exercises"][i]["id"], exercises[i].pk
             )
             self.assertEqual(
-                response.data["exercises"][i]["Template"], exercises[i].pk
+                response.data["exercises"][i]["template"], exercises[i].template.pk
             )
             self.assertEqual(
-                response.data["exercises"][i]["Order"], exercises[i].order
+                response.data["exercises"][i]["order"], exercises[i].order
             )
             self.assertEqual(
-                response.data["exercises"][i]["Units"], exercises[i].units
+                response.data["exercises"][i]["units"], exercises[i].units
             )
             self.assertEqual(
-                response.data["exercises"][i]["Sets"], exercises[i].sets
+                response.data["exercises"][i]["sets"], exercises[i].sets
             )
 
     def test_get_other_user_training(self):
@@ -238,6 +274,7 @@ class TrainingAPITestCase(APITestCase):
             title=self.new_training_data["title"]
         )
         self.assertEqual(training.count(), 1)
+        training = training[0]
         exercises = Exercise.objects.filter(training=training)
         self.assertEqual(exercises.count(), 2)
         self.assertEqual(exercises[0].template, self.exercise_template_first)
@@ -245,20 +282,23 @@ class TrainingAPITestCase(APITestCase):
 
     def test_edit_training(self):
         response = self.client.put(
-            get_detail_url(self.training.pk), {self.new_training_data}
+            get_detail_url(self.training.pk), self.new_training_data
         )
         self.assertEqual(response.status_code, 200)
         self.training.refresh_from_db()
         self.assertEqual(self.training.title, self.new_training_data["title"])
+        exercises = Exercise.objects.filter(training=self.training)
+        self.assertEqual(exercises.count(), 2)
+        first_exercise = exercises[0]
         self.assertEqual(
-            self.training.exercises[0].units,
-            self.new_training_data["exercises_data"][0]["Units"],
+            first_exercise.units,
+            self.new_training_data["exercises"][0]["units"],
         )
 
     def test_edit_other_user_training(self):
         response = self.client.put(
             get_detail_url(self.training_other_user.pk),
-            {self.new_training_data},
+            self.new_training_data,
         )
         self.assertEqual(response.status_code, 403)
 
