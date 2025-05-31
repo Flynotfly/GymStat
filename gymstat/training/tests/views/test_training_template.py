@@ -5,7 +5,7 @@ from rest_framework.test import APITestCase
 from user.tests import login_data, other_user_data, user_data
 
 from ...models import TrainingTemplate
-from ..models.training_template import VALID_DATA
+from ..models.test_training_template import VALID_DATA
 
 User = get_user_model()
 

@@ -5,8 +5,8 @@ from rest_framework.test import APITestCase
 
 from user.tests import login_data, other_user_data, admin_user_data
 
-from ..models.training_template import VALID_DATA
-from ..models.training import VALID_NOTES, VALID_CONDUCTED
+from ..models.test_training_template import VALID_DATA
+from ..models.test_training import VALID_NOTES, VALID_CONDUCTED
 from ...models import Training, TrainingTemplate, ExerciseTemplate, Exercise
 
 
