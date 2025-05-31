@@ -3,7 +3,7 @@ from django.urls import reverse
 
 from rest_framework.test import APITestCase
 
-from user.tests import login_data, other_user_data, admin_user_data
+from user.tests import login_data, other_user_data, admin_user_data, user_data
 
 from ..models.test_training_template import VALID_DATA
 from ..models.test_training import VALID_NOTES, VALID_CONDUCTED
@@ -27,7 +27,7 @@ def get_detail_url(pk: int):
 
 class TrainingAPITestCase(APITestCase):
     def setUp(self):
-        self.user = User.objects.create_user(**login_data)
+        self.user = User.objects.create_user(**user_data)
         self.other_user = User.objects.create_user(**other_user_data)
         self.admin_user = User.objects.create_user(**admin_user_data)
 
@@ -181,6 +181,8 @@ class TrainingAPITestCase(APITestCase):
                 self.exercise_data_second_admin,
             ]
         }
+
+        self.client.login(**login_data)
 
     def test_get_all_trainings(self):
         response = self.client.get(get_list_url())
