@@ -94,7 +94,7 @@ class TrainingManager(models.Manager):
         unauthorized_templates = []
         for idx, single_exercise_data in enumerate(exercises_data, start=1):
             # Expect the template to be an instance
-            exercise_template = single_exercise_data.get("Template")
+            exercise_template = single_exercise_data.get("template")
             if not exercise_template:
                 raise ValidationError(
                     f"Exercise #{idx} is missing a template."
@@ -118,10 +118,10 @@ class TrainingManager(models.Manager):
         exercises_to_create = []
         orders = []
         for idx, single_exercise_data in enumerate(exercises_data, start=1):
-            template = single_exercise_data.get("Template")
-            order = single_exercise_data.get("Order")
-            units = single_exercise_data.get("Units")
-            sets = single_exercise_data.get("Sets")
+            template = single_exercise_data.get("template")
+            order = single_exercise_data.get("order")
+            units = single_exercise_data.get("units")
+            sets = single_exercise_data.get("sets")
             exercise = Exercise(
                 training=training,
                 template=template,
