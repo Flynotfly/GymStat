@@ -202,6 +202,20 @@ class TrainingModelTestCase(TestCase):
                 ],
             )
 
+    def test_create_training_no_template(self):
+        Training.objects.create_training(
+            owner=self.user,
+            conducted=VALID_CONDUCTED,
+            title=VALID_TITLE,
+            notes=VALID_NOTES,
+            exercises_data=[
+                self.first_exercise_data,
+                self.second_exercise_data,
+            ],
+        )
+        self.assertEqual(Training.objects.count(), 1)
+        self.assertEqual(Exercise.objects.count(), 2)
+
     # --- Notes ---
     def test_create_training_no_notes(self):
         Training.objects.create_training(
