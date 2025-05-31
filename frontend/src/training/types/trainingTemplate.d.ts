@@ -37,25 +37,25 @@ export interface TrainingTemplateData {
 
 export interface TrainingTemplateDataStringify {
   Notes?: NoteStringify[];
-  Exercises?: Exercise[]
+  Exercises?: Exercise[];
 }
 
 export interface NewTrainingTemplate{
-  name: string,
-  description: string,
-  data: TrainingTemplateData,
+  name: string;
+  description: string;
+  data: TrainingTemplateData;
 }
 
 export interface TrainingTemplate extends NewTrainingTemplate{
-  id: number,
+  id: number;
 }
 
 export interface NewTrainingTemplateStringify{
-  name: string,
-  description: string,
-  data: TrainingTemplateDataStringify,
+  name: string;
+  description: string;
+  data: TrainingTemplateDataStringify;
 }
 
 export interface TrainingTemplateStringify extends NewTrainingTemplateStringify{
-  id: number,
+  id: number;
 }

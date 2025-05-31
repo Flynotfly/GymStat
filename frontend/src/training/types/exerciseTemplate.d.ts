@@ -1,13 +1,13 @@
 export interface NewExerciseTemplate {
-  name: string,
-  fields: ExerciseTemplateField[],
-  tags: ExerciseTemplateTag[],
-  description: string,
+  name: string;
+  fields: ExerciseTemplateField[];
+  tags: ExerciseTemplateTag[];
+  description: string;
 }
 
 export interface ExerciseTemplate extends NewExerciseTemplate {
-  id: number,
-  is_admin: boolean,
+  id: number;
+  is_admin: boolean;
 }
 
 export type ExerciseTemplateType = 'user' | 'admin' | null;
