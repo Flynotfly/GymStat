@@ -32,7 +32,9 @@ class TrainingManager(models.Manager):
         exercises_data: list | None = None,
     ):
         if template and not template.owner == owner:
-            raise PermissionDenied("You are not the owner of this training template.")
+            raise PermissionDenied(
+                "You are not the owner of this training template."
+            )
         training = self.model(
             owner=owner,
             conducted=conducted,
@@ -62,7 +64,9 @@ class TrainingManager(models.Manager):
         if training.owner != owner:
             raise PermissionDenied("You are not the owner of this training.")
         if template and not template.owner == owner:
-            raise PermissionDenied("You are not the owner of this training template.")
+            raise PermissionDenied(
+                "You are not the owner of this training template."
+            )
 
         training.conducted = conducted
         training.template = template

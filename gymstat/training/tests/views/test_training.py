@@ -1,14 +1,12 @@
 from django.contrib.auth import get_user_model
 from django.urls import reverse
-
 from rest_framework.test import APITestCase
 
-from user.tests import login_data, other_user_data, admin_user_data, user_data
+from user.tests import admin_user_data, login_data, other_user_data, user_data
 
+from ...models import Exercise, ExerciseTemplate, Training, TrainingTemplate
+from ..models.test_training import VALID_CONDUCTED, VALID_NOTES
 from ..models.test_training_template import VALID_DATA
-from ..models.test_training import VALID_NOTES, VALID_CONDUCTED
-from ...models import Training, TrainingTemplate, ExerciseTemplate, Exercise
-
 
 User = get_user_model()
 
@@ -103,7 +101,7 @@ class TrainingAPITestCase(APITestCase):
                     "reps": "4",
                     "weight": "60",
                     "time": "01:11:10",
-                }
+                },
             ],
         }
         self.exercise_data_second_admin = {
@@ -121,7 +119,7 @@ class TrainingAPITestCase(APITestCase):
                     "reps": "4",
                     "weight": "60",
                     "time": "01:11:10",
-                }
+                },
             ],
         }
         self.exercise_data_other_user = {
@@ -135,7 +133,7 @@ class TrainingAPITestCase(APITestCase):
                 {
                     "reps": "4",
                     "time": "01:11:10",
-                }
+                },
             ],
         }
 
@@ -149,7 +147,7 @@ class TrainingAPITestCase(APITestCase):
             exercises_data=[
                 self.exercise_data_first,
                 self.exercise_data_second_admin,
-            ]
+            ],
         )
         self.training_second = Training.objects.create_training(
             owner=self.user,
@@ -159,7 +157,7 @@ class TrainingAPITestCase(APITestCase):
             notes=VALID_NOTES,
             exercises_data=[
                 self.exercise_data_first_another,
-            ]
+            ],
         )
         self.training_other_user = Training.objects.create_training(
             owner=self.other_user,
@@ -169,7 +167,7 @@ class TrainingAPITestCase(APITestCase):
             notes=VALID_NOTES,
             exercises_data=[
                 self.exercise_data_other_user,
-            ]
+            ],
         )
 
         self.new_training_data = {
@@ -179,7 +177,7 @@ class TrainingAPITestCase(APITestCase):
             "exercises_data": [
                 self.exercise_data_first_another,
                 self.exercise_data_second_admin,
-            ]
+            ],
         }
 
         self.client.login(**login_data)
@@ -188,7 +186,9 @@ class TrainingAPITestCase(APITestCase):
         response = self.client.get(get_list_url())
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["count"], 2)
-        returned_ids = {training["id"] for training in response.data["results"]}
+        returned_ids = {
+            training["id"] for training in response.data["results"]
+        }
         expected_ids = {
             self.training.pk,
             self.training_second.pk,
@@ -203,15 +203,27 @@ class TrainingAPITestCase(APITestCase):
         self.assertEqual(response.data["conducted"], self.training.conducted)
         self.assertEqual(response.data["template"], self.training.template.pk)
         self.assertEqual(response.data["title"], self.training.title)
-        self.assertEqual(response.data["description"], self.training.description)
+        self.assertEqual(
+            response.data["description"], self.training.description
+        )
         self.assertEqual(response.data["notes"], self.training.notes)
         exercises = Exercise.objects.filter(training=self.training)
         for i in range(2):
-            self.assertEqual(response.data["exercises"][i]["id"], exercises[i].pk)
-            self.assertEqual(response.data["exercises"][i]["Template"], exercises[i].pk)
-            self.assertEqual(response.data["exercises"][i]["Order"], exercises[i].order)
-            self.assertEqual(response.data["exercises"][i]["Units"], exercises[i].units)
-            self.assertEqual(response.data["exercises"][i]["Sets"], exercises[i].sets)
+            self.assertEqual(
+                response.data["exercises"][i]["id"], exercises[i].pk
+            )
+            self.assertEqual(
+                response.data["exercises"][i]["Template"], exercises[i].pk
+            )
+            self.assertEqual(
+                response.data["exercises"][i]["Order"], exercises[i].order
+            )
+            self.assertEqual(
+                response.data["exercises"][i]["Units"], exercises[i].units
+            )
+            self.assertEqual(
+                response.data["exercises"][i]["Sets"], exercises[i].sets
+            )
 
     def test_get_other_user_training(self):
         response = self.client.get(get_detail_url(self.training_other_user.pk))
@@ -222,7 +234,9 @@ class TrainingAPITestCase(APITestCase):
         self.assertEqual(response.status_code, 201)
         self.assertEqual(Training.objects.count(), 4)
         self.assertEqual(Training.objects.count(), 4)
-        training = Training.objects.filter(title=self.new_training_data["title"])
+        training = Training.objects.filter(
+            title=self.new_training_data["title"]
+        )
         self.assertEqual(training.count(), 1)
         exercises = Exercise.objects.filter(training=training)
         self.assertEqual(exercises.count(), 2)
@@ -230,14 +244,22 @@ class TrainingAPITestCase(APITestCase):
         self.assertEqual(exercises[1].template, self.exercise_template_admin)
 
     def test_edit_training(self):
-        response = self.client.put(get_detail_url(self.training.pk), {self.new_training_data})
+        response = self.client.put(
+            get_detail_url(self.training.pk), {self.new_training_data}
+        )
         self.assertEqual(response.status_code, 200)
         self.training.refresh_from_db()
         self.assertEqual(self.training.title, self.new_training_data["title"])
-        self.assertEqual(self.training.exercises[0].units, self.new_training_data["exercises_data"][0]["Units"])
+        self.assertEqual(
+            self.training.exercises[0].units,
+            self.new_training_data["exercises_data"][0]["Units"],
+        )
 
     def test_edit_other_user_training(self):
-        response = self.client.put(get_detail_url(self.training_other_user.pk), {self.new_training_data})
+        response = self.client.put(
+            get_detail_url(self.training_other_user.pk),
+            {self.new_training_data},
+        )
         self.assertEqual(response.status_code, 403)
 
     def test_delete_training(self):
@@ -246,5 +268,7 @@ class TrainingAPITestCase(APITestCase):
         self.assertFalse(Training.objects.filter(pk=self.training.pk).exists())
 
     def test_delete_other_user_training(self):
-        response = self.client.delete(get_detail_url(self.training_other_user.pk))
+        response = self.client.delete(
+            get_detail_url(self.training_other_user.pk)
+        )
         self.assertEqual(response.status_code, 403)

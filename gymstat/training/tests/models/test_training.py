@@ -2,7 +2,7 @@ import datetime
 import zoneinfo
 
 from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError, PermissionDenied
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.test import TestCase
 
 from training.constants import NOTES_FIELDS
@@ -698,7 +698,9 @@ class TrainingModelTestCase(TestCase):
         self.assertEqual(first_exercise.units, None)
         self.assertEqual(first_exercise.sets, None)
         self.assertEqual(second_exercise.training, training)
-        self.assertEqual(second_exercise.template, second_exercise_data["Template"])
+        self.assertEqual(
+            second_exercise.template, second_exercise_data["Template"]
+        )
         self.assertEqual(second_exercise.order, 2)
         self.assertEqual(second_exercise.units, second_exercise_data["Units"])
         self.assertEqual(second_exercise.sets, second_exercise_data["Sets"])

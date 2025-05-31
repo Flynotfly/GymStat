@@ -98,7 +98,9 @@ class TrainingTemplateAPITestCase(APITestCase):
     def test_delete_template(self):
         response = self.client.delete(get_detail_url(self.template.pk))
         self.assertEqual(response.status_code, 204)
-        self.assertFalse(TrainingTemplate.objects.filter(pk=self.template.pk).exists())
+        self.assertFalse(
+            TrainingTemplate.objects.filter(pk=self.template.pk).exists()
+        )
 
     def test_delete_other_user_template(self):
         response = self.client.delete(
