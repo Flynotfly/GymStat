@@ -124,3 +124,6 @@ class TrainingRetrieveUpdateDestroyAPIView(
     serializer_class = TrainingSerializer
     permission_classes = [IsAuthenticated, IsOwner]
     queryset = Training.objects.prefetch_related("exercises").all()
+
+    def perform_update(self, serializer):
+        serializer.save(owner=self.request.user)
