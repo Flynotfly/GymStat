@@ -5,17 +5,17 @@ import MainLayout from "./MainLayout.tsx";
 import VerifyEmail, { loader as verifyEmailLoader } from "../core/pages/VerifyEmail.tsx";
 
 const AppRouteLayout = lazy(() => import("./AppRouteLayout.tsx"));
-const Exercises = lazy(() => import("../training/components/ExerciseTemplatesPage.tsx"));
+const Exercises = lazy(() => import("../training/components/exercise-template/ExerciseTemplatesPage.tsx"));
 const Home = lazy(() => import("../core/pages/Home.tsx"));
-const Training = lazy(() => import("../training/components/TrainingPage.tsx"));
+const Training = lazy(() => import("../training/components/training/TrainingPage.tsx"));
 const Body = lazy(() => import("../core/pages/Body.tsx"));
 const Tasks = lazy(() => import("../core/pages/Tasks.tsx"));
 const SignIn = lazy(() => import("../core/pages/SignIn.tsx"));
 const SignUp = lazy(() => import("../core/pages/SignUp.tsx"));
 const Promo = lazy(() => import("../core/pages/Promo.tsx"));
 const VerificationEmailSent = lazy(() => import("../core/pages/VerificationEmailSent.tsx"));
-const TrainingTemplates = lazy(() => import("../training/components/TrainingTemplatesPage.tsx"));
-const AddTrainingTemplate = lazy(() => import("../training/components/AddTrainingTemplate.tsx"));
+const TrainingTemplates = lazy(() => import("../training/components/training-template/TrainingTemplatesPage.tsx"));
+const AddTrainingTemplate = lazy(() => import("../training/components/training-template/AddTrainingTemplate.tsx"));
 
 function createRouter() {
   return createBrowserRouter([

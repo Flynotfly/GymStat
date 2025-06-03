@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Autocomplete, TextField, CircularProgress } from "@mui/material";
-import { getExerciseTemplates } from "../api";
-import { ExerciseTemplate } from "../types/exerciseTemplate";
+import { getExerciseTemplates } from "../../api.ts";
+import { ExerciseTemplate } from "../../types/exerciseTemplate";
 
 interface Props {
   value: number | null;

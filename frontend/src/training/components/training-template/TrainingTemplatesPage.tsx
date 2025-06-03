@@ -17,8 +17,8 @@ import {
 } from "@mui/material";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { getTrainingTemplates } from "../api";
-import { TrainingTemplate } from "../types/trainingTemplate";
+import { getTrainingTemplates } from "../../api.ts";
+import { TrainingTemplate } from "../../types/trainingTemplate";
 
 export default function TrainingTemplatesPage() {
   const [templates, setTemplates] = useState<TrainingTemplate[]>([]);

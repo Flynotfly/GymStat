@@ -16,9 +16,9 @@ import { Delete as DeleteIcon } from "@mui/icons-material";
 import {
   ALLOWED_EXERCISE_FIELDS,
   AllowedFieldName,
-} from "../constants/exerciseFields";
-import { ExerciseTemplate } from "../types/exerciseTemplate";
-import ExerciseTemplatePicker from "./ExerciseTemplatePicker";
+} from "../../constants/exerciseFields.ts";
+import { ExerciseTemplate } from "../../types/exerciseTemplate";
+import ExerciseTemplatePicker from "../exercise-template/ExerciseTemplatePicker.tsx";
 
 type FieldUI = {
   name: AllowedFieldName;

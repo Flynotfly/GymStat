@@ -1,6 +1,6 @@
 import { Box, Card, CardContent, Chip, Typography } from '@mui/material';
 
-import {ExerciseTemplate} from "../types/exerciseTemplate";
+import {ExerciseTemplate} from "../../types/exerciseTemplate";
 
 interface ExerciseTemplateCardProps {
   template: ExerciseTemplate;

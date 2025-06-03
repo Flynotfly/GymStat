@@ -15,12 +15,12 @@ import {
 } from "@mui/material";
 import { Add as AddIcon, Delete as DeleteIcon } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import {createTrainingTemplate} from "../api";
+import {createTrainingTemplate} from "../../api.ts";
 import {
   NoteField,
   NewTrainingTemplateStringify,
-} from "../types/trainingTemplate";
-import ExerciseCard, { ExerciseUI } from "../components/ExerciseCard.tsx";
+} from "../../types/trainingTemplate";
+import ExerciseCard, { ExerciseUI } from "./ExerciseCard.tsx";
 
 
 interface NoteUI {

@@ -7,14 +7,14 @@ import {
   FormControlLabel, Radio, RadioGroup, Autocomplete,
 } from "@mui/material";
 import {ChangeEvent, useEffect, useRef, useState} from "react";
-import {createExerciseTemplate, getExerciseTemplates} from "../api.ts";
+import {createExerciseTemplate, getExerciseTemplates} from "../../api.ts";
 import ExerciseTemplateCard from "./ExerciseTemplateCard.tsx";
 import {
   ExerciseTemplate, ExerciseTemplateField,
   ExerciseTemplateTag,
   ExerciseTemplateType,
   ExerciseTemplateTypeChoose, NewExerciseTemplate
-} from "../types/exerciseTemplate";
+} from "../../types/exerciseTemplate";
 import FormControl from "@mui/material/FormControl";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
