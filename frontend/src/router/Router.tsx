@@ -8,6 +8,7 @@ const AppRouteLayout = lazy(() => import("./AppRouteLayout.tsx"));
 const Exercises = lazy(() => import("../training/components/exercise-template/ExerciseTemplatesPage.tsx"));
 const Home = lazy(() => import("../core/pages/Home.tsx"));
 const Training = lazy(() => import("../training/components/training/TrainingPage.tsx"));
+const AddTraining = lazy(() => import("../training/components/training/AddTrainingPage.tsx"))
 const Body = lazy(() => import("../core/pages/Body.tsx"));
 const Tasks = lazy(() => import("../core/pages/Tasks.tsx"));
 const SignIn = lazy(() => import("../core/pages/SignIn.tsx"));
@@ -33,6 +34,7 @@ function createRouter() {
           children: [
             { index: true, element: <Home/> },
             { path: "trainings", element: <Training/> },
+            { path: "trainings/add", element: <AddTraining/> },
             { path: "trainings/templates/", element: <TrainingTemplates/> },
             { path: "trainings/templates/add/", element: <AddTrainingTemplate/> },
             { path: "exercises", element: <Exercises/>},
