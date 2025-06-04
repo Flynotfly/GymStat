@@ -56,7 +56,7 @@ export default function NewTrainingPage() {
 
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DateTimePicker
-          label="Conducted (date and time)"
+          label="Conducted"
           value={conducted}
           onChange={(newValue: Dayjs | null) => setConducted(newValue)}
           slotProps={{
