@@ -1,3 +1,5 @@
+import {Dayjs} from "dayjs";
+
 import {NoteField} from "./trainingTemplate";
 
 export interface TrainingNote{
@@ -7,27 +9,9 @@ export interface TrainingNote{
   Value: string;
 }
 
-export interface ExerciseUnit{
-  weight?: "kg" | "lbs";
-  distance?: "m" | "km" | "mi";
-  speed?: "kph" | "mph" | "mps";
-}
+export type ExerciseUnit = Record<string, string>;
 
-export interface ExerciseSet {
-  sets?: number;
-  reps?: number;
-  weight?: number;
-  time?: string;
-  distance?: number;
-  speed?: number;
-  rounds?: number;
-  rest?: string;
-  rpe?: number;
-  attempts?: number;
-  successes?: number;
-  notes?: string;
-  tempo?: string;
-}
+export type ExerciseSet = Record<string, string | number>;
 
 export interface Exercise{
   template: number;
@@ -37,7 +21,7 @@ export interface Exercise{
 }
 
 export interface NewTraining {
-  conducted: Date;
+  conducted: Dayjs;
   title: string;
   template?: number;
   description?: string;
