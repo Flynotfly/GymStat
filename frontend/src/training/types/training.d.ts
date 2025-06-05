@@ -22,7 +22,7 @@ export interface Exercise{
 
 export interface NewTraining {
   conducted: Dayjs;
-  title: string;
+  title?: string;
   template?: number;
   description?: string;
   notes: TrainingNote[];
