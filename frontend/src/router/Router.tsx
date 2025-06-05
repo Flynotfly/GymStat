@@ -35,6 +35,7 @@ function createRouter() {
             { index: true, element: <Home/> },
             { path: "trainings", element: <Training/> },
             { path: "trainings/add", element: <AddTraining/> },
+            { path: "trainings/edit/:trainingId", element: <AddTraining/> },
             { path: "trainings/templates/", element: <TrainingTemplates/> },
             { path: "trainings/templates/add/", element: <AddTrainingTemplate/> },
             { path: "exercises", element: <Exercises/>},
