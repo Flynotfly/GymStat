@@ -71,15 +71,12 @@ export default function TrainingPage() {
   }, [page, hasMore, loading]);
 
   const handleDelete = (id: number) => {
-    deleteTraining(id)
-      .then(() => {
-        setTrainings(prev =>
-          prev.filter(t => t.id !== id)
-        );
-      })
-      .catch(err => {
-        console.error("Error deleting training:", err);
-      });
+    setTrainings(prev => prev.filter(t => t.id !== id));
+
+    deleteTraining(id).catch(err => {
+      console.error("Error deleting training:", err);
+      fetchTrainings(1, false);
+    });
   };
 
   return (
@@ -112,9 +109,7 @@ export default function TrainingPage() {
           <Card variant="outlined" sx={{ mb: 2 }} key={training.id}>
             <CardHeader
               title={training.title || "Untitled Training"}
-              subheader={
-                new Date(training.conducted).toLocaleString()
-              }
+              subheader={new Date(training.conducted).toLocaleString()}
             />
             <CardContent>
               {training.description && (
@@ -160,7 +155,6 @@ export default function TrainingPage() {
                     Exercises:
                   </Typography>
                   {training.exercises.map((ex, ei) => {
-                    // Determine all set keys for table header
                     const setKeys = ex.sets
                       ? Array.from(
                         new Set(
@@ -177,16 +171,14 @@ export default function TrainingPage() {
                         {/* Units */}
                         {ex.units && (
                           <Box sx={{ mb: 1 }}>
-                            {Object.entries(ex.units).map(
-                              ([k, v]) => (
-                                <Chip
-                                  key={k}
-                                  label={`${k}: ${v}`}
-                                  size="small"
-                                  sx={{ mr: 0.5, mb: 0.5 }}
-                                />
-                              )
-                            )}
+                            {Object.entries(ex.units).map(([k, v]) => (
+                              <Chip
+                                key={k}
+                                label={`${k}: ${v}`}
+                                size="small"
+                                sx={{ mr: 0.5, mb: 0.5 }}
+                              />
+                            ))}
                           </Box>
                         )}
 
@@ -196,9 +188,7 @@ export default function TrainingPage() {
                             <TableHead>
                               <TableRow>
                                 {setKeys.map(key => (
-                                  <TableCell key={key}>
-                                    {key}
-                                  </TableCell>
+                                  <TableCell key={key}>{key}</TableCell>
                                 ))}
                               </TableRow>
                             </TableHead>
