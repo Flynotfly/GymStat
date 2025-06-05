@@ -10,6 +10,12 @@ import {
   IconButton,
   Grid,
   Paper,
+  Chip,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
 } from "@mui/material";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
@@ -112,38 +118,108 @@ export default function TrainingPage() {
             />
             <CardContent>
               {training.description && (
-                <Typography variant="body2" sx={{ mb: 1 }}>
+                <Typography variant="body2" sx={{ mb: 2 }}>
                   {training.description}
                 </Typography>
               )}
-              <Grid container spacing={1}>
-                <Grid item>
-                  <Paper
-                    variant="outlined"
-                    sx={{ p: 1, textAlign: "center" }}
-                  >
-                    <Typography variant="subtitle2">
-                      Notes
-                    </Typography>
-                    <Typography variant="h6">
-                      {training.notes.length}
-                    </Typography>
-                  </Paper>
-                </Grid>
-                <Grid item>
-                  <Paper
-                    variant="outlined"
-                    sx={{ p: 1, textAlign: "center" }}
-                  >
-                    <Typography variant="subtitle2">
-                      Exercises
-                    </Typography>
-                    <Typography variant="h6">
-                      {training.exercises.length}
-                    </Typography>
-                  </Paper>
-                </Grid>
-              </Grid>
+
+              {/* NOTES */}
+              {training.notes.length > 0 && (
+                <Box sx={{ mb: 2 }}>
+                  <Typography variant="subtitle2" gutterBottom>
+                    Notes:
+                  </Typography>
+                  <Grid container spacing={1}>
+                    {training.notes.map((note, i) => (
+                      <Grid item xs={12} sm={6} key={i}>
+                        <Paper variant="outlined" sx={{ p: 1 }}>
+                          <Typography variant="body2">
+                            <strong>Name:</strong> {note.Name}
+                          </Typography>
+                          <Typography variant="body2">
+                            <strong>Field:</strong> {note.Field}
+                          </Typography>
+                          <Typography variant="body2">
+                            <strong>Required:</strong>{" "}
+                            {note.Required === "True" ? "Yes" : "No"}
+                          </Typography>
+                          <Typography variant="body2">
+                            <strong>Value:</strong> {note.Value}
+                          </Typography>
+                        </Paper>
+                      </Grid>
+                    ))}
+                  </Grid>
+                </Box>
+              )}
+
+              {/* EXERCISES */}
+              {training.exercises.length > 0 && (
+                <Box>
+                  <Typography variant="subtitle2" gutterBottom>
+                    Exercises:
+                  </Typography>
+                  {training.exercises.map((ex, ei) => {
+                    // Determine all set keys for table header
+                    const setKeys = ex.sets
+                      ? Array.from(
+                        new Set(
+                          ex.sets.flatMap(s => Object.keys(s))
+                        )
+                      )
+                      : [];
+                    return (
+                      <Box key={ei} sx={{ mb: 2 }}>
+                        <Typography variant="body2" gutterBottom>
+                          <strong>Template ID:</strong> {ex.template}
+                        </Typography>
+
+                        {/* Units */}
+                        {ex.units && (
+                          <Box sx={{ mb: 1 }}>
+                            {Object.entries(ex.units).map(
+                              ([k, v]) => (
+                                <Chip
+                                  key={k}
+                                  label={`${k}: ${v}`}
+                                  size="small"
+                                  sx={{ mr: 0.5, mb: 0.5 }}
+                                />
+                              )
+                            )}
+                          </Box>
+                        )}
+
+                        {/* Sets table */}
+                        {ex.sets && ex.sets.length > 0 && (
+                          <Table size="small">
+                            <TableHead>
+                              <TableRow>
+                                {setKeys.map(key => (
+                                  <TableCell key={key}>
+                                    {key}
+                                  </TableCell>
+                                ))}
+                              </TableRow>
+                            </TableHead>
+                            <TableBody>
+                              {ex.sets.map((set, si) => (
+                                <TableRow key={si}>
+                                  {setKeys.map(key => (
+                                    <TableCell key={key}>
+                                      {set[key] ?? "-"}
+                                    </TableCell>
+                                  ))}
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                        )}
+                      </Box>
+                    );
+                  })}
+                </Box>
+              )}
             </CardContent>
             <CardActions>
               <IconButton
