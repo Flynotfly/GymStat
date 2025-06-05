@@ -25,8 +25,10 @@ import { createTraining } from "../../api.ts";
 import {
   NewTrainingStringify,
   TrainingNoteStringify,
+  Exercise,
 } from "../../types/training";
-import { NoteField } from "../../types/trainingTemplate"
+import { NoteField } from "../../types/trainingTemplate";
+import ExerciseCard, { ExerciseUI } from "../training-template/ExerciseCard.tsx";
 
 interface NoteUI {
   Name: string;
@@ -46,6 +48,9 @@ export default function NewTrainingPage() {
   // --- State for notes ---
   const [notesUI, setNotesUI] = useState<NoteUI[]>([]);
 
+  // --- State for exercises ---
+  const [exercisesUI, setExercisesUI] = useState<ExerciseUI[]>([]);
+
   // Predefined options for the NoteField dropdown
   const noteFieldOptions: NoteField[] = [
     "Text",
@@ -59,6 +64,7 @@ export default function NewTrainingPage() {
   // Can submit as long as we have a datetime; title is optional
   const canSubmit = conducted !== null;
 
+  // --- Note handlers ---
   const addNote = () =>
     setNotesUI((prev) => [
       ...prev,
@@ -73,8 +79,63 @@ export default function NewTrainingPage() {
   const removeNote = (i: number) =>
     setNotesUI((prev) => prev.filter((_, idx) => idx !== i));
 
+  // --- Exercise handlers ---
+  const addExercise = () =>
+    setExercisesUI((prev) => [
+      ...prev,
+      { template: null, fields: [] },
+    ]);
+
+  const updateExercise = (i: number, updated: ExerciseUI) =>
+    setExercisesUI((prev) =>
+      prev.map((ex, idx) => (idx === i ? updated : ex))
+    );
+
+  const removeExercise = (i: number) =>
+    setExercisesUI((prev) => prev.filter((_, idx) => idx !== i));
+
   const handleSubmit = () => {
     if (!canSubmit || !conducted) return;
+
+    // Map each ExerciseUI to either an Exercise or null (if no template chosen)
+    const mapped: (Exercise | null)[] = exercisesUI.map((exUI, idx) => {
+      if (!exUI.template) {
+        return null;
+      }
+
+      const units = exUI.fields.reduce<Record<string, string>>(
+        (acc, f) => {
+          if (f.unit) {
+            acc[f.name] = f.unit;
+          }
+          return acc;
+        },
+        {}
+      );
+
+      const oneSet = exUI.fields.reduce<Record<string, string | number>>(
+        (acc, f) => {
+          const raw = f.default?.trim() ?? "";
+          const asNum = Number(raw);
+          acc[f.name] =
+            raw === "" || isNaN(asNum) ? raw : asNum;
+          return acc;
+        },
+        {}
+      );
+
+      return {
+        template: exUI.template.id,
+        order: idx,
+        units: Object.keys(units).length ? units : undefined,
+        sets: Object.keys(oneSet).length ? [oneSet] : [],
+      };
+    });
+
+    // Filter out nulls; now we have Exercise[]
+    const validExercises: Exercise[] = mapped.filter(
+      (e): e is Exercise => e !== null
+    );
 
     const payload: NewTrainingStringify = {
       conducted: conducted.toISOString(),
@@ -86,7 +147,7 @@ export default function NewTrainingPage() {
         Required: n.Required ? "True" : "False",
         Value: n.Value,
       })),
-      exercises: [],
+      exercises: validExercises,
     };
 
     createTraining(payload)
@@ -171,7 +232,9 @@ export default function NewTrainingPage() {
                   fullWidth
                   value={note.Field}
                   onChange={(e) =>
-                    updateNote(i, { Field: e.target.value as NoteField })
+                    updateNote(i, {
+                      Field: e.target.value as NoteField,
+                    })
                   }
                 >
                   {noteFieldOptions.map((opt) => (
@@ -208,6 +271,27 @@ export default function NewTrainingPage() {
               </Grid>
             </Grid>
           </Paper>
+        ))}
+      </Box>
+
+      {/* Exercises Section */}
+      <Box sx={{ mb: 3 }}>
+        <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+            Exercises
+          </Typography>
+          <Button size="small" startIcon={<AddIcon />} onClick={addExercise}>
+            Add Exercise
+          </Button>
+        </Box>
+
+        {exercisesUI.map((exUI, idx) => (
+          <ExerciseCard
+            key={idx}
+            exercise={exUI}
+            onChange={(updated) => updateExercise(idx, updated)}
+            onRemove={() => removeExercise(idx)}
+          />
         ))}
       </Box>
 
