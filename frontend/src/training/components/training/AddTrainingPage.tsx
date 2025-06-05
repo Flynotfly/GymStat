@@ -19,21 +19,18 @@ import { NewTrainingStringify } from "../../types/training";
 export default function NewTrainingPage() {
   const navigate = useNavigate();
 
-  // State for the timestamp, title, description
   const [conducted, setConducted] = useState<Dayjs | null>(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
-  // Can submit only if there's a timestamp and a non-empty title
-  const canSubmit = conducted !== null && title.trim() !== "";
+  const canSubmit = conducted !== null;
 
   const handleSubmit = () => {
     if (!canSubmit || !conducted) return;
 
     const payload: NewTrainingStringify = {
-      // toISOString() will include both date and time
       conducted: conducted.toISOString(),
-      title: title.trim(),
+      title: title.trim() || "",
       description: description.trim(),
       notes: [],
       exercises: [],
