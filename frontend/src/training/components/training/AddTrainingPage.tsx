@@ -149,7 +149,7 @@ export default function NewTrainingPage() {
       })),
       exercises: validExercises,
     };
-
+    console.log("Try create training with this data:", payload);
     createTraining(payload)
       .then(() => {
         navigate("/app/trainings");
