@@ -24,6 +24,16 @@ const URLs = Object.freeze({
 // Exercise templates //
 ////////////////////////
 
+export function getSingleExerciseTemplate(
+  id: number
+): Promise<ExerciseTemplate> {
+  return request(
+    'GET',
+    URLs['EXERCISE_TEMPLATES'] + id + '/',
+  )
+}
+
+
 export function getExerciseTemplates(
   page: number = 1,
   search?: string,
