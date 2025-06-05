@@ -126,7 +126,7 @@ export default function NewTrainingPage() {
 
       return {
         template: exUI.template.id,
-        order: idx,
+        order: idx + 1,
         units: Object.keys(units).length ? units : undefined,
         sets: Object.keys(oneSet).length ? [oneSet] : [],
       };
