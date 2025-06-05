@@ -121,6 +121,16 @@ export function deleteTrainingTemplate(
 // Trainings //
 ///////////////
 
+export function getSingleTraining(
+  id: number
+): Promise<TrainingStringify> {
+  return request(
+    'GET',
+    URLs['TRAININGS'] + id + '/',
+  )
+}
+
+
 export function getTrainings(
   page: number = 1
 ): Promise<PaginatedResponse<TrainingStringify>> {
