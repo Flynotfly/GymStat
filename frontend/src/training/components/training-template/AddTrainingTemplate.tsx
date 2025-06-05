@@ -1,5 +1,5 @@
-// src/pages/NewTrainingTemplatePage.tsx
-import {useMemo, useState} from "react";
+// src/pages/AddTrainingPage.tsx
+import { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -12,72 +12,52 @@ import {
   Paper,
   IconButton,
   Grid,
+  CircularProgress,
 } from "@mui/material";
-import { Add as AddIcon, Delete as DeleteIcon } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
-import {createTrainingTemplate} from "../../api.ts";
+import { Delete as DeleteIcon, Add as AddIcon } from "@mui/icons-material";
 import {
-  NoteField,
-  NewTrainingTemplateStringify,
-} from "../../types/trainingTemplate";
-import ExerciseCard, { ExerciseUI } from "./ExerciseCard.tsx";
-
+  DateTimePicker,
+  LocalizationProvider,
+} from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs, { Dayjs } from "dayjs";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  getTrainings,
+  createTraining,
+  editTraining,
+} from "../../api.ts";
+import {
+  NewTrainingStringify,
+  TrainingStringify,
+  TrainingNoteStringify,
+  Exercise,
+} from "../../types/training";
+import { NoteField } from "../../types/trainingTemplate";
+import ExerciseCard, { ExerciseUI } from "../training-template/ExerciseCard.tsx";
 
 interface NoteUI {
   Name: string;
   Field: NoteField;
   Required: boolean;
-  Default?: string;
+  Value: string;
 }
 
-// --- Validation helpers ---
-function isDatetime(s: string): boolean {
-  // YYYY-MM-DD HH:MM:SS
-  const re = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
-  if (!re.test(s)) return false;
-  // try parsing by swapping space → T
-  const d = new Date(s.replace(" ", "T"));
-  return !isNaN(d.getTime());
-}
-
-function isDuration(s: string): boolean {
-  // HH:MM:SS or MM:SS
-  if (/^\d{2}:\d{2}:\d{2}$/.test(s)) return true;
-  if (/^\d{2}:\d{2}$/.test(s)) return true;
-  return false;
-}
-
-function is5stars(s: string): boolean {
-  const n = parseInt(s, 10);
-  return !isNaN(n) && n >= 1 && n <= 5;
-}
-
-function is10stars(s: string): boolean {
-  const n = parseInt(s, 10);
-  return !isNaN(n) && n >= 1 && n <= 10;
-}
-
-function validateDefault(field: NoteField, def: string): boolean {
-  switch (field) {
-    case "Text":
-      return true; // any string
-    case "Datetime":
-      return isDatetime(def);
-    case "Duration":
-      return isDuration(def);
-    case "Number":
-      return !isNaN(parseFloat(def));
-    case "5stars":
-      return is5stars(def);
-    case "10stars":
-      return is10stars(def);
-    default:
-      return false;
-  }
-}
-
-export default function NewTrainingTemplatePage() {
+export default function AddTrainingPage() {
+  const { trainingId } = useParams<{ trainingId: string }>();
+  const isEdit = Boolean(trainingId);
   const navigate = useNavigate();
+
+  // --- State for main fields ---
+  const [conducted, setConducted] = useState<Dayjs | null>(null);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  // --- State for notes ---
+  const [notesUI, setNotesUI] = useState<NoteUI[]>([]);
+  // --- State for exercises ---
+  const [exercisesUI, setExercisesUI] = useState<ExerciseUI[]>([]);
+  // --- Loading flag for edit fetch ---
+  const [loading, setLoading] = useState(false);
 
   const noteFieldOptions: NoteField[] = [
     "Text",
@@ -88,108 +68,185 @@ export default function NewTrainingTemplatePage() {
     "10stars",
   ];
 
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [notesUI, setNotesUI] = useState<NoteUI[]>([]);
-  const [exercisesUI, setExercisesUI] = useState<ExerciseUI[]>([]);
+  const canSubmit = conducted !== null;
 
-  // Compute an array of default‐validation errors
-  const defaultErrors = useMemo(() =>
-    notesUI.map((n) => {
-      if (n.Default == null || n.Default === "") return "";
-      return validateDefault(n.Field, n.Default)
-        ? ""
-        : (() => {
-          switch (n.Field) {
-            case "Datetime":
-              return "Expected format YYYY-MM-DD HH:MM:SS";
-            case "Duration":
-              return "Expected HH:MM:SS or MM:SS";
-            case "Number":
-              return "Must be a valid number";
-            case "5stars":
-              return "Integer 1–5";
-            case "10stars":
-              return "Integer 1–10";
-            default:
-              return "";
-          }
-        })();
-    })
-  , [notesUI]);
+  // Fetch existing training when in edit mode
+  useEffect(() => {
+    if (!isEdit) return;
 
-  const canSubmit =
-    name.trim() !== "" &&
-    defaultErrors.every((e) => e === "");
+    setLoading(true);
+    getTrainings(1)
+      .then(({ results }) => {
+        const found = results.find(
+          (t) => t.id === Number(trainingId)
+        );
+        if (!found) {
+          console.error("Training not found on page 1");
+          setLoading(false);
+          return;
+        }
+        // Populate fields (use dayjs(...) to construct a Dayjs instance)
+        setConducted(dayjs(found.conducted));
+        setTitle(found.title || "");
+        setDescription(found.description || "");
+        setNotesUI(
+          found.notes.map<NoteUI>((n) => ({
+            Name: n.Name,
+            Field: n.Field,
+            Required: n.Required === "True",
+            Value: n.Value,
+          }))
+        );
+        // Pre‐populate same number of exercise cards; no template/fields loaded
+        setExercisesUI(
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          found.exercises.map((_, _idx) => ({
+            template: null,
+            fields: [],
+          }))
+        );
+      })
+      .catch((err) => {
+        console.error("Error fetching training:", err);
+      })
+      .finally(() => setLoading(false));
+  }, [isEdit, trainingId]);
 
-
+  // --- Note handlers ---
   const addNote = () =>
-    setNotesUI((prev) => [...prev, { Name: "", Field: "Text", Required: false }]);
+    setNotesUI((prev) => [
+      ...prev,
+      { Name: "", Field: "Text", Required: false, Value: "" },
+    ]);
+
   const updateNote = (i: number, u: Partial<NoteUI>) =>
     setNotesUI((prev) =>
       prev.map((n, idx) => (idx === i ? { ...n, ...u } : n))
     );
+
   const removeNote = (i: number) =>
     setNotesUI((prev) => prev.filter((_, idx) => idx !== i));
 
-  const addExercise = () => {
-    setExercisesUI([
-      ...exercisesUI,
+  // --- Exercise handlers ---
+  const addExercise = () =>
+    setExercisesUI((prev) => [
+      ...prev,
       { template: null, fields: [] },
     ]);
-  };
 
+  const updateExercise = (i: number, updated: ExerciseUI) =>
+    setExercisesUI((prev) =>
+      prev.map((ex, idx) => (idx === i ? updated : ex))
+    );
+
+  const removeExercise = (i: number) =>
+    setExercisesUI((prev) => prev.filter((_, idx) => idx !== i));
+
+  // --- Submit handler ---
   const handleSubmit = () => {
-    if (!canSubmit) return;
+    if (!canSubmit || !conducted) return;
 
-    const payload: NewTrainingTemplateStringify = {
-      name: name.trim(),
+    const mapped: (Exercise | null)[] = exercisesUI.map(
+      (exUI, idx) => {
+        if (!exUI.template) return null;
+        const units = exUI.fields.reduce<Record<string, string>>(
+          (acc, f) => {
+            if (f.unit) acc[f.name] = f.unit;
+            return acc;
+          },
+          {}
+        );
+        const oneSet = exUI.fields.reduce<Record<string, string | number>>(
+          (acc, f) => {
+            const raw = f.default?.trim() ?? "";
+            const asNum = Number(raw);
+            acc[f.name] =
+              raw === "" || isNaN(asNum) ? raw : asNum;
+            return acc;
+          },
+          {}
+        );
+        return {
+          template: exUI.template.id,
+          order: idx + 1,
+          units: Object.keys(units).length ? units : undefined,
+          sets: Object.keys(oneSet).length ? [oneSet] : [],
+        };
+      }
+    );
+    const validExercises: Exercise[] = mapped.filter(
+      (e): e is Exercise => e !== null
+    );
+
+    const payload: NewTrainingStringify = {
+      conducted: conducted.toISOString(),
+      title: title.trim() || "",
       description: description.trim(),
-      data: {
-        ...(notesUI.length > 0 && {
-          Notes: notesUI.map((n) => ({
-            Name: n.Name,
-            Field: n.Field,
-            Required: n.Required ? "True" : "False",
-            ...(n.Default ? { Default: n.Default } : {}),
-          })),
-        }),
-        ...(exercisesUI.length > 0 && {
-          Exercises: exercisesUI.map(ex => ({
-            Template: ex.template!.id,
-            Unit: ex.fields.reduce<Record<string,string>>((acc,f) => {
-              if (f.unit) acc[f.name] = f.unit;
-              return acc;
-            }, {}),
-            Sets: [
-              ex.fields.reduce<Record<string,string|number>>((acc,f) => {
-                acc[f.name] = f.default!;
-                return acc;
-              }, {}),
-            ],
-          })),
-        }),
-      },
+      notes: notesUI.map<TrainingNoteStringify>((n) => ({
+        Name: n.Name.trim(),
+        Field: n.Field,
+        Required: n.Required ? "True" : "False",
+        Value: n.Value,
+      })),
+      exercises: validExercises,
     };
-    console.log("Send template: ", payload)
-    createTrainingTemplate(payload)
-      .then(() => navigate("/app/trainings/templates"))
-      .catch((err) =>
-        console.error("Error creating training template:", err)
-      );
+
+    if (isEdit) {
+      const toEdit: TrainingStringify = {
+        ...payload,
+        id: Number(trainingId),
+        owner: 0, // owner is ignored by API on edit
+      };
+      editTraining(toEdit)
+        .then(() => {
+          navigate("/app/trainings");
+        })
+        .catch((err) => {
+          console.error("Error editing training:", err);
+        });
+    } else {
+      createTraining(payload)
+        .then(() => {
+          navigate("/app/trainings");
+        })
+        .catch((err) => {
+          console.error("Error creating training:", err);
+        });
+    }
   };
+
+  if (isEdit && loading) {
+    return (
+      <Box sx={{ p: 2, textAlign: "center" }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ p: 2 }}>
       <Typography variant="h5" gutterBottom>
-        Add New Training Template
+        {isEdit ? "Edit Training" : "Add New Training"}
       </Typography>
+
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <DateTimePicker
+          label="Conducted"
+          value={conducted}
+          onChange={(newValue: Dayjs | null) =>
+            setConducted(newValue)
+          }
+          slotProps={{
+            textField: { fullWidth: true, sx: { mb: 2 } },
+          }}
+        />
+      </LocalizationProvider>
 
       <TextField
         fullWidth
-        label="Name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
+        label="Title (optional)"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
         sx={{ mb: 2 }}
       />
 
@@ -225,21 +282,25 @@ export default function NewTrainingTemplatePage() {
             </IconButton>
 
             <Grid container spacing={2}>
-              {/* Name, Field, Required unchanged */}
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
                   label="Name"
                   value={note.Name}
-                  onChange={(e) => updateNote(i, { Name: e.target.value })}
+                  onChange={(e) =>
+                    updateNote(i, { Name: e.target.value })
+                  }
                 />
               </Grid>
+
               <Grid item xs={12} sm={6}>
                 <Select
                   fullWidth
                   value={note.Field}
                   onChange={(e) =>
-                    updateNote(i, { Field: e.target.value as NoteField })
+                    updateNote(i, {
+                      Field: e.target.value as NoteField,
+                    })
                   }
                 >
                   {noteFieldOptions.map((opt) => (
@@ -249,13 +310,16 @@ export default function NewTrainingTemplatePage() {
                   ))}
                 </Select>
               </Grid>
+
               <Grid item xs={12} sm={6}>
                 <FormControlLabel
                   control={
                     <Checkbox
                       checked={note.Required}
                       onChange={(e) =>
-                        updateNote(i, { Required: e.target.checked })
+                        updateNote(i, {
+                          Required: e.target.checked,
+                        })
                       }
                     />
                   }
@@ -263,15 +327,14 @@ export default function NewTrainingTemplatePage() {
                 />
               </Grid>
 
-              {/* Default with inline validation */}
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  label="Default"
-                  value={note.Default ?? ""}
-                  onChange={(e) => updateNote(i, { Default: e.target.value })}
-                  error={!!defaultErrors[i]}
-                  helperText={defaultErrors[i]}
+                  label="Value"
+                  value={note.Value}
+                  onChange={(e) =>
+                    updateNote(i, { Value: e.target.value })
+                  }
                 />
               </Grid>
             </Grid>
@@ -281,13 +344,7 @@ export default function NewTrainingTemplatePage() {
 
       {/* Exercises Section */}
       <Box sx={{ mb: 3 }}>
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            mb: 1,
-          }}
-        >
+        <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             Exercises
           </Typography>
@@ -300,18 +357,12 @@ export default function NewTrainingTemplatePage() {
           </Button>
         </Box>
 
-        {exercisesUI.map((ex, idx) => (
+        {exercisesUI.map((exUI, idx) => (
           <ExerciseCard
             key={idx}
-            exercise={ex}
-            onChange={updated => {
-              setExercisesUI(ui =>
-                ui.map((u, i) => (i === idx ? updated : u))
-              );
-            }}
-            onRemove={() => {
-              setExercisesUI(ui => ui.filter((_, i) => i !== idx));
-            }}
+            exercise={exUI}
+            onChange={(updated) => updateExercise(idx, updated)}
+            onRemove={() => removeExercise(idx)}
           />
         ))}
       </Box>
@@ -321,7 +372,7 @@ export default function NewTrainingTemplatePage() {
         onClick={handleSubmit}
         disabled={!canSubmit}
       >
-        Create Training Template
+        {isEdit ? "Save Changes" : "Create Training"}
       </Button>
     </Box>
   );
