@@ -23,8 +23,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
 import { useNavigate, useParams } from "react-router-dom";
 import {
-  getSingleTraining,
-  getSingleExerciseTemplate,
+  getTrainings,
   createTraining,
   editTraining,
 } from "../../api.ts";
@@ -35,8 +34,6 @@ import {
   Exercise,
 } from "../../types/training";
 import { NoteField } from "../../types/trainingTemplate";
-import { ExerciseTemplate } from "../../types/exerciseTemplate";
-import { AllowedFieldName } from "../../constants/exerciseFields";
 import ExerciseCard, { ExerciseUI } from "../training-template/ExerciseCard.tsx";
 
 interface NoteUI {
@@ -55,13 +52,10 @@ export default function AddTrainingPage() {
   const [conducted, setConducted] = useState<Dayjs | null>(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-
   // --- State for notes ---
   const [notesUI, setNotesUI] = useState<NoteUI[]>([]);
-
   // --- State for exercises ---
   const [exercisesUI, setExercisesUI] = useState<ExerciseUI[]>([]);
-
   // --- Loading flag for edit fetch ---
   const [loading, setLoading] = useState(false);
 
@@ -81,19 +75,20 @@ export default function AddTrainingPage() {
     if (!isEdit) return;
 
     setLoading(true);
-
-    (async () => {
-      try {
-        const found: TrainingStringify = await getSingleTraining(
-          Number(trainingId)
+    getTrainings(1)
+      .then(({ results }) => {
+        const found = results.find(
+          (t) => t.id === Number(trainingId)
         );
-
-        // 1) Populate the date + title/description
+        if (!found) {
+          console.error("Training not found on page 1");
+          setLoading(false);
+          return;
+        }
+        // Populate fields (use dayjs(...) to construct a Dayjs instance)
         setConducted(dayjs(found.conducted));
         setTitle(found.title || "");
         setDescription(found.description || "");
-
-        // 2) Populate notesUI
         setNotesUI(
           found.notes.map<NoteUI>((n) => ({
             Name: n.Name,
@@ -102,53 +97,19 @@ export default function AddTrainingPage() {
             Value: n.Value,
           }))
         );
-
-        // 3) Fetch each exercise's template, then build ExerciseUI[]
-        const templatesArr: ExerciseTemplate[] = await Promise.all(
-          found.exercises.map((ex) =>
-            getSingleExerciseTemplate(ex.template)
-          )
+        // Pre‐populate same number of exercise cards; no template/fields loaded
+        setExercisesUI(
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          found.exercises.map((_, _idx) => ({
+            template: null,
+            fields: [],
+          }))
         );
-
-        const populatedExercises: ExerciseUI[] = found.exercises.map(
-          (ex, idx) => {
-            const fullTpl: ExerciseTemplate = templatesArr[idx];
-
-            // Pull out the very first "set"
-            const firstSet = ex.sets && ex.sets.length > 0 ? ex.sets[0] : {};
-            const fieldEntries: Array<{
-              name: AllowedFieldName;
-              default?: string;
-              unit?: string;
-            }> = [];
-
-            for (const [fieldName, rawValue] of Object.entries(firstSet)) {
-              const unitForField = ex.units ? ex.units[fieldName] : undefined;
-
-              // Cast fieldName to AllowedFieldName, since TS knows it must match one of those
-              const name = fieldName as AllowedFieldName;
-
-              fieldEntries.push({
-                name,
-                default: String(rawValue),
-                unit: unitForField,
-              });
-            }
-
-            return {
-              template: fullTpl,
-              fields: fieldEntries,
-            };
-          }
-        );
-
-        setExercisesUI(populatedExercises);
-      } catch (err) {
-        console.error("Error fetching single training:", err);
-      } finally {
-        setLoading(false);
-      }
-    })();
+      })
+      .catch((err) => {
+        console.error("Error fetching training:", err);
+      })
+      .finally(() => setLoading(false));
   }, [isEdit, trainingId]);
 
   // --- Note handlers ---
@@ -185,33 +146,34 @@ export default function AddTrainingPage() {
   const handleSubmit = () => {
     if (!canSubmit || !conducted) return;
 
-    // Map ExerciseUI → Exercise API shape
-    const mapped: (Exercise | null)[] = exercisesUI.map((exUI, idx) => {
-      if (!exUI.template) return null;
-
-      const units = exUI.fields.reduce<Record<string, string>>((acc, f) => {
-        if (f.unit) acc[f.name] = f.unit;
-        return acc;
-      }, {});
-
-      const oneSet = exUI.fields.reduce<Record<string, string | number>>(
-        (acc, f) => {
-          const raw = f.default?.trim() ?? "";
-          const asNum = Number(raw);
-          acc[f.name] = raw === "" || isNaN(asNum) ? raw : asNum;
-          return acc;
-        },
-        {}
-      );
-
-      return {
-        template: exUI.template.id,
-        order: idx + 1,
-        units: Object.keys(units).length ? units : undefined,
-        sets: Object.keys(oneSet).length ? [oneSet] : [],
-      };
-    });
-
+    const mapped: (Exercise | null)[] = exercisesUI.map(
+      (exUI, idx) => {
+        if (!exUI.template) return null;
+        const units = exUI.fields.reduce<Record<string, string>>(
+          (acc, f) => {
+            if (f.unit) acc[f.name] = f.unit;
+            return acc;
+          },
+          {}
+        );
+        const oneSet = exUI.fields.reduce<Record<string, string | number>>(
+          (acc, f) => {
+            const raw = f.default?.trim() ?? "";
+            const asNum = Number(raw);
+            acc[f.name] =
+              raw === "" || isNaN(asNum) ? raw : asNum;
+            return acc;
+          },
+          {}
+        );
+        return {
+          template: exUI.template.id,
+          order: idx + 1,
+          units: Object.keys(units).length ? units : undefined,
+          sets: Object.keys(oneSet).length ? [oneSet] : [],
+        };
+      }
+    );
     const validExercises: Exercise[] = mapped.filter(
       (e): e is Exercise => e !== null
     );
@@ -271,7 +233,9 @@ export default function AddTrainingPage() {
         <DateTimePicker
           label="Conducted"
           value={conducted}
-          onChange={(newValue: Dayjs | null) => setConducted(newValue)}
+          onChange={(newValue: Dayjs | null) =>
+            setConducted(newValue)
+          }
           slotProps={{
             textField: { fullWidth: true, sx: { mb: 2 } },
           }}
@@ -323,7 +287,9 @@ export default function AddTrainingPage() {
                   fullWidth
                   label="Name"
                   value={note.Name}
-                  onChange={(e) => updateNote(i, { Name: e.target.value })}
+                  onChange={(e) =>
+                    updateNote(i, { Name: e.target.value })
+                  }
                 />
               </Grid>
 
@@ -332,7 +298,9 @@ export default function AddTrainingPage() {
                   fullWidth
                   value={note.Field}
                   onChange={(e) =>
-                    updateNote(i, { Field: e.target.value as NoteField })
+                    updateNote(i, {
+                      Field: e.target.value as NoteField,
+                    })
                   }
                 >
                   {noteFieldOptions.map((opt) => (
@@ -349,7 +317,9 @@ export default function AddTrainingPage() {
                     <Checkbox
                       checked={note.Required}
                       onChange={(e) =>
-                        updateNote(i, { Required: e.target.checked })
+                        updateNote(i, {
+                          Required: e.target.checked,
+                        })
                       }
                     />
                   }
@@ -362,7 +332,9 @@ export default function AddTrainingPage() {
                   fullWidth
                   label="Value"
                   value={note.Value}
-                  onChange={(e) => updateNote(i, { Value: e.target.value })}
+                  onChange={(e) =>
+                    updateNote(i, { Value: e.target.value })
+                  }
                 />
               </Grid>
             </Grid>
@@ -376,7 +348,11 @@ export default function AddTrainingPage() {
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             Exercises
           </Typography>
-          <Button size="small" startIcon={<AddIcon />} onClick={addExercise}>
+          <Button
+            size="small"
+            startIcon={<AddIcon />}
+            onClick={addExercise}
+          >
             Add Exercise
           </Button>
         </Box>

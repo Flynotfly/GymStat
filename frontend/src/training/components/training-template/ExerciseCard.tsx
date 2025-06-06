@@ -27,9 +27,9 @@ type FieldUI = {
 };
 
 export interface ExerciseUI {
-  /** The full template object (with id, name, description, fields) */
+  /** The full template object (with id, name, description, defaultFields) */
   template: ExerciseTemplate | null;
-  /** User’s chosen fields + default values for this exercise */
+  /** User’s chosen fields for this exercise */
   fields: FieldUI[];
 }
 
@@ -40,32 +40,23 @@ interface Props {
 }
 
 export default function ExerciseCard({ exercise, onChange, onRemove }: Props) {
-  // Only populate `fields` if template exists and fields is currently empty.
+  // Reset fields when template changes
   useEffect(() => {
     if (!exercise.template) {
-      // If the user cleared the template, erase all fields:
       onChange({ ...exercise, fields: [] });
       return;
     }
-
-    // If `fields` is already non-empty (e.g. coming from "Edit"), do nothing.
-    if (exercise.fields.length > 0) {
-      return;
-    }
-
-    // Otherwise (new template + no fields yet), build the default list:
-    const defaults: FieldUI[] = (
-      exercise.template.fields as AllowedFieldName[]
+    const defaults: FieldUI[] = (exercise.template
+        .fields as AllowedFieldName[]
     ).map((fieldName) => {
       const spec = ALLOWED_EXERCISE_FIELDS[fieldName];
       const unit = Array.isArray(spec) ? spec[1][0] : undefined;
       return { name: fieldName, unit, default: "" };
     });
-
     onChange({ ...exercise, fields: defaults });
   }, [exercise.template]);
 
-  // Which fields remain available to add?
+  // Which fields remain available
   const available = useMemo<AllowedFieldName[]>(
     () =>
       (Object.keys(ALLOWED_EXERCISE_FIELDS) as AllowedFieldName[]).filter(
@@ -74,7 +65,7 @@ export default function ExerciseCard({ exercise, onChange, onRemove }: Props) {
     [exercise.fields]
   );
 
-  // Handlers for field‐level changes
+  // Handlers
   const replaceField = (idx: number, name: AllowedFieldName) => {
     const spec = ALLOWED_EXERCISE_FIELDS[name];
     const unit = Array.isArray(spec) ? spec[1][0] : undefined;
@@ -109,7 +100,7 @@ export default function ExerciseCard({ exercise, onChange, onRemove }: Props) {
     });
   };
 
-  // Validation for default values
+  // Validate default values
   const defaultErrors = useMemo(() => {
     return exercise.fields.map((f) => {
       if (!f.default) return "";
@@ -197,7 +188,7 @@ export default function ExerciseCard({ exercise, onChange, onRemove }: Props) {
               </Grid>
             )}
 
-            <Grid item xs={units.length > 0 ? 4 : 7}>
+            <Grid item xs={units?.length ? 4 : 7}>
               <TextField
                 fullWidth
                 value={f.default || ""}
