@@ -1,3 +1,4 @@
+// src/components/ExerciseCard.tsx
 import { useEffect, useMemo } from "react";
 import {
   Paper,
@@ -12,7 +13,6 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { Delete as DeleteIcon } from "@mui/icons-material";
-
 import {
   ALLOWED_EXERCISE_FIELDS,
   AllowedFieldName,
@@ -39,35 +39,16 @@ interface Props {
   onRemove: () => void;
 }
 
-export default function ExerciseCard({
-                                       exercise,
-                                       onChange,
-                                       onRemove,
-                                     }: Props) {
-  /**
-   * We only want to “autogenerate default fields” if
-   *    a) template just went from null → non‐null
-   *    b) OR template is still non‐null but fields array is empty.
-   * Otherwise (e.g. in “edit” mode) we do NOT override a nonempty fields[].
-   */
+export default function ExerciseCard({ exercise, onChange, onRemove }: Props) {
+  // Reset fields when template changes
   useEffect(() => {
-    // If no template is chosen, force fields → []
     if (!exercise.template) {
-      if (exercise.fields.length !== 0) {
-        onChange({ ...exercise, fields: [] });
-      }
+      onChange({ ...exercise, fields: [] });
       return;
     }
-
-    // If there *is* a template object, but fields array is already nonempty,
-    // assume it was injected by “edit” mode or by a prior user change.
-    if (exercise.fields.length > 0) {
-      return;
-    }
-
-    // Otherwise, fields is empty and we have a template; build defaults
     const defaults: FieldUI[] = (exercise.template
-      .fields as AllowedFieldName[]).map((fieldName) => {
+        .fields as AllowedFieldName[]
+    ).map((fieldName) => {
       const spec = ALLOWED_EXERCISE_FIELDS[fieldName];
       const unit = Array.isArray(spec) ? spec[1][0] : undefined;
       return { name: fieldName, unit, default: "" };
@@ -75,7 +56,7 @@ export default function ExerciseCard({
     onChange({ ...exercise, fields: defaults });
   }, [exercise.template]);
 
-  // Which fields remain available to add
+  // Which fields remain available
   const available = useMemo<AllowedFieldName[]>(
     () =>
       (Object.keys(ALLOWED_EXERCISE_FIELDS) as AllowedFieldName[]).filter(
@@ -160,19 +141,13 @@ export default function ExerciseCard({
       <Typography variant="subtitle1" gutterBottom>
         {exercise.template?.name || "No template chosen"}
       </Typography>
-      <Typography
-        variant="body2"
-        color="text.secondary"
-        gutterBottom
-      >
+      <Typography variant="body2" color="text.secondary" gutterBottom>
         {exercise.template?.description}
       </Typography>
 
       {exercise.fields.map((f, idx) => {
         const spec = ALLOWED_EXERCISE_FIELDS[f.name];
-        const units: readonly string[] = Array.isArray(spec)
-          ? spec[1]
-          : [];
+        const units: readonly string[] = Array.isArray(spec) ? spec[1] : [];
         return (
           <Grid
             container

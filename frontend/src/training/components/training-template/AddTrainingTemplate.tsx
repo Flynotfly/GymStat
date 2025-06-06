@@ -1,3 +1,4 @@
+// src/pages/AddTrainingPage.tsx
 import { useState, useEffect } from "react";
 import {
   Box,
@@ -21,14 +22,11 @@ import {
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
 import { useNavigate, useParams } from "react-router-dom";
-
 import {
   getTrainings,
   createTraining,
   editTraining,
-  getSingleExerciseTemplate,
 } from "../../api.ts";
-
 import {
   NewTrainingStringify,
   TrainingStringify,
@@ -78,7 +76,7 @@ export default function AddTrainingPage() {
 
     setLoading(true);
     getTrainings(1)
-      .then(async ({ results }) => {
+      .then(({ results }) => {
         const found = results.find(
           (t) => t.id === Number(trainingId)
         );
@@ -87,13 +85,10 @@ export default function AddTrainingPage() {
           setLoading(false);
           return;
         }
-
-        // Populate scalar fields
+        // Populate fields (use dayjs(...) to construct a Dayjs instance)
         setConducted(dayjs(found.conducted));
         setTitle(found.title || "");
         setDescription(found.description || "");
-
-        // Populate note‐fields
         setNotesUI(
           found.notes.map<NoteUI>((n) => ({
             Name: n.Name,
@@ -102,44 +97,14 @@ export default function AddTrainingPage() {
             Value: n.Value,
           }))
         );
-
-        // Now: for each "found.exercises", fetch its template and build the ExerciseUI
-        const exUIArray: ExerciseUI[] = await Promise.all(
-          found.exercises.map(async (ex) => {
-            // 1) fetch the template object
-            const tpl = await getSingleExerciseTemplate(ex.template);
-            // 2) build an array of FieldUI entries:
-            //    - the template.fields is something like: ["reps", "weight", …]
-            //    - ex.units is possibly { reps: "kg", weight: "lb", … } or undefined
-            //    - ex.sets is an array of set‐objects; we take only the first set (index 0) if it exists
-            const firstSet = ex.sets?.[0] || {};
-            const fields = tpl.fields.map((fieldName) => {
-              // to retrieve default string, try ex.sets[0][fieldName] if present
-              const rawVal = firstSet[fieldName];
-              const defaultStr =
-                rawVal !== undefined && rawVal !== null
-                  ? String(rawVal)
-                  : "";
-              // units for this field come from ex.units[fieldName] if available
-              const unitForField = ex.units
-                ? ex.units[fieldName]
-                : undefined;
-              return {
-                name: fieldName,
-                unit: unitForField ?? undefined,
-                default: defaultStr,
-              };
-            });
-
-            return {
-              template: tpl,
-              fields,
-            };
-          })
+        // Pre‐populate same number of exercise cards; no template/fields loaded
+        setExercisesUI(
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          found.exercises.map((_, _idx) => ({
+            template: null,
+            fields: [],
+          }))
         );
-
-        // finally set the ExerciseUI array
-        setExercisesUI(exUIArray);
       })
       .catch((err) => {
         console.error("Error fetching training:", err);
@@ -181,11 +146,9 @@ export default function AddTrainingPage() {
   const handleSubmit = () => {
     if (!canSubmit || !conducted) return;
 
-    // Map the ExerciseUI back into API’s Exercise type
     const mapped: (Exercise | null)[] = exercisesUI.map(
       (exUI, idx) => {
         if (!exUI.template) return null;
-        // collect units per field
         const units = exUI.fields.reduce<Record<string, string>>(
           (acc, f) => {
             if (f.unit) acc[f.name] = f.unit;
@@ -193,7 +156,6 @@ export default function AddTrainingPage() {
           },
           {}
         );
-        // collect one “set” object from the defaults
         const oneSet = exUI.fields.reduce<Record<string, string | number>>(
           (acc, f) => {
             const raw = f.default?.trim() ?? "";
@@ -300,26 +262,17 @@ export default function AddTrainingPage() {
 
       {/* Notes Section */}
       <Box sx={{ mb: 3 }}>
-        <Box
-          sx={{ display: "flex", alignItems: "center", mb: 1 }}
-        >
+        <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             Notes
           </Typography>
-          <Button
-            size="small"
-            startIcon={<AddIcon />}
-            onClick={addNote}
-          >
+          <Button size="small" startIcon={<AddIcon />} onClick={addNote}>
             Add Note
           </Button>
         </Box>
 
         {notesUI.map((note, i) => (
-          <Paper
-            key={i}
-            sx={{ p: 2, mb: 2, position: "relative" }}
-          >
+          <Paper key={i} sx={{ p: 2, mb: 2, position: "relative" }}>
             <IconButton
               size="small"
               sx={{ position: "absolute", top: 8, right: 8 }}
@@ -391,9 +344,7 @@ export default function AddTrainingPage() {
 
       {/* Exercises Section */}
       <Box sx={{ mb: 3 }}>
-        <Box
-          sx={{ display: "flex", alignItems: "center", mb: 1 }}
-        >
+        <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             Exercises
           </Typography>
