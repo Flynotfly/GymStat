@@ -24,6 +24,7 @@ services:
             - uwsgi_socket:/run/uwsgi
             - static_volume:/code/static
             - media_volume:/code/media
+            - ./fixtures:/code/fixtures
         environment:
             - DJANGO_SETTINGS_MODULE=gymstat.settings.prod
             - POSTGRES_DB=postgres
