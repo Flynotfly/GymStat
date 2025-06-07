@@ -6,6 +6,7 @@ npm-debug.log
 .env
 /data
 uwsgi_app.sock
+/fixtures
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
