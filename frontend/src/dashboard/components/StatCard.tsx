@@ -109,7 +109,7 @@ export default function StatCard({
                 },
               }}
             >
-              <AreaGradient color={chartColor} id={`area-gradient-${value}`} />
+              <AreaGradient color={chartColor} id={`area-gradient-${slugify(title)}`} />
             </SparkLineChart>
           </Box>
         </Stack>
