@@ -14,22 +14,9 @@ export type StatCardProps = {
   interval: string;
   trend: 'up' | 'down' | 'neutral';
   data: number[];
+  dates: Date[];
+  trendValue: string;
 };
-
-function getDaysInMonth(month: number, year: number) {
-  const date = new Date(year, month, 0);
-  const monthName = date.toLocaleDateString('en-US', {
-    month: 'short',
-  });
-  const daysInMonth = date.getDate();
-  const days = [];
-  let i = 1;
-  while (days.length < daysInMonth) {
-    days.push(`${monthName} ${i}`);
-    i += 1;
-  }
-  return days;
-}
 
 function AreaGradient({ color, id }: { color: string; id: string }) {
   return (
@@ -48,9 +35,10 @@ export default function StatCard({
   interval,
   trend,
   data,
+  dates,
+  trendValue,
 }: StatCardProps) {
   const theme = useTheme();
-  const daysInWeek = getDaysInMonth(4, 2024);
 
   const trendColors = {
     up:
@@ -75,7 +63,6 @@ export default function StatCard({
 
   const color = labelColors[trend];
   const chartColor = trendColors[trend];
-  const trendValues = { up: '+25%', down: '-25%', neutral: '+5%' };
 
   return (
     <Card variant="outlined" sx={{ height: '100%', flexGrow: 1 }}>
@@ -95,7 +82,7 @@ export default function StatCard({
               <Typography variant="h4" component="p">
                 {value}
               </Typography>
-              <Chip size="small" color={color} label={trendValues[trend]} />
+              <Chip size="small" color={color} label={trendValue} />
             </Stack>
             <Typography variant="caption" sx={{ color: 'text.secondary' }}>
               {interval}
@@ -109,8 +96,8 @@ export default function StatCard({
               showHighlight
               showTooltip
               xAxis={{
-                scaleType: 'band',
-                data: daysInWeek, // Use the correct property 'data' for xAxis
+                scaleType: 'time',
+                data: dates,
               }}
               sx={{
                 [`& .${areaElementClasses.root}`]: {
