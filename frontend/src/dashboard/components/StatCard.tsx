@@ -96,7 +96,7 @@ export default function StatCard({
               showHighlight
               showTooltip
               xAxis={{
-                scaleType: 'time',
+                scaleType: 'band',
                 data: dates,
               }}
               sx={{
