@@ -18,6 +18,10 @@ export type StatCardProps = {
   trendValue: string;
 };
 
+function slugify(str: string) {
+  return str.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-_]/g, '')
+}
+
 function AreaGradient({ color, id }: { color: string; id: string }) {
   return (
     <defs>
@@ -96,12 +100,12 @@ export default function StatCard({
               showHighlight
               showTooltip
               xAxis={{
-                scaleType: 'band',
+                scaleType: 'time',
                 data: dates,
               }}
               sx={{
                 [`& .${areaElementClasses.root}`]: {
-                  fill: `url(#area-gradient-${value})`,
+                  fill: `url(#area-gradient-${slugify(title)})`,
                 },
               }}
             >
