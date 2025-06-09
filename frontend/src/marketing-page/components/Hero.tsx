@@ -8,6 +8,8 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import visuallyHidden from '@mui/utils/visuallyHidden';
 import { styled } from '@mui/material/styles';
+import {useState} from "react";
+import {useNavigate} from "react-router-dom";
 
 const StyledBox = styled('div')(({ theme }) => ({
   alignSelf: 'center',
@@ -35,6 +37,21 @@ const StyledBox = styled('div')(({ theme }) => ({
 }));
 
 export default function Hero() {
+  const [email, setEmail] = useState('');
+  const [emailError, setEmailError] = useState(false);
+  const [emailErrorMessage, setEmailErrorMessage] = useState('');
+  const navigate = useNavigate()
+
+  const handleStartNow = () => {
+    if (!email.trim()) {
+      setEmailError(true);
+      setEmailErrorMessage('Please enter your email address');
+    }
+    setEmailError(false);
+    setEmailErrorMessage('');
+    navigate(`/sign-up?email=${encodeURIComponent(email.trim())}`)
+  }
+
   return (
     <Box
       id="hero"
@@ -116,9 +133,19 @@ export default function Hero() {
               aria-label="Enter your email address"
               placeholder="Your email address"
               fullWidth
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (emailError) {
+                  setEmailError(false);
+                  setEmailErrorMessage('');
+                }
+              }}
+              error={emailError}
+              helperText={emailErrorMessage}
               slotProps={{
                 htmlInput: {
-                  autoComplete: 'off',
+                  autoComplete: 'email',
                   'aria-label': 'Enter your email address',
                 },
               }}
@@ -128,6 +155,7 @@ export default function Hero() {
               color="primary"
               size="small"
               sx={{ minWidth: 'fit-content' }}
+              onClick={handleStartNow}
             >
               Start now
             </Button>
