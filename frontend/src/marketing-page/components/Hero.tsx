@@ -8,7 +8,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import visuallyHidden from '@mui/utils/visuallyHidden';
 import { styled } from '@mui/material/styles';
-import {useState} from "react";
+import {FormEvent, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
 const StyledBox = styled('div')(({ theme }) => ({
@@ -42,7 +42,8 @@ export default function Hero() {
   const [emailErrorMessage, setEmailErrorMessage] = useState('');
   const navigate = useNavigate()
 
-  const handleStartNow = () => {
+  const handleStartNow = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     if (!email.trim()) {
       setEmailError(true);
       setEmailErrorMessage('Please enter your email address');
