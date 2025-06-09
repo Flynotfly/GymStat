@@ -117,6 +117,8 @@ export default function Hero() {
             Achieve more with proper management.
           </Typography>
           <Stack
+            component="form"
+            onSubmit={handleStartNow}
             direction={{ xs: 'column', sm: 'row' }}
             spacing={1}
             useFlexGap
@@ -155,7 +157,7 @@ export default function Hero() {
               color="primary"
               size="small"
               sx={{ minWidth: 'fit-content' }}
-              onClick={handleStartNow}
+              type="submit"
             >
               Start now
             </Button>
