@@ -15,7 +15,7 @@ import Card from "../components/SignInCard.ts";
 import SignUpContainer from "../components/SignInContainer.ts";
 import {useEffect} from "react";
 import {useConfig} from "../../auth";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {getCookie} from "../utils.ts";
 import {signUp} from "../../auth/lib/allauth";
 import {fetchCsrf} from "../api.ts";
@@ -40,6 +40,16 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
   const password2Ref = React.useRef<HTMLInputElement>(null);
   const firstNameRef = React.useRef<HTMLInputElement>(null);
   const lastNameRef = React.useRef<HTMLInputElement>(null);
+
+  const { search } = useLocation();
+  const params = new URLSearchParams(search);
+  const emailParam = params.get('email') ?? '';
+
+  useEffect(() => {
+    if (emailRef.current && emailParam) {
+      emailRef.current.value = emailParam;
+    }
+  }, [emailParam]);
 
   useEffect(() => {
     fetchCsrf().catch(console.error);
@@ -208,6 +218,7 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
                 name="email"
                 autoComplete="email"
                 variant="outlined"
+                defaultValue={emailParam}
                 error={emailError}
                 helperText={emailErrorMessage}
                 color={passwordError ? 'error' : 'primary'}
