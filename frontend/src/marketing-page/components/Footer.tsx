@@ -15,8 +15,8 @@ function Copyright() {
   return (
     <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
       {'Copyright © '}
-      <Link color="text.secondary" href="https://mui.com/">
-        Sitemark
+      <Link color="text.secondary" href="https://github.com/Flynotfly/">
+        GymStat
       </Link>
       &nbsp;
       {new Date().getFullYear()}
@@ -99,17 +99,11 @@ export default function Footer() {
           <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
             Product
           </Typography>
-          <Link color="text.secondary" variant="body2" component={RouterLink} to="#features">
-            Features
-          </Link>
-          <Link color="text.secondary" variant="body2" component={RouterLink} to="#testimonials">
-            Testimonials
+          <Link color="text.secondary" variant="body2" component={RouterLink} to="#hero">
+            Start now
           </Link>
           <Link color="text.secondary" variant="body2" component={RouterLink} to="#highlights">
             Highlights
-          </Link>
-          <Link color="text.secondary" variant="body2" component={RouterLink} to="#pricing">
-            Pricing
           </Link>
           <Link color="text.secondary" variant="body2" component={RouterLink} to="#faq">
             FAQs
