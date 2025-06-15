@@ -236,4 +236,4 @@ Use this space to list resources you find helpful and would like to give credit 
 [PostgreSQL-url]: https://www.postgresql.org/
 [Redis-url]: https://redis.io/
 [Docker-url]: https://www.docker.com/
-[GitHib-Actions-url]: https://github.com/features/actions
+[GitHub-Actions-url]: https://github.com/features/actions
