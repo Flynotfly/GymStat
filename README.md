@@ -7,7 +7,7 @@
     <img src="images/logo.png" alt="Logo" width="340" height="80">
   </a>
 
-  <h3 align="center">GymStat</h3>
+  <h3 align="center">GymStats</h3>
 
   <p align="center">
     Веб-приложение для ведения тренировок.
