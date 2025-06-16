@@ -36,6 +36,7 @@
       </ul>
     </li>
     <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#контакты">Контакты</a></li>
   </ol>
 </details>
 
@@ -99,6 +100,16 @@
 - [ ] Добавить определение результатов тренировок с фото
 - [ ] Добавить кэширование запросов
 - [ ] Добавить возможность переключения языка
+
+<p align="right">(<a href="#readme-top">Вверх</a>)</p>
+
+
+## Контакты
+
+ALTERIA001@gmail.com
+tg: @flynotfly
+
+Ссылка на проект: https://github.com/Flynotfly/GymStats(https://github.com/Flynotfly/GymStats)
 
 <p align="right">(<a href="#readme-top">Вверх</a>)</p>
 
