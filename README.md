@@ -140,7 +140,7 @@ pip install -r requirements_dev.txt
 docker-compose -f local_postgres/docker-compose.yml --env-file .env up -d
 ```
 
-9. Запустить проект
+9. Запустить проект.
 ```
 py manage.py runserver_plus localhost:8000 --cert ssl/gymstat.crt --settings gymstat.settings.local 
 ```
