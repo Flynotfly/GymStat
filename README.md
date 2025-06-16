@@ -117,9 +117,6 @@ tg: @flynotfly
 
 <!-- MARKDOWN LINKS & IMAGES -->
 [product-screenshot]: images/screenshot.jpg
-[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
-[React-url]: https://reactjs.org/
-
 
 [Python-shield]: https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white
 [Django-shield]: https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white
