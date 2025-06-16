@@ -66,6 +66,7 @@
 * [![MUI][MUI-shield]][MUI-url]
 * [![PostgreSQL][PostgreSQL-shield]][PostgreSQL-url]
 * [![Redis][Redis-shield]][Redis-url]
+* [![Nginx][Nginx-shield]][Nginx-url]
 * [![Docker][Docker-shield]][Docker-url]
 * [![GitHub Actions][GitHub-Actions-shield]][GitHub-Actions-url]
 
@@ -127,6 +128,7 @@ tg: @flynotfly
 [MUI-shield]: https://img.shields.io/badge/MUI-007FFF?style=for-the-badge&logo=mui&logoColor=white
 [PostgreSQL-shield]: https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white
 [Redis-shield]: https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white
+[Nginx-shield]: https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=white
 [Docker-shield]: https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white
 [GitHub-Actions-shield]: https://img.shields.io/badge/GitHub%20Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white
 
@@ -138,5 +140,6 @@ tg: @flynotfly
 [MUI-url]: https://mui.com/
 [PostgreSQL-url]: https://www.postgresql.org/
 [Redis-url]: https://redis.io/
+[Nginx-url]: https://www.nginx.com/
 [Docker-url]: https://www.docker.com/
 [GitHub-Actions-url]: https://github.com/features/actions
