@@ -110,7 +110,7 @@ alteria001@gmail.com
 
 tg: @flynotfly
 
-Ссылка на проект: https://github.com/Flynotfly/GymStats(https://github.com/Flynotfly/GymStats)
+Ссылка на проект: https://github.com/Flynotfly/GymStats
 
 <p align="right">(<a href="#readme-top">Вверх</a>)</p>
 
