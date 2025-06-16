@@ -33,6 +33,7 @@
       <a href="#использование">Использование</a>
       <ul>
         <li><a href="#сборка-и-запуск-проекта">Сборка и запуск проекта</a></li>
+        <li><a href="#локальный-запуск-и-разработка">Локальный запуск и разработка</a></li>
       </ul>
     </li>
     <li><a href="#roadmap">Roadmap</a></li>
@@ -91,6 +92,66 @@
 * DEFAULT_FROM_EMAIL
 
 На сервере должен быть установлен Docker и получен HTTPS сертификат.
+
+### Локальный запуск и разработка
+
+Алгоритм запуска представлен для машины с ОС Windows 11
+
+1. Установить git, docker и python 3.12.
+2. 
+3. Создать и активировать виртуальное окружение python.
+```
+py -m venv GymStats
+cd GymStats
+Scripts\activate
+```
+
+3. Склонировать репозиторий.
+```
+git clone https://github.com/Flynotfly/GymStats.git
+```
+
+4. Перейти в директорию проекта.
+```
+cd gymstats
+```
+
+5. Перейти в директорию Django проекта.
+```
+cd gymstat
+```
+
+6. Установить зависимости.
+```
+pip install -r requirements_dev.txt
+```
+
+7. Создать файл .env со следующими переменными окружения:
+* POSTGRES_DB
+* POSTGRES_USER
+* POSTGRES_PASSWORD
+* EMAIL_HOST_USER
+* EMAIL_HOST_PASSWORD
+* DEFAULT_FROM_EMAIL
+* DJANGO_SECRET_KEY
+
+8. Запустить базу данных.
+```
+docker-compose -f local_postgres/docker-compose.yml --env-file .env up -d
+```
+
+9. Запустить проект
+```
+py manage.py runserver_plus localhost:8000 --cert ssl/gymstat.crt --settings gymstat.settings.local 
+```
+
+10. Для запуска фронтенда необходимо перейти в директорию "frontend", установить npm и запустить проект в режиме разработчика.
+```
+cd ..
+cd frontend
+npm install
+npm run dev
+```
 
 <p align="right">(<a href="#readme-top">Вверх</a>)</p>
 
