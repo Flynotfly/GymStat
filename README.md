@@ -106,7 +106,8 @@
 
 ## Контакты
 
-ALTERIA001@gmail.com
+alteria001@gmail.com
+
 tg: @flynotfly
 
 Ссылка на проект: https://github.com/Flynotfly/GymStats(https://github.com/Flynotfly/GymStats)
