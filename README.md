@@ -73,7 +73,7 @@
 * [![Docker][Docker-shield]][Docker-url]
 * [![GitHub Actions][GitHub-Actions-shield]][GitHub-Actions-url]
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#readme-top">Вверх</a>)</p>
 
 
 ## Использование
@@ -95,7 +95,7 @@
 
 На сервере должен быть установлен Docker и получен HTTPS сертификат.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#readme-top">Вверх</a>)</p>
 
 ## Roadmap
 
@@ -109,7 +109,7 @@
 
 See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a full list of proposed features (and known issues).
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#readme-top">Вверх</a>)</p>
 
 
 <!-- MARKDOWN LINKS & IMAGES -->
