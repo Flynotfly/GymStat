@@ -140,6 +140,6 @@ tg: @flynotfly
 [MUI-url]: https://mui.com/
 [PostgreSQL-url]: https://www.postgresql.org/
 [Redis-url]: https://redis.io/
-[Nginx-url]: https://www.nginx.com/
+[Nginx-url]: https://nginx.org/
 [Docker-url]: https://www.docker.com/
 [GitHub-Actions-url]: https://github.com/features/actions
