@@ -61,6 +61,7 @@
 * [![Python][Python-shield]][Python-url]
 * [![Django][Django-shield]][Django-url]
 * [![Django REST Framework][DRF-shield]][DRF-url]
+* [![TypeScript][TypeScript-shield]][TypeScript-url]
 * [![React][React-shield]][React-url]
 * [![MUI][MUI-shield]][MUI-url]
 * [![PostgreSQL][PostgreSQL-shield]][PostgreSQL-url]
@@ -121,6 +122,7 @@ tg: @flynotfly
 [Python-shield]: https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white
 [Django-shield]: https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white
 [DRF-shield]: https://img.shields.io/badge/Django%20REST%20Framework-A30000?style=for-the-badge&logo=djangorestframework&logoColor=white
+[TypeScript-shield]: https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white
 [React-shield]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
 [MUI-shield]: https://img.shields.io/badge/MUI-007FFF?style=for-the-badge&logo=mui&logoColor=white
 [PostgreSQL-shield]: https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white
@@ -131,6 +133,7 @@ tg: @flynotfly
 [Python-url]: https://www.python.org/
 [Django-url]: https://www.djangoproject.com/
 [DRF-url]: https://www.django-rest-framework.org/
+[TypeScript-url]: https://www.typescriptlang.org/
 [React-url]: https://reactjs.org/
 [MUI-url]: https://mui.com/
 [PostgreSQL-url]: https://www.postgresql.org/
