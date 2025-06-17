@@ -140,12 +140,17 @@ pip install -r requirements_dev.txt
 docker-compose -f local_postgres/docker-compose.yml --env-file .env up -d
 ```
 
-9. Запустить проект.
+9. Мигрировать.
+```
+py manage.py migrate --settings gymstat.settings.local 
+```
+
+10. Запустить проект.
 ```
 py manage.py runserver_plus localhost:8000 --cert ssl/gymstat.crt --settings gymstat.settings.local 
 ```
 
-10. Для запуска фронтенда необходимо перейти в директорию "frontend", установить npm и запустить проект в режиме разработчика.
+11. Для запуска фронтенда необходимо перейти в директорию "frontend", установить npm и запустить проект в режиме разработчика.
 ```
 cd ..
 cd frontend
