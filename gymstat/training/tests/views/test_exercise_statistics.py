@@ -304,3 +304,50 @@ class ExericseStatisticsAPITestCase(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["count"], 1)
         self.assertEqual(response.data["results"][0]["weight"], "140")
+
+    @freeze_time("2025-06-01")
+    def test_get_exercise_history_with_unit_conversion(self):
+        create_training(
+            self,
+            weight=100,
+            conducted=datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=2),
+        )
+        create_training(
+            self,
+            conducted=datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=2),
+            exercises_data=[{
+                "template": self.exercise_template,
+                "order": 1,
+                "units": {"weight": "lbs"},
+                "sets": [
+                    {
+                        "weight": "176.37",
+                    },
+                ]
+            }]
+        )
+        response_kg = self.client.get(get_url(
+            self.exercise_template.pk,
+            period="day",
+            period_quantity=3,
+            field="weight",
+            unit="kg",
+        ))
+        self.assertEqual(response_kg.status_code, 200)
+        self.assertEqual(response_kg.data["count"], 2)
+        returned_weights_kg = {round(float(exercise["weight"])) for exercise in response_kg.data["results"]}
+        expected_weights_kg = {100.00, 80.00}
+        self.assertEqual(returned_weights_kg, expected_weights_kg)
+
+        response_lbs = self.client.get(get_url(
+            self.exercise_template.pk,
+            period="day",
+            period_quantity=3,
+            field="weight",
+            unit="lbs",
+        ))
+        self.assertEqual(response_lbs.status_code, 200)
+        self.assertEqual(response_lbs.data["count"], 2)
+        returned_weights_lbs = {round(float(exercise["weight"])) for exercise in response_lbs.data["results"]}
+        expected_weights_lbs = {220.46, 176.37}
+        self.assertEqual(returned_weights_lbs, expected_weights_lbs)
