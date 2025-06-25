@@ -1,3 +1,4 @@
+import copy
 import datetime
 
 from rest_framework.test import APITestCase
@@ -11,6 +12,32 @@ from ...models import ExerciseTemplate, Training
 User = get_user_model()
 
 
+def create_training(test_case, **kwargs):
+    def get_default_exercise_data():
+        return [{
+            "template": test_case.exercise_template,
+            "order": 1,
+            "units": {"weight": "kg"},
+            "sets": [
+                {
+                    "weight": "80",
+                },
+            ]
+        }]
+
+    defaults = {
+        "owner": test_case.user,
+        "conducted": datetime.datetime(2024, 1, 1, tzinfo=datetime.timezone.utc),
+        "exercises_data": get_default_exercise_data()
+    }
+    if "weight" in kwargs and "exercise_data" not in kwargs:
+        modified_exercise_data = copy.deepcopy(defaults["exercises_data"])
+        modified_exercise_data[0]["sets"][0]['weight'] = str(kwargs.pop("weight"))
+        defaults["exercises_data"] = modified_exercise_data
+    defaults.update(kwargs)
+    return Training.objects.create_training(**defaults)
+
+
 class ExericseStatisticsAPITestCase(APITestCase):
     def setUp(self):
         self.user = User.objects.create_user(**user_data)
@@ -21,30 +48,4 @@ class ExericseStatisticsAPITestCase(APITestCase):
             owner=self.user,
             fields=["weight"],
         )
-        self.other_exercise_template = ExerciseTemplate.objects.create(
-            name="Other exercise",
-            owner=self.user,
-            fields=["weight"],
-        )
-        self.other_user_exercise_template = ExerciseTemplate.objects.create(
-            name="Other user exercise",
-            owner=self.other_user,
-            fields=["weight"]
-        )
-
-        self.trainings = []
-        self.trainings.append(Training.objects.create_training(
-            owner=self.user,
-            conducted=datetime.datetime(2025, 5, 10),
-            exercises_data=[{
-                "template": self.exercise_template,
-                "order": 1,
-                "units": {"weight": "kg"},
-                "sets": [
-                    {
-                        "weight": "80",
-                    },
-                ]
-            }]
-        ))
         self.client.login(**login_data)
