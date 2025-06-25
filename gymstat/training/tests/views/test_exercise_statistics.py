@@ -175,3 +175,52 @@ class ExericseStatisticsAPITestCase(APITestCase):
         returned_weights = {exercise["weight"] for exercise in response.data["results"]}
         expected_weights = {"70", "90", "100", "120"}
         self.assertEqual(returned_weights, expected_weights)
+
+    def test_get_exercise_history_several_fields(self):
+        exercise_template = ExerciseTemplate.objects.create(
+            name="Press",
+            owner=self.user,
+            fields=["weight", "reps"],
+        )
+        create_training(
+            self,
+            conduncted=datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=2),
+            exercises_data=[{
+                "template": exercise_template,
+                "order": 1,
+                "units": {"weight": "kg"},
+                "sets": [
+                    {
+                        "weight": "80",
+                        "reps": 4,
+                    },
+                ]
+            }]
+        )
+        create_training(
+            self,
+            conduncted=datetime.datetime.now(tz=datetime.timezone.utc),
+            exercises_data=[{
+                "template": exercise_template,
+                "order": 1,
+                "units": {"weight": "kg"},
+                "sets": [
+                    {
+                        "weight": "80",
+                        "reps": 7,
+                    },
+                ]
+            }]
+        )
+
+        response = self.client.get(get_url(
+            self.exercise_template,
+            period="day",
+            period_quantity=5,
+            field="reps",
+        ))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["count"], 2)
+        returned_weights = {exercise["reps"] for exercise in response.data["results"]}
+        expected_weights = {"4", "7"}
+        self.assertEqual(returned_weights, expected_weights)
