@@ -2,14 +2,26 @@ import copy
 import datetime
 
 from rest_framework.test import APITestCase
+from freezegun import freeze_time
+from urllib.parse import urlencode
 
 from django.contrib.auth import get_user_model
+from django.urls import reverse
 
 from user.tests import login_data, other_user_data, user_data
 from ...models import ExerciseTemplate, Training
 
 
 User = get_user_model()
+
+
+def get_url(pk: int, period: str, period_quantity: int):
+    base_url = reverse("training:exercise-statistics", kwargs={"pk": pk})
+    query = {
+        "period": period,
+        "period_quantity": period_quantity,
+    }
+    return f"{base_url}?{urlencode(query)}"
 
 
 def create_training(test_case, **kwargs):
