@@ -76,26 +76,26 @@ class ExericseStatisticsAPITestCase(APITestCase):
         create_training(
             self,
             weight=50,
-            conduncted=datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=15)
+            conducted=datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=15)
         )
         create_training(
             self,
             weight=60,
-            conduncted=datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=8)
+            conducted=datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=8)
         )
         create_training(
             self,
             weight=70,
-            conduncted=datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=5)
+            conducted=datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=5)
         )
         create_training(
             self,
             weight=100,
-            conduncted=datetime.datetime.now(tz=datetime.timezone.utc)
+            conducted=datetime.datetime.now(tz=datetime.timezone.utc)
         )
 
         response = self.client.get(get_url(
-            self.exercise_template,
+            self.exercise_template.pk,
             period="day",
             period_quantity=10,
             field="weight",
@@ -112,30 +112,30 @@ class ExericseStatisticsAPITestCase(APITestCase):
         create_training(
             self,
             weight=50,
-            conduncted=datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(weeks=7)
+            conducted=datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(weeks=7)
         )
         create_training(
             self,
             weight=70,
-            conduncted=datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(weeks=5)
+            conducted=datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(weeks=5)
         )
         create_training(
             self,
             weight=90,
-            conduncted=datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(weeks=3)
+            conducted=datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(weeks=3)
         )
         create_training(
             self,
             weight=100,
-            conduncted=datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=2)
+            conducted=datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=2)
         )
         create_training(
             self,
             weight=120,
-            conduncted=datetime.datetime.now(tz=datetime.timezone.utc)
+            conducted=datetime.datetime.now(tz=datetime.timezone.utc)
         )
         response = self.client.get(get_url(
-            self.exercise_template,
+            self.exercise_template.pk,
             period="week",
             period_quantity=6,
             field="weight",
@@ -152,30 +152,30 @@ class ExericseStatisticsAPITestCase(APITestCase):
         create_training(
             self,
             weight=50,
-            conduncted=datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(weeks=15)
+            conducted=datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(weeks=15)
         )
         create_training(
             self,
             weight=70,
-            conduncted=datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(weeks=12)
+            conducted=datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(weeks=12)
         )
         create_training(
             self,
             weight=90,
-            conduncted=datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(weeks=5)
+            conducted=datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(weeks=5)
         )
         create_training(
             self,
             weight=100,
-            conduncted=datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=2)
+            conducted=datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=2)
         )
         create_training(
             self,
             weight=120,
-            conduncted=datetime.datetime.now(tz=datetime.timezone.utc)
+            conducted=datetime.datetime.now(tz=datetime.timezone.utc)
         )
         response = self.client.get(get_url(
-            self.exercise_template,
+            self.exercise_template.pk,
             period="month",
             period_quantity=3,
             field="weight",
@@ -196,7 +196,7 @@ class ExericseStatisticsAPITestCase(APITestCase):
         )
         create_training(
             self,
-            conduncted=datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=2),
+            conducted=datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=2),
             exercises_data=[{
                 "template": exercise_template,
                 "order": 1,
@@ -211,7 +211,7 @@ class ExericseStatisticsAPITestCase(APITestCase):
         )
         create_training(
             self,
-            conduncted=datetime.datetime.now(tz=datetime.timezone.utc),
+            conducted=datetime.datetime.now(tz=datetime.timezone.utc),
             exercises_data=[{
                 "template": exercise_template,
                 "order": 1,
@@ -242,16 +242,16 @@ class ExericseStatisticsAPITestCase(APITestCase):
         create_training(
             self,
             weight=100,
-            conduncted=datetime.datetime.now(tz=datetime.timezone.utc)
+            conducted=datetime.datetime.now(tz=datetime.timezone.utc)
         )
         create_training(
             self,
             weight=120,
-            conduncted=datetime.datetime.now(tz=datetime.timezone.utc)
+            conducted=datetime.datetime.now(tz=datetime.timezone.utc)
         )
         create_training(
             self,
-            conduncted=datetime.datetime.now(tz=datetime.timezone.utc),
+            conducted=datetime.datetime.now(tz=datetime.timezone.utc),
             exercises_data=[{
                 "template": self.exercise_template,
                 "order": 1,
@@ -261,7 +261,7 @@ class ExericseStatisticsAPITestCase(APITestCase):
                         "weight": "80",
                     },
                     {
-                        "weight: 140",
+                        "weight": "140",
                     }
                 ]
             }]
@@ -270,7 +270,7 @@ class ExericseStatisticsAPITestCase(APITestCase):
             self,
             owner=self.other_user,
             weight=200,
-            conduncted=datetime.datetime.now(tz=datetime.timezone.utc)
+            conducted=datetime.datetime.now(tz=datetime.timezone.utc)
         )
 
         wrong_exercise_template = ExerciseTemplate.objects.create(
@@ -280,7 +280,7 @@ class ExericseStatisticsAPITestCase(APITestCase):
         )
         create_training(
             self,
-            conduncted=datetime.datetime.now(tz=datetime.timezone.utc),
+            conducted=datetime.datetime.now(tz=datetime.timezone.utc),
             exercises_data=[{
                 "template": wrong_exercise_template,
                 "order": 1,
@@ -295,7 +295,7 @@ class ExericseStatisticsAPITestCase(APITestCase):
         )
 
         response = self.client.get(get_url(
-            self.exercise_template,
+            self.exercise_template.pk,
             period="day",
             period_quantity=3,
             field="weight",
