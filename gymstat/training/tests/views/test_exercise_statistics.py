@@ -15,13 +15,21 @@ from ...models import ExerciseTemplate, Training
 User = get_user_model()
 
 
-def get_url(pk: int, field: str, period: str, period_quantity: int):
+def get_url(
+        pk: int,
+        field: str,
+        period: str,
+        period_quantity: int,
+        unit: str | None = None,
+):
     base_url = reverse("training:exercise-statistics", kwargs={"pk": pk})
     query = {
         "period": period,
         "period_quantity": period_quantity,
         "field": field,
     }
+    if unit:
+        query["unit"] = unit
     return f"{base_url}?{urlencode(query)}"
 
 
@@ -91,6 +99,7 @@ class ExericseStatisticsAPITestCase(APITestCase):
             period="day",
             period_quantity=10,
             field="weight",
+            unit="kg",
         ))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["count"], 3)
@@ -130,6 +139,7 @@ class ExericseStatisticsAPITestCase(APITestCase):
             period="week",
             period_quantity=6,
             field="weight",
+            unit="kg",
         ))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["count"], 4)
@@ -169,6 +179,7 @@ class ExericseStatisticsAPITestCase(APITestCase):
             period="month",
             period_quantity=3,
             field="weight",
+            unit="kg",
         ))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["count"], 4)
@@ -288,6 +299,7 @@ class ExericseStatisticsAPITestCase(APITestCase):
             period="day",
             period_quantity=3,
             field="weight",
+            unit="kg",
         ))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["count"], 1)
