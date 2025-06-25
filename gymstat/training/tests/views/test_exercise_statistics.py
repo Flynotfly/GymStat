@@ -15,11 +15,12 @@ from ...models import ExerciseTemplate, Training
 User = get_user_model()
 
 
-def get_url(pk: int, period: str, period_quantity: int):
+def get_url(pk: int, field: str, period: str, period_quantity: int):
     base_url = reverse("training:exercise-statistics", kwargs={"pk": pk})
     query = {
         "period": period,
         "period_quantity": period_quantity,
+        "field": field,
     }
     return f"{base_url}?{urlencode(query)}"
 
@@ -61,3 +62,116 @@ class ExericseStatisticsAPITestCase(APITestCase):
             fields=["weight"],
         )
         self.client.login(**login_data)
+
+    @freeze_time("2025-06-01")
+    def test_get_exercise_history_for_10_days(self):
+        create_training(
+            self,
+            weight=50,
+            conduncted=datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=15)
+        )
+        create_training(
+            self,
+            weight=60,
+            conduncted=datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=8)
+        )
+        create_training(
+            self,
+            weight=70,
+            conduncted=datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=5)
+        )
+        create_training(
+            self,
+            weight=100,
+            conduncted=datetime.datetime.now(tz=datetime.timezone.utc)
+        )
+
+        response = self.client.get(get_url(
+            self.exercise_template,
+            period="day",
+            period_quantity=10,
+            field="weight",
+        ))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["count"], 3)
+        returned_weights = {exercise["weight"] for exercise in response.data["results"]}
+        expected_weights = {"60", "70", "100"}
+        self.assertEqual(returned_weights, expected_weights)
+
+    @freeze_time("2025-06-01")
+    def test_get_exercises_history_for_6_weeks(self):
+        create_training(
+            self,
+            weight=50,
+            conduncted=datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(weeks=7)
+        )
+        create_training(
+            self,
+            weight=70,
+            conduncted=datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(weeks=5)
+        )
+        create_training(
+            self,
+            weight=90,
+            conduncted=datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(weeks=3)
+        )
+        create_training(
+            self,
+            weight=100,
+            conduncted=datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=2)
+        )
+        create_training(
+            self,
+            weight=120,
+            conduncted=datetime.datetime.now(tz=datetime.timezone.utc)
+        )
+        response = self.client.get(get_url(
+            self.exercise_template,
+            period="week",
+            period_quantity=6,
+            field="weight",
+        ))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["count"], 4)
+        returned_weights = {exercise["weight"] for exercise in response.data["results"]}
+        expected_weights = {"70", "90", "100", "120"}
+        self.assertEqual(returned_weights, expected_weights)
+
+    @freeze_time("2025-06-01")
+    def test_get_exercises_history_for_3_months(self):
+        create_training(
+            self,
+            weight=50,
+            conduncted=datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(weeks=15)
+        )
+        create_training(
+            self,
+            weight=70,
+            conduncted=datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(weeks=12)
+        )
+        create_training(
+            self,
+            weight=90,
+            conduncted=datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(weeks=5)
+        )
+        create_training(
+            self,
+            weight=100,
+            conduncted=datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=2)
+        )
+        create_training(
+            self,
+            weight=120,
+            conduncted=datetime.datetime.now(tz=datetime.timezone.utc)
+        )
+        response = self.client.get(get_url(
+            self.exercise_template,
+            period="month",
+            period_quantity=3,
+            field="weight",
+        ))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["count"], 4)
+        returned_weights = {exercise["weight"] for exercise in response.data["results"]}
+        expected_weights = {"70", "90", "100", "120"}
+        self.assertEqual(returned_weights, expected_weights)
