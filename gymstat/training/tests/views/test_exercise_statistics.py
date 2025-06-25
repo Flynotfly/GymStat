@@ -176,6 +176,7 @@ class ExericseStatisticsAPITestCase(APITestCase):
         expected_weights = {"70", "90", "100", "120"}
         self.assertEqual(returned_weights, expected_weights)
 
+    @freeze_time("2025-06-01")
     def test_get_exercise_history_several_fields(self):
         exercise_template = ExerciseTemplate.objects.create(
             name="Press",
