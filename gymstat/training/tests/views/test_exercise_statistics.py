@@ -43,7 +43,7 @@ def create_training(test_case, **kwargs):
         "conducted": datetime.datetime(2024, 1, 1, tzinfo=datetime.timezone.utc),
         "exercises_data": get_default_exercise_data()
     }
-    if "weight" in kwargs and "exercise_data" not in kwargs:
+    if "weight" in kwargs and "exercises_data" not in kwargs:
         modified_exercise_data = copy.deepcopy(defaults["exercises_data"])
         modified_exercise_data[0]["sets"][0]['weight'] = str(kwargs.pop("weight"))
         defaults["exercises_data"] = modified_exercise_data
